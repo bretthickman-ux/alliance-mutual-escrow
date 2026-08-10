@@ -30,37 +30,40 @@ document.querySelectorAll<HTMLElement>('.reveal, .rowx').forEach((el, i) => {
   io.observe(el);
 });
 
-// Fee count-up.
-const feetable = document.getElementById('feetable');
-if (feetable) {
-  const cio = new IntersectionObserver(
-    (entries) =>
-      entries.forEach((e) => {
-        if (!e.isIntersecting) return;
-        cio.unobserve(e.target);
-        ([['cnt1', 2450], ['cnt2', 3200]] as const).forEach(([id, target], k) => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const t0 = performance.now(), dur = 900;
-          const step = (now: number) => {
-            const p = Math.min((now - t0) / dur, 1), ease = 1 - Math.pow(1 - p, 3);
-            el.textContent = '$' + Math.round(target * ease).toLocaleString();
-            if (p < 1) requestAnimationFrame(step);
-          };
-          setTimeout(() => requestAnimationFrame(step), k * 140);
-        });
-      }),
-    { threshold: 0.4 },
-  );
-  cio.observe(feetable);
-}
+// The fee table is now the real calculator island; it manages its own state.
 
-// Fee table tab toggle (the full calculator arrives in Phase 2).
-document.querySelectorAll<HTMLElement>('.ft-tab').forEach((t) =>
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.ft-tab').forEach((x) => x.classList.toggle('on', x === t));
-  }),
-);
+// Reviews (Phase 3): cached Places data via our API, never Google directly and
+// never hardcoded. If the cache is empty or the API is absent, render nothing.
+(async function () {
+  const wrap = document.getElementById('reviews');
+  const grid = document.getElementById('gr-grid');
+  if (!wrap || !grid) return;
+  try {
+    const res = await fetch('/api/reviews');
+    if (!res.ok) return;
+    const data = (await res.json()) as { reviews?: { author: string; rating: number; text: string }[] };
+    const reviews = (data.reviews || []).slice(0, 3);
+    if (reviews.length === 0) return;
+    for (const r of reviews) {
+      const card = document.createElement('div');
+      card.className = 'gr-card';
+      const stars = document.createElement('div');
+      stars.className = 'gr-stars';
+      stars.textContent = '★'.repeat(Math.max(1, Math.min(5, Math.round(r.rating))));
+      const text = document.createElement('div');
+      text.className = 'gr-text';
+      text.textContent = '“' + r.text + '”';
+      const author = document.createElement('div');
+      author.className = 'gr-author';
+      author.textContent = r.author + ' · Google';
+      card.append(stars, text, author);
+      grid.append(card);
+    }
+    wrap.classList.add('has');
+  } catch {
+    /* no reviews section */
+  }
+})();
 
 // Ambient statement video: plays only while on screen.
 const sv = document.getElementById('stvid') as HTMLVideoElement | null;

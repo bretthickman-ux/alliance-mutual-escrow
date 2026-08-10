@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { guides } from '../../data/guides.mjs';
+import '../../styles/interior.css';
+
+export function getStaticPaths() {
+  return guides.map((g) => ({ params: { slug: g.slug }, props: { guide: g } }));
+}
+
+const { guide } = Astro.props;
+const pdfHref = `/pdfs/${guide.slug}.pdf`;
+---
+
+<BaseLayout
+  title={`${guide.title} · Alliance Mutual Escrow`}
+  description={guide.description}
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+  faq={guide.faq}
+>
+  <header class="hero">
+    <div class="kick">{guide.kicker}</div>
+    <h1>{guide.title}</h1>
+    <p class="sub">{guide.lead}</p>
+    <p style="margin-top:18px">
+      <a
+        class="pdfbtn"
+        href={pdfHref}
+        download
+        style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:11px 20px;border-radius:100px;border:1px solid var(--hair);color:var(--ink);text-decoration:none"
+      >
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 1v8m0 0L4 6m3 3l3-3M2 12h10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download as PDF
+      </a>
+    </p>
+  </header>
+
+  <div class="wrap" style="grid-template-columns:1fr;max-width:880px">
+    <main>
+      {guide.sections.map((s) => (
+        <>
+          <h2>{s.h}</h2>
+          {s.ps.map((p) => <p>{p}</p>)}
+        </>
+      ))}
+
+      <h2>Frequently asked</h2>
+      <div class="faq">
+        {guide.faq.map((f) => (
+          <div class="fq">
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </main>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Questions about your file? <i>Ask an officer.</i></h2>
+      <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </section>
+
+  <p class="note">
+    General information for California consumers, not legal or tax advice. For advice about your
+    situation, talk to your attorney or tax professional.
+  </p>
+
+  <script>
+    import '../../scripts/interior-motion';
+  </script>
+</BaseLayout>

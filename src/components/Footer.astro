@@ -1,5 +1,5 @@
 ---
-import { site, audiencePages } from '../data/site';
+import { site, audiencePages, legalLinks } from '../data/site';
 ---
 
 <footer>
@@ -20,7 +20,8 @@ import { site, audiencePages } from '../data/site';
       <div class="df-col">
         <div class="df-h">Company</div>
         <a href="/team">The team</a>
-        <a href="/#feetable">Fees &amp; calculator</a>
+        <a href="/calculator">Fees &amp; calculator</a>
+        <a href="/guides">Guides</a>
         <a href={site.phone.href}>Open an escrow</a>
       </div>
       <div class="df-col">
@@ -33,6 +34,7 @@ import { site, audiencePages } from '../data/site';
     <div class="df-bot">
       <span>&copy; {site.name}, Inc.</span>
       <span>Licensed by the DFPI</span>
+      {legalLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </div>
   </div>
 </footer>

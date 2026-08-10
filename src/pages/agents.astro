@@ -3,6 +3,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HBand from '../components/HBand.astro';
 import agentsImg from '../assets/doors/agents.jpg';
 import '../styles/interior.css';
+
+const faq = [
+  {
+    q: 'Why does independent matter to my clients?',
+    a: 'An independent escrow answers to the file, not to a brokerage or a bank that also has a side in the deal. Licensed by the DFPI, audited, and neutral by charter. It is an easy trust story to tell your clients.',
+  },
+  {
+    q: 'How do you handle a rough file?',
+    a: 'Early and out loud. Solar transfers, subordinations, seller payoffs that will not add up: we surface problems while there is still calendar left to fix them.',
+  },
+  {
+    q: 'Do my clients pay more for this?',
+    a: 'No. Our fees are published: $300 plus $2.15 per $1,000, each side, with flat add-ons listed in the open. No mystery line items for you to explain later.',
+  },
+];
 ---
 
 <BaseLayout
@@ -11,6 +26,7 @@ import '../styles/interior.css';
   bodyClass="page-interior"
   navVariant="solid"
   navMax={1080}
+  faq={faq}
 >
   <header class="hero">
     <div class="kick">For real estate agents</div>
@@ -54,28 +70,12 @@ import '../styles/interior.css';
 
       <h2>Frequently asked</h2>
       <div class="faq">
-        <div class="fq">
-          <h3>Why does independent matter to my clients?</h3>
-          <p>
-            An independent escrow answers to the file, not to a brokerage or a bank that also has a
-            side in the deal. Licensed by the DFPI, audited, and neutral by charter. It is an easy
-            trust story to tell your clients.
-          </p>
-        </div>
-        <div class="fq">
-          <h3>How do you handle a rough file?</h3>
-          <p>
-            Early and out loud. Solar transfers, subordinations, seller payoffs that will not add up:
-            we surface problems while there is still calendar left to fix them.
-          </p>
-        </div>
-        <div class="fq">
-          <h3>Do my clients pay more for this?</h3>
-          <p>
-            No. Our fees are published: $300 plus $2.15 per $1,000, each side, with flat add-ons
-            listed in the open. No mystery line items for you to explain later.
-          </p>
-        </div>
+        {faq.map((f) => (
+          <div class="fq">
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))}
       </div>
     </main>
 

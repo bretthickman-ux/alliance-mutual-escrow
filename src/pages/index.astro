@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShapeSection from '../components/ShapeSection.astro';
+import EscrowCalculator from '../components/calculator/EscrowCalculator.jsx';
 import { Picture, getImage } from 'astro:assets';
 
 import posterImg from '../assets/poster.jpg';
@@ -12,6 +13,7 @@ import doorLenders from '../assets/home/door-lenders.jpg';
 import doorInvestors from '../assets/home/door-investors.jpg';
 
 import '../styles/home.css';
+import '../styles/calc.css';
 
 // Optimized poster for the hero video (attribute + CSS background fallback).
 const poster = await getImage({ src: posterImg, format: 'webp', width: 1920 });
@@ -103,18 +105,13 @@ const doors = [
           Published, current, and computed by the same formulas we bill with: $300 base plus $2.15
           per thousand. No mystery line items, no call-for-pricing.
         </p>
-        <div class="feetable" id="feetable" style="margin-top:28px">
-          <div class="ft-head">
-            <button class="ft-tab on" type="button">Buyer</button>
-            <button class="ft-tab" type="button">Seller</button>
-            <button class="ft-tab" type="button">Refinance</button>
-          </div>
-          <div class="ft-row"><span class="l2">Purchase price</span><span class="r2">$1,000,000</span></div>
-          <div class="ft-row"><span class="l2">Escrow fee: $300 + $2.15/K</span><span class="r2" id="cnt1">$2,450</span></div>
-          <div class="ft-row"><span class="l2">Loan processing</span><span class="r2">$500</span></div>
-          <div class="ft-row"><span class="l2">Notary (with loan) · est.</span><span class="r2">$250</span></div>
-          <div class="ft-row total"><span class="l2">Escrow side · buyer</span><span class="r2" id="cnt2">$3,200</span></div>
-          <div class="ft-note">Illustrative, using real published rates. Third-party costs itemized in the full calculator.</div>
+        <div id="feetable" style="margin-top:28px">
+          <EscrowCalculator client:visible compact={true} />
+          <p style="margin-top:12px;font-size:12.5px">
+            <a href="/calculator" style="color:var(--amber);font-weight:600;text-decoration:none">
+              Open the full calculator &rarr;
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -159,7 +156,7 @@ const doors = [
       <div class="kick">The shape of a closing</div>
       <h2 class="serif" style="font-size:clamp(30px,3.4vw,46px);line-height:1.12">Always know where your escrow stands.</h2>
     </div>
-    <div class="inst2" id="inst2">
+    <div class="inst2" id="inst2" role="group" aria-label="Example escrow file tracker replaying a 30 day timeline">
       <div class="i2-head"><span class="i2dot"></span><span class="i2t">Escrow &#8470; 24-118</span><span class="i2d mono">DAY <b id="i2day">1</b> / 30</span></div>
       <div class="i2-prog"><i id="i2prog"></i></div>
       <div class="i2-body" id="i2body">
@@ -173,6 +170,14 @@ const doors = [
       </div>
       <div class="i2-foot">A 30-day file, replayed. Yours gets a live version.</div>
     </div>
+  </section>
+
+  <section class="gr-wrap" id="reviews" aria-label="Client reviews">
+    <div class="center-head">
+      <div class="kick">From our clients</div>
+      <h2 class="serif" style="font-weight:400;font-size:clamp(30px,3.4vw,46px);line-height:1.12">In their words.</h2>
+    </div>
+    <div class="gr-grid" id="gr-grid"></div>
   </section>
 
   <section class="close">

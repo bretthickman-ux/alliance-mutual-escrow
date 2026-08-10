@@ -1,0 +1,87 @@
+/* The escrow calculator island. Same visual language as the mockup fee table
+   (hairlines, mono numerals, amber totals) so the home embed is seamless. */
+
+.ec { background: var(--white); border: 1px solid var(--hair); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px -30px rgba(15, 18, 21, 0.18); }
+.ec-tabs { display: flex; border-bottom: 1px solid var(--hair); }
+.ec-tab {
+  flex: 1; text-align: center; padding: 15px 8px; font-size: 12.5px; font-weight: 600;
+  color: var(--faint); cursor: pointer; position: relative; transition: color 0.25s;
+  background: none; border: 0; font-family: inherit;
+}
+.ec-tab.on { color: var(--ink); }
+.ec-tab.on::after { content: ''; position: absolute; left: 24%; right: 24%; bottom: -1px; height: 2px; background: var(--amber); }
+.ec-tab:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; border-radius: 6px; }
+
+.ec-inputs { padding: 16px 22px 6px; display: flex; flex-direction: column; gap: 12px; }
+.ec-field label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--soft); margin-bottom: 6px; }
+.ec-in { position: relative; }
+.ec-in .cur { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--faint); font-size: 14px; }
+.ec-in input {
+  width: 100%; padding: 12px 14px 12px 30px; font-family: var(--mono); font-size: 15px;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--hair); border-radius: 10px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.ec-in input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
+.ec-in input[aria-invalid='true'] { border-color: #b4552e; }
+.ec-err { font-size: 12.5px; color: #b4552e; margin-top: 6px; }
+
+.ec-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.ec-opt {
+  display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--soft);
+  border: 1px solid var(--hair); border-radius: 100px; padding: 7px 13px; cursor: pointer;
+  background: none; font-family: inherit; transition: all 0.25s var(--ease);
+}
+.ec-opt[aria-pressed='true'] { color: var(--ink); border-color: var(--amber); background: var(--amber-soft); }
+.ec-opt:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.ec-opt .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--hair); }
+.ec-opt[aria-pressed='true'] .dot { background: var(--amber); }
+
+.ec-count { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--hair); border-radius: 100px; padding: 4px 6px; }
+.ec-count button { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--paper); color: var(--ink); font-size: 14px; cursor: pointer; }
+.ec-count button:focus-visible { outline: 2px solid var(--amber); }
+.ec-count span { font-family: var(--mono); font-size: 12.5px; min-width: 16px; text-align: center; }
+.ec-count-label { font-size: 12.5px; color: var(--soft); }
+
+.ec-rows { margin-top: 4px; }
+.ec-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 22px; border-bottom: 1px solid var(--hair2); font-size: 13.5px; }
+.ec-row .l { color: var(--soft); }
+.ec-row .r { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+.ec-row.total { background: var(--paper); }
+.ec-row.total .l { color: var(--ink); font-weight: 600; }
+.ec-row.total .r { color: var(--amber); font-weight: 500; font-size: 14px; }
+.ec-quote { padding: 14px 22px; font-size: 13.5px; color: var(--ink); background: var(--amber-soft); }
+.ec-quote a { color: var(--amber); font-weight: 600; text-decoration: none; }
+
+.ec-note { padding: 11px 22px 15px; font-size: 10.5px; color: var(--faint); }
+.ec-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 22px 18px; }
+.ec-act {
+  font-size: 12.5px; font-weight: 600; padding: 10px 18px; border-radius: 100px; cursor: pointer;
+  border: 1px solid var(--hair); background: none; color: var(--ink); font-family: inherit;
+  transition: all 0.25s var(--ease);
+}
+.ec-act.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.ec-act:hover { border-color: var(--amber); color: var(--amber); }
+.ec-act.primary:hover { background: var(--amber); border-color: var(--amber); color: #fff; }
+.ec-act:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.ec-status { font-size: 12.5px; color: var(--soft); padding: 0 22px 16px; }
+.ec-status.ok { color: #4a6e5e; }
+
+.ec-email { display: flex; gap: 8px; padding: 0 22px 14px; flex-wrap: wrap; }
+.ec-email input {
+  flex: 1 1 200px; padding: 10px 14px; font-size: 13.5px; font-family: inherit;
+  border: 1px solid var(--hair); border-radius: 100px; background: var(--paper); color: var(--ink);
+}
+.ec-email input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
+
+/* Full-page calculator layout */
+.calc-hero { max-width: 880px; margin: 0 auto; padding: 84px 28px 30px; text-align: center; }
+.calc-wrap { max-width: 720px; margin: 0 auto; padding: 10px 28px 30px; }
+.calc-below { max-width: 720px; margin: 0 auto; padding: 10px 28px 60px; }
+.calc-below h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin: 34px 0 10px; }
+.calc-below p { color: var(--soft); font-size: 14.5px; }
+
+@media print {
+  nav, footer, .nmenu, .ec-actions, .ec-email, .ec-tabs, .calc-below, .ec-status { display: none !important; }
+  .ec { box-shadow: none; border-color: #999; }
+  body { background: #fff; }
+}

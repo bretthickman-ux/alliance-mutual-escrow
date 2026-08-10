@@ -1,0 +1,46 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+---
+
+<LegalPage
+  title="Privacy · Alliance Mutual Escrow"
+  description="What the Alliance Mutual Escrow website collects and what it never does: no ad tracking, no selling data, calculator use is anonymous."
+  kicker="Your information"
+  heading="Privacy"
+  draft={true}
+>
+  <h2>The short version</h2>
+  <p>
+    This site is built to know as little about you as possible. The fee calculator runs in your
+    browser and sends nothing unless you ask it to. There is no advertising tracking and we do not
+    sell or share visitor data.
+  </p>
+
+  <h2>What the site collects</h2>
+  <p>
+    <b>Nothing you type in the calculator</b> leaves your browser, except when you choose "email me
+    this estimate": then your email address and the estimate are sent once, used to send that one
+    message, and not stored by the site.
+  </p>
+  <p>
+    <b>Standard server logs.</b> Our host (Cloudflare) keeps ordinary technical logs, such as IP
+    addresses and requested pages, for security and reliability.
+  </p>
+  <p>
+    <b>Privacy-friendly analytics.</b> If analytics are enabled, they are cookie-free and aggregate:
+    page counts, not people. No cross-site tracking, no profiles.
+  </p>
+
+  <h2>Escrow files are different</h2>
+  <p>
+    When you open an escrow with us, the file itself contains real financial information. That
+    information is governed by California escrow law and our regulatory obligations, is used only to
+    close your transaction, and is never sold. This page covers the website; your officer can answer
+    questions about the file.
+  </p>
+
+  <h2>Questions</h2>
+  <p>
+    Write to <a href="mailto:info@ameescrow.com" style="color:var(--amber)">info@ameescrow.com</a> and a person will answer.
+  </p>
+</LegalPage>

@@ -23,3 +23,6 @@ npm-debug.log*
 # Never committed: it is produced fresh each build from Compendium.
 src/data/roster.generated.json
 src/assets/team/generated/
+
+# Guide PDFs, generated at build time from src/data/guides.mjs.
+public/pdfs/

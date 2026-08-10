@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /team-b
 
-# XML sitemap is added in Phase 3.
+Sitemap: https://alliance-mutual-escrow.pages.dev/sitemap-index.xml

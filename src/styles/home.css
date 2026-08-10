@@ -136,6 +136,16 @@
 @keyframes i2pop { 0% { transform: scale(0.55); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
 @keyframes i2draw { to { stroke-dashoffset: 0; } }
 
+/* ── reviews (Phase 3): hidden until the cached API returns real reviews ──── */
+.gr-wrap { display: none; max-width: 1400px; margin: 0 auto; padding: 0 40px 110px; }
+.gr-wrap.has { display: block; }
+.gr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 46px; }
+.gr-card { background: var(--white); border: 1px solid var(--hair); border-radius: 16px; padding: 24px 22px; }
+.gr-stars { color: var(--amber); font-size: 13px; letter-spacing: 2px; }
+.gr-text { font-family: var(--serif); font-size: 17px; line-height: 1.45; margin-top: 12px; }
+.gr-author { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-top: 14px; }
+@media (max-width: 1000px) { .gr-grid { grid-template-columns: 1fr; } .gr-wrap { padding: 0 22px 90px; } }
+
 /* ── dark close ──────────────────────────────────────────────────────────── */
 .close { background: var(--ink); color: #fff; margin-top: 20px; }
 .close-in { max-width: 1400px; margin: 0 auto; padding: 120px 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 60px; flex-wrap: wrap; }

@@ -44,8 +44,9 @@ const navStyle = navMax ? `--nav-max:${navMax}px` : undefined;
 
 <div class="nmenu" id="nmenu">
   {audiencePages.map((p) => <a href={p.href}>{p.label}</a>)}
+  <a href="/guides">Guides</a>
   <a href="/team">Team</a>
-  <a href="/#feetable">Calculator</a>
+  <a href="/calculator">Calculator</a>
   <div class="nmenu-foot">
     <a class="nm-tel mono" href={site.phone.href}>{site.phone.display}</a>
     <a class="nm-cta" href={site.phone.href}>Open an Escrow</a>

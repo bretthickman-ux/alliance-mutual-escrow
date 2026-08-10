@@ -1,0 +1,43 @@
+---
+// Shared shell for the legal set: one column, interior styling, optional
+// draft note for pages that need attorney review before launch.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/interior.css';
+
+interface Props {
+  title: string;
+  description: string;
+  kicker: string;
+  heading: string;
+  draft?: boolean;
+}
+const { title, description, kicker, heading, draft = false } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} bodyClass="page-interior" navVariant="solid" navMax={1080}>
+  <header class="hero">
+    <div class="kick">{kicker}</div>
+    <h1>{heading}</h1>
+  </header>
+
+  <div class="wrap" style="grid-template-columns:1fr;max-width:880px">
+    <main>
+      <slot />
+    </main>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Questions? <i>Just ask.</i></h2>
+      <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </section>
+
+  {draft && (
+    <p class="note">Draft for review before launch. Wording may be refined with counsel; the commitments stand.</p>
+  )}
+
+  <script>
+    import '../scripts/interior-motion';
+  </script>
+</BaseLayout>

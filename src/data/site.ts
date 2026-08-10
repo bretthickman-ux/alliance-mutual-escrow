@@ -25,9 +25,19 @@ export const site: SiteConfig = {
 /** Flat nav, identical on every page (HANDOFF section 3). No dropdowns. */
 export const navLinks = [
   { label: 'Services', href: '/#services' },
+  { label: 'Guides', href: '/guides' },
   { label: 'Team', href: '/team' },
-  { label: 'Calculator', href: '/#feetable' },
+  { label: 'Calculator', href: '/calculator' },
   { label: site.phone.display, href: site.phone.href },
+];
+
+/** Legal and policy set, shown in the deep footer's mono bottom row. */
+export const legalLinks = [
+  { label: 'Consumer feedback', href: '/consumer-feedback' },
+  { label: 'Complaint policy', href: '/complaint-policy' },
+  { label: 'Terms', href: '/terms' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Resources', href: '/resources' },
 ];
 
 /** Audience pages, used by the mobile menu and the footer "Escrow for" column. */

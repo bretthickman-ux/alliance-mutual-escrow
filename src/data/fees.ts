@@ -8,6 +8,13 @@ export const fees = {
     base: 300,
     perThousand: 2.15,
     label: '$300 + $2.15/K',
+    /** Buyer-side loan processing (as published on the mockup fee card). */
+    loanProcessing: 500,
+  },
+
+  /** Labeled estimates, never billed as-is; third parties set the final number. */
+  estimates: {
+    notaryWithLoan: 250,
   },
 
   /** SFR refinance, flat tiers by loan amount. `max: null` means "quoted". */

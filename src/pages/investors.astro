@@ -3,6 +3,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HBand from '../components/HBand.astro';
 import investorsImg from '../assets/doors/investors.jpg';
 import '../styles/interior.css';
+
+const faq = [
+  {
+    q: 'Can you work with my exchange accommodator?',
+    a: 'Yes. We coordinate directly with your qualified intermediary and build the escrow timeline around the exchange deadlines.',
+  },
+  {
+    q: 'Do specialty files cost more?',
+    a: 'Only the published add-ons: $250 for 1031 processing, standard sale or refinance fees otherwise. Complex does not mean opaque.',
+  },
+];
 ---
 
 <BaseLayout
@@ -11,6 +22,7 @@ import '../styles/interior.css';
   bodyClass="page-interior"
   navVariant="solid"
   navMax={1080}
+  faq={faq}
 >
   <header class="hero">
     <div class="kick">For investors &amp; specialty files</div>
@@ -58,14 +70,12 @@ import '../styles/interior.css';
 
       <h2>Frequently asked</h2>
       <div class="faq">
-        <div class="fq">
-          <h3>Can you work with my exchange accommodator?</h3>
-          <p>Yes. We coordinate directly with your qualified intermediary and build the escrow timeline around the exchange deadlines.</p>
-        </div>
-        <div class="fq">
-          <h3>Do specialty files cost more?</h3>
-          <p>Only the published add-ons: $250 for 1031 processing, standard sale or refinance fees otherwise. Complex does not mean opaque.</p>
-        </div>
+        {faq.map((f) => (
+          <div class="fq">
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))}
       </div>
     </main>
 

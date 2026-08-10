@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EscrowCalculator from '../components/calculator/EscrowCalculator.jsx';
+import { fees } from '../data/fees';
+import '../styles/interior.css';
+import '../styles/calc.css';
+---
+
+<BaseLayout
+  title="Escrow Fee Calculator · Alliance Mutual Escrow"
+  description="Estimate your escrow fees in seconds: buyer, seller, and refinance, itemized from the published schedule. Anonymous, no signup."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="calc-hero">
+    <div class="kick">Fees, in the open</div>
+    <h1 style="max-width:none">What will escrow <i>actually cost?</i></h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">
+      Pick your side, enter a number, and see every line. These are the published formulas we bill
+      with. No signup, no email required, nothing stored.
+    </p>
+  </header>
+
+  <div class="calc-wrap">
+    <EscrowCalculator client:load />
+  </div>
+
+  <div class="calc-below">
+    <h2>The whole schedule, published</h2>
+    <p>
+      Sale escrow is {fees.sale.label} for each side. Single family refinance runs on flat tiers:
+      $650 to $750,000, $850 to $1,000,000, $1,200 to $2,000,000, quoted above that, plus $200
+      processing. Multi-family and commercial refinance is {fees.commercialRefinance.label} with a
+      $500,000 loan minimum. Published add-ons: 1031 processing $250, subordination $50, solar
+      transfer $100 per side, document prep $50 each, demand processing $30 per payoff, HELOC or
+      second-only escrow $250.
+    </p>
+    <h2>What this does not include</h2>
+    <p>
+      Title insurance, recording charges, lender fees, and county transfer taxes are set by third
+      parties and your county. Your officer itemizes them on your file. Nothing here is hidden;
+      there is just more than one company at the table.
+    </p>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Want it exact? <i>Ask an officer.</i></h2>
+      <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </section>
+</BaseLayout>

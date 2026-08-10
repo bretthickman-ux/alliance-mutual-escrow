@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { guides } from '../../data/guides.mjs';
+import '../../styles/interior.css';
+
+const groups = [
+  { label: 'Start here', slugs: ['what-escrow-does', 'escrow-timeline', 'wire-fraud-safety'] },
+  { label: 'Your side of the table', slugs: ['buyer-guide', 'seller-guide', 'refinance-guide'] },
+  { label: 'Specialty work', slugs: ['1031-exchange', 'bulk-sale', 'probate', 'mobile-home', 'fsbo', 'holding-escrow'] },
+];
+const bySlug = new Map(guides.map((g) => [g.slug, g]));
+---
+
+<BaseLayout
+  title="Escrow Guides · Alliance Mutual Escrow"
+  description="Plain-English guides to California escrow: what it is, the 30 day timeline, wire fraud safety, buyer and seller guides, and specialty files."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="hero">
+    <div class="kick">The library</div>
+    <h1>Escrow, explained <i>in plain English.</i></h1>
+    <p class="sub">
+      Short guides, written for people, not lawyers. Every one is downloadable as a PDF. If your
+      question is not here, call and a licensed officer will answer it plainly.
+    </p>
+  </header>
+
+  <div class="wrap" style="grid-template-columns:1fr;max-width:880px">
+    <main>
+      {groups.map((grp) => (
+        <>
+          <h2>{grp.label}</h2>
+          <div class="faq" style="margin-bottom:16px">
+            {grp.slugs.map((slug) => {
+              const g = bySlug.get(slug);
+              return (
+                <div class="fq">
+                  <h3><a href={`/guides/${g.slug}`} style="color:inherit;text-decoration:none">{g.title} &rarr;</a></h3>
+                  <p>{g.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ))}
+    </main>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Prefer a person? <i>So do we.</i></h2>
+      <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </section>
+
+  <script>
+    import '../../scripts/interior-motion';
+  </script>
+</BaseLayout>

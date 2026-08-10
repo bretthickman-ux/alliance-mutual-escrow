@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/interior.css';
+---
+
+<BaseLayout
+  title="Page Not Found · Alliance Mutual Escrow"
+  description="That page is not here. The rest of the site is."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="hero" style="text-align:center;padding-bottom:20px">
+    <div class="kick">404</div>
+    <h1 style="max-width:none">This page did not <i>make it to closing.</i></h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">
+      The address is wrong or the page moved. Everything that matters is one click away.
+    </p>
+  </header>
+
+  <div class="wrap" style="grid-template-columns:1fr;max-width:640px;text-align:center">
+    <main>
+      <p style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+        <a class="btn" style="background:var(--ink);color:#fff" href="/">Home</a>
+        <a class="btn" style="border:1px solid var(--hair);color:var(--ink);background:none" href="/guides">Guides</a>
+        <a class="btn" style="border:1px solid var(--hair);color:var(--ink);background:none" href="/calculator">Calculator</a>
+        <a class="btn" style="border:1px solid var(--hair);color:var(--ink);background:none" href="/team">The team</a>
+      </p>
+      <p style="margin-top:22px">Or just call a person: <a href="tel:7145446525" style="color:var(--amber);font-weight:600">(714) 544-6525</a></p>
+    </main>
+  </div>
+</BaseLayout>

@@ -195,6 +195,27 @@ function initTour() {
     return lines.join('\n');
   }
 
+  async function sendResults() {
+    const text = digest();
+    if (totalDone() === 0) {
+      flashBar('Nothing to send yet. Review a stop first.');
+      return;
+    }
+    flashBar('Sending...');
+    try {
+      const res = await fetch('/api/review-digest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ digest: text }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok && body.ok) flashBar('Sent. Brett has it.');
+      else flashBar(body.error || 'Sending failed. Try Copy instead.');
+    } catch {
+      flashBar('Sending failed. Try Copy instead.');
+    }
+  }
+
   async function copyResults() {
     const text = digest();
     try {
@@ -206,9 +227,30 @@ function initTour() {
     try {
       await navigator.clipboard.writeText(text);
       flashBar('Copied. Paste it to Brett.');
-    } catch {
-      prompt('Copy your review results:', text);
-    }
+      return;
+    } catch { /* fall through to the manual panel */ }
+    // Last resort (older browsers, blocked clipboard): a selectable panel.
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9002;background:rgba(15,18,21,.55);display:flex;align-items:center;justify-content:center;padding:16px';
+    const panel = document.createElement('div');
+    panel.style.cssText = 'background:#fdfdfc;border-radius:16px;max-width:520px;width:100%;padding:18px;font-family:Inter,system-ui,sans-serif';
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.readOnly = true;
+    ta.style.cssText = 'width:100%;height:40vh;font-size:12px;border:1px solid rgba(15,18,21,.15);border-radius:10px;padding:10px';
+    const hint = document.createElement('div');
+    hint.textContent = 'Press and hold (or Ctrl+C) to copy, then close.';
+    hint.style.cssText = 'font-size:12px;color:#666;margin:10px 0';
+    const close = document.createElement('button');
+    close.textContent = 'Close';
+    close.className = 'rt-btn';
+    close.style.cssText = 'border:1px solid rgba(15,18,21,.25);color:#0f1215;border-radius:100px;padding:8px 16px;background:none;cursor:pointer';
+    close.onclick = () => overlay.remove();
+    panel.append(ta, hint, close);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    ta.focus();
+    ta.select();
   }
 
   let flashTimer: ReturnType<typeof setTimeout> | undefined;
@@ -253,9 +295,15 @@ function initTour() {
       bar.appendChild(next);
     }
 
+    const send = document.createElement('button');
+    send.className = 'rt-btn solid';
+    send.textContent = 'Send results';
+    send.onclick = sendResults;
+    bar.appendChild(send);
+
     const copy = document.createElement('button');
-    copy.className = 'rt-btn solid';
-    copy.textContent = 'Copy results';
+    copy.className = 'rt-btn';
+    copy.textContent = 'Copy';
     copy.onclick = copyResults;
     bar.appendChild(copy);
 

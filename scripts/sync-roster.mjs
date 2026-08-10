@@ -19,9 +19,11 @@
      ("If empty, title from the people tab is used.") counts as no title.
 
    Safety and resilience:
-   - No token -> skips cleanly; the static roster is used.
-   - Any Airtable error is NON-FATAL: it logs and keeps the previous roster, so
-     an outage or bad token never breaks a deploy.
+   - Local (no CI env): no token skips cleanly and errors are NON-FATAL, so dev
+     work never blocks on Airtable.
+   - CI (Cloudflare Pages/GitHub Actions set CI=true): a missing token or an
+     Airtable error FAILS the build. Deploying the static fallback over live
+     data would silently regress the site; no deploy beats a wrong deploy.
    - Long-dash characters are sanitized out of all synced text (site hard rule).
    - The token is read from the environment only. Never commit it. */
 
@@ -100,9 +102,20 @@ async function fetchAllRecords() {
   return records;
 }
 
+const IN_CI = process.env.CI === 'true' || process.env.CI === '1';
+
+function bail(message) {
+  if (IN_CI) {
+    console.error(`[sync-roster] FATAL in CI: ${message} Refusing to deploy a stale roster.`);
+    process.exit(1);
+  }
+  console.warn(`[sync-roster] NON-FATAL: ${message} Keeping the existing roster.`);
+}
+
 async function main() {
   if (!CONFIG.token) {
-    console.log('[sync-roster] No Compendium token in env; using the static roster. Skipping.');
+    if (IN_CI) bail('No COMPENDIUM_API_TOKEN in the build environment.');
+    else console.log('[sync-roster] No Compendium token in env; using the static roster. Skipping.');
     return;
   }
 
@@ -110,7 +123,7 @@ async function main() {
   try {
     records = await fetchAllRecords();
   } catch (err) {
-    console.warn(`[sync-roster] NON-FATAL: ${err.message}. Keeping the existing roster.`);
+    bail(err.message + '.');
     return;
   }
 
@@ -136,7 +149,7 @@ async function main() {
   }
 
   if (members.length === 0) {
-    console.warn('[sync-roster] NON-FATAL: zero usable staff records for org "' + CONFIG.org + '". Keeping the existing roster.');
+    bail('Zero usable staff records for org "' + CONFIG.org + '".');
     return;
   }
 
@@ -185,5 +198,5 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.warn(`[sync-roster] NON-FATAL: ${err.message}. Keeping the existing roster.`);
+  bail(err.message + '.');
 });

@@ -244,13 +244,16 @@ function KeyBody({ T, M, df, accent }) {
   const sweep = interpolate([M.keys + 0.6, M.keys + 1.4, M.keys + 2.4], [0, 1, 0.12], Easing.easeInOutSine)(T);
   const shimO = animate({ from: 0, to: 1, start: M.keys + 0.5, end: M.keys + 0.8, ease: Easing.easeInOutSine })(T) * (1 - MOTION.draw(T, M.keys + 2.6, 0.8));
   const shadowA = 0.05 + (df / 30) * 0.07 + fillP * 0.16;
-  const shadowY = 8 + fillP * 18;
   // After the turn and glint land, the key bows out: the finale belongs to the
   // words, not the object. The text floats up into the space it leaves.
   const exit = MOTION.draw(T, M.keys + 2.3, 1.1);
   return (
     <div style={{ position: 'absolute', inset: 0, perspective: 1500, opacity: 1 - exit }}>
-      <svg viewBox="0 0 1600 900" style={{ position: 'absolute', left: 0, top: 0, width: 1600, height: 900, transform: `translateY(${settle}px) rotateX(${turn}deg)`, transformOrigin: '50% 52.2%', transformStyle: 'preserve-3d', filter: `drop-shadow(0 ${shadowY}px ${20 + fillP * 26}px rgba(15,18,21,${shadowA}))` }}>
+      {/* Ground shadow as a plain gradient div, not an SVG drop-shadow filter:
+          animating a filter on a layer this size re-rasterizes every frame and
+          crashes iOS Safari under pinch zoom. Opacity-only animation here. */}
+      <div style={{ position: 'absolute', left: 340, top: 585, width: 920, height: 54, background: 'radial-gradient(closest-side, rgba(15,18,21,0.32), transparent 72%)', opacity: shadowA * 2.1, transform: `scaleX(${0.88 + fillP * 0.12})`, pointerEvents: 'none' }}></div>
+      <svg viewBox="0 0 1600 900" style={{ position: 'absolute', left: 0, top: 0, width: 1600, height: 900, transform: `translateY(${settle}px) rotateX(${turn}deg)`, transformOrigin: '50% 52.2%', transformStyle: 'preserve-3d' }}>
         <defs>
           <clipPath id="bladeReveal"><rect x={X0} y="425" width={revealW} height="90" /></clipPath>
           <clipPath id="keySilhouette">
@@ -389,8 +392,11 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
       setT(Math.min(START_SKIP + e, total));
       raf = requestAnimationFrame(frame);
     };
+    const zoomed = () =>
+      typeof window !== 'undefined' && window.visualViewport != null && window.visualViewport.scale > 1.05;
+
     const start = () => {
-      if (raf != null) return;
+      if (raf != null || zoomed()) return;
       last = null;
       raf = requestAnimationFrame(frame);
     };
@@ -411,7 +417,21 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
       { threshold: 0.12 },
     );
     io.observe(el);
-    return () => { stop(); io.disconnect(); };
+
+    // Pinch zoom on iOS re-rasterizes every animated layer at zoom scale per
+    // frame; keep animating and Safari kills the tab. Freeze the clock while
+    // zoomed, resume when the pinch releases.
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+    const onViewport = () => { if (zoomed()) stop(); else if (visible) start(); };
+    vv?.addEventListener('resize', onViewport);
+    vv?.addEventListener('scroll', onViewport);
+
+    return () => {
+      stop();
+      io.disconnect();
+      vv?.removeEventListener('resize', onViewport);
+      vv?.removeEventListener('scroll', onViewport);
+    };
   }, [reduced, total]);
 
   return (

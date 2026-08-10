@@ -181,3 +181,8 @@
 
 /* hero anchor lands with breathing room under the fixed nav */
 #feetable { scroll-margin-top: 96px; }
+
+/* fee-table CTA: breathing room above; centered on mobile where it stands
+   alone, left-aligned on desktop where it anchors to the text column */
+.ft-cta { margin-top: 24px; }
+@media (max-width: 1000px) { .ft-cta { text-align: center; margin-top: 26px; } }

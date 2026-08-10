@@ -1,6 +1,8 @@
 ---
 // The Shape of a Closing, presented with no player chrome. The island hydrates
-// only when scrolled into view (client:visible) and pauses itself off screen.
+// during idle time after page load (client:idle) so it is ready the moment it
+// scrolls into view; its own IntersectionObserver still starts/pauses playback
+// on visibility, so nothing runs off screen.
 // Its background is set to the section's --shape-bg token value so the piece is
 // seamless by construction: no frame, no shadow, no visible boundary.
 import ShapeOfClosing from './shape/ShapeOfClosing.jsx';
@@ -19,7 +21,7 @@ const SHAPE_BG = '#f7f6f2'; // === var(--shape-bg)
       role="img"
       aria-label="Animated illustration: a key is drawn and cut over 30 days of an escrow, milestone by milestone, until it turns and the deed records. Reduced motion shows the finished key."
     >
-      <ShapeOfClosing client:visible background={SHAPE_BG} accent="#b97a3a" county="Orange" />
+      <ShapeOfClosing client:idle background={SHAPE_BG} accent="#b97a3a" county="Orange" />
     </div>
   </div>
 </section>

@@ -26,13 +26,14 @@
 
 .statline { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: center; gap: 52px; padding: 15px 20px; background: rgba(15, 18, 21, 0.38); backdrop-filter: blur(10px); border-top: 1px solid rgba(255, 255, 255, 0.12); }
 .statline span { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255, 255, 255, 0.75); display: flex; align-items: baseline; gap: 8px; }
-.statline b { font-family: var(--serif); font-weight: 400; font-size: 19px; color: #fff; letter-spacing: 0; text-transform: none; }
+.statline b { font-family: var(--serif); font-weight: 400; font-size: 19px; color: #d9a56f; letter-spacing: 0; text-transform: none; }
 .statline sup { color: #c99b63; font-size: 10px; }
 @media (max-width: 640px) { .statline { gap: 22px; padding: 11px 10px; } .statline b { font-size: 16px; } }
 
 /* ── intro ───────────────────────────────────────────────────────────────── */
 .intro { max-width: 880px; margin: 0 auto; padding: 140px 40px 120px; text-align: center; }
 .kick { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 26px; }
+.intro .kick { font-size: 14px; letter-spacing: 0.3em; }
 .intro h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3.6vw, 50px); line-height: 1.15; letter-spacing: -0.01em; }
 .intro h2 i { color: var(--soft); }
 .intro p { color: var(--soft); max-width: 54ch; margin: 24px auto 0; font-size: 16px; }
@@ -106,7 +107,7 @@
 .statement .serif i { color: #c99b63; }
 .proofline { display: flex; justify-content: center; gap: 44px; flex-wrap: wrap; margin-top: 64px; padding-top: 44px; border-top: 1px solid rgba(255, 255, 255, 0.12); max-width: 900px; margin-left: auto; margin-right: auto; }
 .pf { display: flex; align-items: baseline; gap: 9px; }
-.pf b { font-family: var(--serif); font-weight: 400; font-size: 26px; }
+.pf b { font-family: var(--serif); font-weight: 400; font-size: 26px; color: #d9a56f; }
 .pf span { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
 .pf sup { color: #c99b63; }
 

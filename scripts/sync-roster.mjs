@@ -8,9 +8,9 @@
 
    Source (confirmed against the live base 2026-08-09):
    - Base appQIE0KXf4azH4jQ, table tblH0lEI2pMGO85FF (the master people table).
-   - Staff are selected by Organization membership + Active status, NOT by view:
-     the provided view returns the whole Seven Gables directory. Filter formula:
-     AND(FIND("<org>", ARRAYJOIN({Organization})), {Status} = "Active").
+   - Staff are selected by IT's official roster views (AME viwhELBByJuBlNvXj,
+     AOE viwDQf8OPqjhgCVTF) plus a {Status} = "Active" guard filter, so a
+     separated person lingering in a view can never ship.
    - The org defaults to "Alliance Mutual Escrow"; the AOE clone sets
      COMPENDIUM_ORG="Advantage One Escrow" and everything else is shared.
    - Field mapping: Name; Title (linked, e.g. "Escrow Officer | Team Laura",
@@ -41,6 +41,16 @@ const CONFIG = {
   token: process.env.COMPENDIUM_API_TOKEN || '',
   tableId: process.env.COMPENDIUM_TABLE_ID || 'tblH0lEI2pMGO85FF',
   org: process.env.COMPENDIUM_ORG || 'Alliance Mutual Escrow',
+  // Official roster views supplied by IT (Ryan, 2026-08-10). The view defines
+  // the roster; the Active filter below stays as a guard so a separated person
+  // lingering in a view can never ship. Views are read-only pointers: the
+  // People/Profile/Headshots table structure is never touched (IT hard rule,
+  // the SGRE website vendor's integration depends on it).
+  view:
+    process.env.COMPENDIUM_VIEW ||
+    ((process.env.COMPENDIUM_ORG || 'Alliance Mutual Escrow') === 'Advantage One Escrow'
+      ? 'viwDQf8OPqjhgCVTF' // AOE roster view
+      : 'viwhELBByJuBlNvXj'), // AME roster view
 };
 
 const GROUP_ORDER = ['Leadership', 'Escrow Officers', 'Support', 'Office & Client Care'];
@@ -85,10 +95,8 @@ async function fetchAllRecords() {
   let offset;
   do {
     const u = new URL(`${CONFIG.baseUrl}/${CONFIG.tableId}`);
-    u.searchParams.set(
-      'filterByFormula',
-      `AND(FIND("${CONFIG.org}", ARRAYJOIN({Organization})) > 0, {Status} = "Active")`,
-    );
+    u.searchParams.set('view', CONFIG.view);
+    u.searchParams.set('filterByFormula', '{Status} = "Active"');
     u.searchParams.set('pageSize', '100');
     u.searchParams.set('sort[0][field]', 'Name');
     u.searchParams.set('sort[0][direction]', 'asc');

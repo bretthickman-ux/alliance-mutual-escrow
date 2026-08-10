@@ -20,7 +20,11 @@ const SERIF = "'Instrument Serif', Georgia, serif";
 const UIF = "Inter, 'Helvetica Neue', sans-serif";
 const MONO = "'IBM Plex Mono', ui-monospace, monospace";
 
-const HOLD = 3.2; // seconds held on the finished key before the loop restarts
+const HOLD = 3.2; // seconds held on the finale before the loop restarts
+// The authored piece opens on 1.6s of empty paper before the first stroke
+// lands. On the site that read as "the bar just sits there", so the clock
+// starts here: the first visible drawing begins almost immediately.
+const START_SKIP = 1.6;
 
 const X0 = 430, PXD = 30, TIP = 1330, BT = 448, BB = 496, CY = 470;
 const dayX = (d) => X0 + d * PXD;
@@ -103,7 +107,7 @@ function NowCard({ T, M, accent }) {
   const dotP = 1 + 0.22 * Math.sin(T * 3.4);
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, top: 648, textAlign: 'center', opacity: head.opacity * (1 - gone), transform: head.transform }}>
-      <div style={{ position: 'absolute', left: 260, top: -14, right: 260, bottom: -18, background: '#f7f6f2', boxShadow: '0 0 24px 18px rgba(247,246,242,0.97)', borderRadius: 12 }}></div>
+      <div style={{ position: 'absolute', left: 190, top: -14, right: 190, bottom: -18, background: '#f7f6f2', boxShadow: '0 0 24px 18px rgba(247,246,242,0.97)', borderRadius: 12 }}></div>
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 11 }}>
         <div style={{ position: 'relative', width: 11, height: 11 }}>
           <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: accent, transform: `scale(${dotP})` }}></div>
@@ -111,14 +115,16 @@ function NowCard({ T, M, accent }) {
         </div>
         <div style={{ fontFamily: MONO, fontSize: 14, letterSpacing: '0.36em', color: 'rgba(15,18,21,0.7)' }}>HAPPENING NOW</div>
       </div>
-      <div style={{ position: 'relative', height: 56, marginTop: 10 }}>
+      <div style={{ position: 'relative', height: 62, marginTop: 10 }}>
         {M.NOW.map((it, i) => {
           const end = i < M.NOW.length - 1 ? M.NOW[i + 1].t : M.keys + 1.2;
           const inP = MOTION.enter(T, it.t + 0.35, 0.55, 16);
           const outP = MOTION.draw(T, end, 0.28);
           return (
             <div key={i} style={{ position: 'absolute', inset: 0, opacity: inP.opacity * (1 - outP), transform: `translateY(${(1 - inP.p) * 16 - outP * 12}px)` }}>
-              <div style={{ fontFamily: SERIF, fontSize: 35, lineHeight: 1.1, color: INK }}>{it.s}</div>
+              {/* Header-serif scale: the live status is the piece's narration
+                  and reads at the same size as the section headings. */}
+              <div style={{ fontFamily: SERIF, fontSize: 44, lineHeight: 1.1, color: INK }}>{it.s}</div>
             </div>
           );
         })}
@@ -239,8 +245,11 @@ function KeyBody({ T, M, df, accent }) {
   const shimO = animate({ from: 0, to: 1, start: M.keys + 0.5, end: M.keys + 0.8, ease: Easing.easeInOutSine })(T) * (1 - MOTION.draw(T, M.keys + 2.6, 0.8));
   const shadowA = 0.05 + (df / 30) * 0.07 + fillP * 0.16;
   const shadowY = 8 + fillP * 18;
+  // After the turn and glint land, the key bows out: the finale belongs to the
+  // words, not the object. The text floats up into the space it leaves.
+  const exit = MOTION.draw(T, M.keys + 2.3, 1.1);
   return (
-    <div style={{ position: 'absolute', inset: 0, perspective: 1500 }}>
+    <div style={{ position: 'absolute', inset: 0, perspective: 1500, opacity: 1 - exit }}>
       <svg viewBox="0 0 1600 900" style={{ position: 'absolute', left: 0, top: 0, width: 1600, height: 900, transform: `translateY(${settle}px) rotateX(${turn}deg)`, transformOrigin: '50% 52.2%', transformStyle: 'preserve-3d', filter: `drop-shadow(0 ${shadowY}px ${20 + fillP * 26}px rgba(15,18,21,${shadowA}))` }}>
         <defs>
           <clipPath id="bladeReveal"><rect x={X0} y="425" width={revealW} height="90" /></clipPath>
@@ -278,9 +287,13 @@ function KeyBody({ T, M, df, accent }) {
 function FinaleText({ T, M, force }) {
   const h = MOTION.enter(T, M.keys + 1.3, 0.9, 24);
   const s = MOTION.enter(T, M.keys + 1.7, 0.8, 16);
+  // As the key fades away (same window as KeyBody's exit), the words float up
+  // to hold the center of the stage on their own.
+  const lift = force ? 1 : MOTION.draw(T, M.keys + 2.3, 1.1);
+  const rise = -Easing.easeInOutCubic(lift) * 96;
   const ho = force ? 1 : h.opacity, so = force ? 1 : s.opacity;
   return (
-    <div style={{ position: 'absolute', left: 0, right: 0, top: 470, textAlign: 'center', pointerEvents: 'none' }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: 470, textAlign: 'center', pointerEvents: 'none', transform: `translateY(${rise}px)` }}>
       <div style={{ fontFamily: SERIF, fontSize: 52, color: INK, opacity: ho, transform: force ? 'none' : h.transform }}>Every promise, kept.</div>
       <div style={{ fontFamily: MONO, fontSize: 13, letterSpacing: '0.32em', color: 'rgba(15,18,21,0.6)', marginTop: 14, opacity: so, transform: force ? 'none' : s.transform }}>
         {'RECORDED · COUNTY OF ' + M.CU + ' · DAY 30 OF 30'}
@@ -344,7 +357,7 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
 
   const wrapRef = React.useRef(null);
   const [scale, setScale] = React.useState(STAGE_W ? 860 / STAGE_W : 1);
-  const [T, setT] = React.useState(reduced ? total : 0.01);
+  const [T, setT] = React.useState(reduced ? total : START_SKIP);
 
   // Scale the fixed 1600x680 stage to the container width.
   React.useEffect(() => {
@@ -362,7 +375,7 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
     if (reduced) { setT(total); return; }
     const el = wrapRef.current;
     if (!el) return;
-    const cycle = total + HOLD;
+    const cycle = total - START_SKIP + HOLD;
     let elapsed = 0;
     let last = null;
     let raf = null;
@@ -373,7 +386,7 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
       elapsed += (now - last) / 1000;
       last = now;
       const e = elapsed % cycle;
-      setT(Math.max(0.01, Math.min(e, total)));
+      setT(Math.min(START_SKIP + e, total));
       raf = requestAnimationFrame(frame);
     };
     const start = () => {

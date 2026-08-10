@@ -64,11 +64,26 @@ the swap in `index.astro` + the four `HBand` heroes is a one-pass change.
 ## Earmarked: already-licensed Adobe assets (no credits needed)
 
 - **#282399227** "Smiling Family Carrying Boxes Into New Home On Moving Day"
-  (Monkey Business, 5351x2452 JPEG, Standard license: Downloaded). Buyers door
-  candidate. Re-download free from the asset page or the Downloads library.
-- A second family-moving photo from the same series showed a Downloaded badge in
-  search (family entering the door, leather couch); it is in the Downloads
-  library beside the first.
+  (Monkey Business, 5351x2452 JPEG, Standard license: Downloaded). LIVE
+  2026-08-10: buyers door (portrait crop) + buyers-sellers HBand hero.
+- **#407170290** family entering through glass doors (6144x3456; the second
+  Downloaded photo). LIVE: high-res upgrade of home `fam.jpg`.
+- **#346928974** lake-community aerial (4000x3000). LIVE: agents door +
+  agents HBand hero (replaced the bare-mountain shot).
+- **#398408234** LA-basin dusk aerial (5472x3218). LIVE: investors door.
 - Review queue: Adobe Stock library **"AME site v2"** holds the new candidates
   (family vertical video for buyers, agent-at-house exterior for agents) plus
   two stray saves to prune. Nothing licensed; credits untouched.
+
+## Video candidates awaiting license (Photos/ holds watermarked HD PREVIEWS only)
+
+These three `_Video_HD_Preview.mov` files carry the AdobeStock watermark and
+must never ship. License the originals in Adobe Stock (search by asset ID),
+then re-drop into `Photos/`:
+
+- **#1672633834** dusk aerial, inland hillside tract homes with pools (1920x1080,
+  10s). Statement-band or AOE-reserve grade.
+- **#915017186** Orange County Great Park balloon aerial (1920x1080, 21s).
+  Iconic OC landmark; strong statement-band candidate.
+- **#1401565634** daytime OC flatland tract aerial with neighborhood park
+  (1920x1080, 19s). Inland AME fit; statement-band alternate.

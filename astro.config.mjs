@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 // Static-first Astro site for Cloudflare Pages (git-connected deploys).
 // Islands are used only for the calculator (Phase 2) and the animation port.
 export default defineConfig({
-  site: 'https://alliancemutualescrow.com',
+  site: 'https://www.alliancemutualescrow.com',
   output: 'static',
   integrations: [react(), sitemap()],
   image: {

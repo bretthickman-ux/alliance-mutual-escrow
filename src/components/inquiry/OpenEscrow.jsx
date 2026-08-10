@@ -83,7 +83,7 @@ export default function OpenEscrow({ variant = 'page' }) {
     const c = contact.trim();
     const looksEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c);
     const looksPhone = c.replace(/\D/g, '').length >= 10;
-    if (!hasName) { setError('Add your name so your officer knows who to ask for.'); return; }
+    if (!hasName) { setError('Add your name so your escrow officer knows who to ask for.'); return; }
     if (!looksEmail && !looksPhone) { setError('Add a phone number or an email so we can reach you.'); return; }
 
     setSending(true);
@@ -188,7 +188,7 @@ export default function OpenEscrow({ variant = 'page' }) {
         {step === 3 && (
           <>
             <div className="oe-step">{stepLabel}</div>
-            <h2 className="oe-q">Where should your officer <i>reach you?</i></h2>
+            <h2 className="oe-q">Where should your escrow officer <i>reach you?</i></h2>
             <div className="oe-input">
               <label htmlFor="oe-name">Your name</label>
               <input id="oe-name" value={name} autoComplete="name" onChange={(e) => setName(e.target.value)} />
@@ -219,7 +219,7 @@ export default function OpenEscrow({ variant = 'page' }) {
             <div className="oe-nav">
               <button type="button" className="oe-back" onClick={() => go(2)}>&larr; Back</button>
               <button type="button" className="oe-next" onClick={send} disabled={sending}>
-                {sending ? 'Sending...' : 'Send to an officer'}
+                {sending ? 'Sending...' : 'Send to an escrow officer'}
               </button>
             </div>
           </>
@@ -230,7 +230,7 @@ export default function OpenEscrow({ variant = 'page' }) {
             <div className="tick" aria-hidden="true">&#10003;</div>
             <div className="big">On its way.</div>
             <p>
-              A licensed officer will reach out, usually the same business day. Nothing moves on your
+              A licensed escrow officer will reach out, usually the same business day. Nothing moves on your
               file until you say so.
             </p>
             <div className="oe-call">Faster by phone: <a href={PHONE_HREF}>{PHONE_DISPLAY}</a></div>

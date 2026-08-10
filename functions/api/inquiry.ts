@@ -31,7 +31,7 @@ export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
   if (body.company && body.company.trim() !== '') return json({ ok: true, queued: true });
 
   if (!body.name || body.name.trim().length < 2) {
-    return json({ ok: false, error: 'Add your name so your officer knows who to ask for.' }, 400);
+    return json({ ok: false, error: 'Add your name so your escrow officer knows who to ask for.' }, 400);
   }
   const contact = (body.contact || '').trim();
   const looksEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);

@@ -41,7 +41,7 @@ function initTour() {
     { id: 'home-hero', page: '/', label: 'Hero headline', selector: '.hero-center h1',
       pills: ['Every promise, kept. (owner approved)', 'Independent, by design. (owner approved)'] },
     { id: 'home-hero-sub', page: '/', label: 'Hero subline', selector: '.hero-center .hsub',
-      pills: ['Funds verified, instructions honored, one licensed officer from open to close.', 'One licensed officer holds your file from open to close. Every dollar verified.'] },
+      pills: ['Funds verified, instructions honored, one licensed officer from open to close.', 'One licensed escrow officer holds your file from open to close. Every dollar verified.'] },
     { id: 'home-statline', page: '/', label: 'Stats bar (gold numbers, 25 years)', selector: '.statline',
       pills: ['25 years · est. 2001 (as built)', 'Serving California since 2001', 'A quarter century of escrow'] },
     { id: 'home-intro', page: '/', label: 'Intro statement (bigger gold kicker)', selector: '.intro h2' },
@@ -101,7 +101,7 @@ function initTour() {
 
     /* ── team ────────────────────────────────────────────────────────────── */
     { id: 'team-h1', page: '/team', label: 'Team page headline', selector: '.team-header h1',
-      pills: ['You don’t hire an officer. You hire a team.', 'Named people. One standard.'] },
+      pills: ['You don’t hire an escrow officer. You hire a team.', 'Named people. One standard.'] },
     { id: 'team-grid', page: '/team', label: 'The roster (live from Compendium)', selector: '.grid' },
     { id: 'team-note', page: '/team', label: 'Team closing note', selector: '.team-note' },
 

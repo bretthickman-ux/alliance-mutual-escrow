@@ -34,7 +34,7 @@ function parseAmount(raw) {
 function validatePrice(value, what) {
   if (value === null) return `Enter a ${what} to see your fees.`;
   if (value < MIN_PRICE) return `That looks too low for a ${what}. Enter the full amount, like 850,000.`;
-  if (value > MAX_PRICE) return `That is above what we can estimate online. Call ${PHONE_DISPLAY} and an officer will quote it.`;
+  if (value > MAX_PRICE) return `That is above what we can estimate online. Call ${PHONE_DISPLAY} and an escrow officer will quote it.`;
   return null;
 }
 
@@ -385,7 +385,7 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
         {result?.minError && <div className="ec-quote">{result.minError}</div>}
         {result?.quote && (
           <div className="ec-quote">
-            Loans over $2,000,000 are quoted by an officer, not a formula.{' '}
+            Loans over $2,000,000 are quoted by an escrow officer, not a formula.{' '}
             <a href={PHONE_HREF}>Call {PHONE_DISPLAY}</a> and we will price it the same day.
           </div>
         )}
@@ -448,7 +448,7 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
         {compact
           ? fees.conciergeNote
           : mode === 'seller'
-            ? `${fees.titleNotes.seller} City transfer taxes vary by city; your officer confirms both. ${fees.conciergeNote}`
+            ? `${fees.titleNotes.seller} City transfer taxes vary by city; your escrow officer confirms both. ${fees.conciergeNote}`
             : mode === 'buyer'
               ? `${fees.titleNotes.buyer} Recording and lender charges appear on your closing statement. ${fees.conciergeNote}`
               : `Escrow fees only. Title, recording, and lender charges come from third parties and appear on your closing statement. ${fees.conciergeNote}`}

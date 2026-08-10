@@ -25,13 +25,15 @@ GOOGLE_PLACE_ID = "ChIJ32vwBbjb3IARki5f0Aft9M8"
 # set on the project. EMAIL_FROM requires the domain verified in Resend; the
 # function falls back to Resend's onboarding sender until then.
 EMAIL_PROVIDER = "resend"
-EMAIL_FROM = "Alliance Mutual Escrow <onboarding@resend.dev>"
+EMAIL_FROM = "Alliance Mutual Escrow <estimates@ameescrow.com>"
 INQUIRY_TO = "info@ameescrow.com"
 # Internal notification list (comma-separated). Per IT: the site emails the
 # team directly on every inquiry/estimate; no distribution list needed.
-# SANDBOX MODE until Ryan adds the DNS records: Resend only delivers to the
-# account owner, so the list is Brett alone and the sender is Resend's
-# onboarding address. After ameescrow.com verifies, flip EMAIL_FROM back to
-# "Alliance Mutual Escrow <estimates@ameescrow.com>" and set NOTIFY_TO to
-# "lauraw@ameescrow.com,mikeh@sevengables.com,bretth@sevengables.com".
-NOTIFY_TO = "bretth@sevengables.com"
+# PRODUCTION since 2026-08-10: ameescrow.com verified in Resend (Ryan's DNS).
+NOTIFY_TO = "lauraw@ameescrow.com,mikeh@sevengables.com,bretth@sevengables.com"
+# Website leads log (Airtable, DEDICATED base in the company workspace; never
+# the Compendium base). Set LEADS_BASE_ID + LEADS_TABLE_ID here once Brett
+# creates the base; LEADS_API_TOKEN goes in as a secret. Inert until all three
+# exist.
+# LEADS_BASE_ID = "appXXXXXXXXXXXXXX"
+# LEADS_TABLE_ID = "tblXXXXXXXXXXXXXX"

@@ -6,6 +6,7 @@
    Nothing is stored; the honeypot field silently succeeds for bots. */
 
 import { brandHtml, rowsHtml, notifyList, type SendEnv, resendSend } from './_lib/email';
+import { logLead, type LeadsEnv } from './_lib/leads';
 
 interface InquiryRequest {
   role: string;
@@ -16,7 +17,7 @@ interface InquiryRequest {
   company?: string; // honeypot
 }
 
-export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
+export const onRequestPost: PagesFunction<SendEnv & LeadsEnv> = async (context) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -66,6 +67,16 @@ export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
     intro: 'Submitted through the Open an Escrow flow just now.',
     bodyHtml: rowsHtml(details),
     footNote: looksEmail ? 'Replying to this email reaches the visitor directly.' : 'The visitor left a phone number; call them back.',
+  });
+
+  // Paper trail first (per IT: log to the DB, then email). Best-effort.
+  await logLead(env, {
+    Type: 'Inquiry',
+    Name: clean(body.name),
+    Contact: clean(contact),
+    Role: clean(body.role),
+    City: clean(body.city),
+    Timeline: clean(body.timing),
   });
 
   try {

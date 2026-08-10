@@ -7,6 +7,7 @@
    Anonymous by design: the email address is used to send and is not stored. */
 
 import { brandHtml, rowsHtml, notifyList, type SendEnv, resendSend } from './_lib/email';
+import { logLead, type LeadsEnv } from './_lib/leads';
 
 interface SummaryLine {
   label: string;
@@ -52,7 +53,7 @@ function renderHtml(req: EmailRequest): string {
   });
 }
 
-export const onRequestPost: PagesFunction<SendEnv & { EMAIL_PROVIDER?: string }> = async (context) => {
+export const onRequestPost: PagesFunction<SendEnv & LeadsEnv & { EMAIL_PROVIDER?: string }> = async (context) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -79,6 +80,14 @@ export const onRequestPost: PagesFunction<SendEnv & { EMAIL_PROVIDER?: string }>
       note: 'Email sending is not connected yet. Print the page or copy the link instead.',
     });
   }
+
+  // Paper trail first (per IT: log to the DB, then email). Best-effort.
+  await logLead(env, {
+    Type: 'Estimate',
+    Contact: body.email,
+    Amount: Math.round(body.amount),
+    Summary: `${titleFor(body.mode)} for ${usd(body.amount)}${body.total != null ? `, escrow side ${usd(body.total)}` : ''}`,
+  });
 
   try {
     await resendSend(env, {

@@ -34,14 +34,20 @@ rebuild:
 - **Site facts**: `src/data/site.ts` (name, address, phone, nav).
 - **One component library**: `src/components/`, `src/layouts/BaseLayout.astro`.
 
-## Roster auto-sync (Compendium)
+## Roster auto-sync (Compendium / Airtable)
 
-The team roster can update itself from **Compendium** with no human work. The
-build runs `scripts/sync-roster.mjs` first (`prebuild`): it fetches escrow staff
-from Compendium, downloads each headshot locally so `astro:assets` optimizes it,
-and writes `src/data/roster.generated.json`. `src/data/roster.ts` prefers that
-generated data over the static fallback. Both generated outputs are gitignored;
-they are produced fresh on every build.
+The team roster can update itself with no human work from the Compendium Airtable
+base (`appQIE0KXf4azH4jQ`, table `tblH0lEI2pMGO85FF`, curated view
+`viwqx0nVK1xbcE4sV`). The build runs `scripts/sync-roster.mjs` first (`prebuild`):
+it pages through the view, downloads each headshot locally so `astro:assets`
+optimizes it, and writes `src/data/roster.generated.json`. `src/data/roster.ts`
+prefers that generated data over the static fallback. Both generated outputs are
+gitignored; they are produced fresh on every build.
+
+**Token:** requires a modern Airtable **Personal Access Token** (scope
+`data.records:read`, access to this base). The legacy `key...` API key format was
+disabled by Airtable in Feb 2024 and returns 401. This is also the rotation
+HANDOFF section 8 item 4 calls for.
 
 Pipeline (once configured): a staff change in Compendium -> a Cloudflare Pages
 **Deploy Hook** fires (from a Compendium webhook, or the scheduled

@@ -1,31 +1,53 @@
-# Automatic rebuild trigger for the Compendium roster sync.
+# Compendium roster watcher (the "zero human work" loop).
 #
-# Preferred trigger: a Compendium webhook that fires on a staff change, pointed
-# straight at a Cloudflare Pages Deploy Hook URL. That is instant and needs no
-# GitHub Action at all.
+# Every 2 hours (and on demand), sync the roster from the Compendium Airtable
+# base and compare it to the last-deployed state via a committed hash marker.
+# When staff or headshots actually changed, commit the marker; that push
+# triggers Cloudflare Pages, whose build re-runs the sync with its own secret
+# and deploys the fresh roster. No change, no commit, no rebuild.
 #
-# This scheduled job is the fallback for when Compendium cannot emit webhooks: it
-# pings the Cloudflare Deploy Hook every 6 hours, which re-runs the build (and so
-# the sync). It is inert until the CLOUDFLARE_DEPLOY_HOOK repo secret is set;
-# without it the job succeeds and does nothing (no noise).
-name: Rebuild site (roster sync)
+# Requires the COMPENDIUM_API_TOKEN repo secret (set via `gh secret set`).
+name: Roster sync watcher
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # every 6 hours
+    - cron: '17 */2 * * *' # every 2 hours
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
-  trigger-deploy:
+  check-roster:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Cloudflare Pages deploy hook
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync roster from Compendium
         env:
-          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+          COMPENDIUM_API_TOKEN: ${{ secrets.COMPENDIUM_API_TOKEN }}
+        run: node scripts/sync-roster.mjs
+
+      - name: Commit marker when the roster changed
         run: |
-          if [ -z "$HOOK" ]; then
-            echo "CLOUDFLARE_DEPLOY_HOOK secret not set; nothing to trigger yet."
+          if [ ! -f src/data/roster.generated.json ]; then
+            echo "Sync produced no roster (missing token or Airtable error); nothing to compare."
             exit 0
           fi
-          echo "Triggering Cloudflare Pages rebuild..."
-          curl -fsS -X POST "$HOOK" && echo "Triggered."
+          # Hash the roster data + headshot bytes so photo swaps count as changes.
+          HASH=$(cat src/data/roster.generated.json src/assets/team/generated/* 2>/dev/null | sha256sum | cut -d' ' -f1)
+          echo "current hash: $HASH"
+          if [ -f .roster-hash ] && [ "$(cat .roster-hash)" = "$HASH" ]; then
+            echo "Roster unchanged; no rebuild needed."
+            exit 0
+          fi
+          echo "$HASH" > .roster-hash
+          git config user.name "roster-watcher"
+          git config user.email "actions@github.com"
+          git add .roster-hash
+          git commit -m "roster: Compendium change detected, trigger rebuild"
+          git push

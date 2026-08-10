@@ -9,3 +9,15 @@
 name = "alliance-mutual-escrow"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-01-01"
+
+# Reviews cache (Phase 3). The /api/reviews Function reads this namespace; the
+# section renders nothing until GOOGLE_PLACES_KEY is also set (a secret, set via
+# `wrangler pages secret put GOOGLE_PLACES_KEY` or the dashboard, never here).
+[[kv_namespaces]]
+binding = "REVIEWS"
+id = "3996bc8c9cc64eb491fc6712154cfc2c"
+
+[vars]
+# Public identifier for the Tustin office on Google Maps (verified round-trip:
+# resolves to "Alliance Mutual Escrow, Inc.", 12681 Newport Ave).
+GOOGLE_PLACE_ID = "ChIJ32vwBbjb3IARki5f0Aft9M8"

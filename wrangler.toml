@@ -26,3 +26,4 @@ GOOGLE_PLACE_ID = "ChIJ32vwBbjb3IARki5f0Aft9M8"
 # function falls back to Resend's onboarding sender until then.
 EMAIL_PROVIDER = "resend"
 EMAIL_FROM = "Alliance Mutual Escrow <estimates@ameescrow.com>"
+INQUIRY_TO = "info@ameescrow.com"

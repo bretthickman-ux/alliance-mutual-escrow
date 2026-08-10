@@ -1,0 +1,80 @@
+/* Open an Escrow: a conversation, not a form. One question per card, pill
+   answers, typing only at the contact step. Same design language as the
+   calculator (hairlines, serif questions, mono kickers, amber accents). */
+
+.oe-wrap { max-width: 620px; margin: 0 auto; padding: 10px 28px 70px; }
+.oe {
+  position: relative; background: var(--white); border: 1px solid var(--hair);
+  border-radius: 20px; box-shadow: 0 24px 60px -30px rgba(15, 18, 21, 0.18);
+  overflow: hidden;
+}
+.oe-progress { height: 3px; background: var(--hair2); }
+.oe-progress i { display: block; height: 100%; background: var(--amber); transition: width 0.45s var(--ease); }
+
+.oe-card { padding: 34px 34px 30px; }
+.oe-step { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
+.oe-q { font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 3.4vw, 32px); line-height: 1.12; letter-spacing: -0.01em; margin-bottom: 22px; }
+.oe-q i { color: var(--soft); }
+
+.oe-pills { display: flex; flex-direction: column; gap: 9px; }
+.oe-pill {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  text-align: left; font-size: 14.5px; font-weight: 500; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 15px 18px; cursor: pointer; font-family: inherit;
+  transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.2s var(--ease);
+}
+.oe-pill:hover { border-color: var(--amber); transform: translateX(3px); }
+.oe-pill:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.oe-pill.on { border-color: var(--amber); background: var(--amber-soft); }
+.oe-pill .arr { color: var(--faint); transition: color 0.25s, transform 0.25s var(--ease); }
+.oe-pill:hover .arr { color: var(--amber); transform: translateX(3px); }
+.oe-pill .sub { display: block; font-size: 12px; font-weight: 400; color: var(--soft); margin-top: 2px; }
+
+.oe-input { position: relative; margin-bottom: 12px; }
+.oe-input label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--soft); margin-bottom: 7px; }
+.oe-input input {
+  width: 100%; padding: 14px 16px; font-size: 15px; font-family: inherit; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.oe-input input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
+.oe-err { font-size: 13px; color: #b4552e; margin: 4px 0 10px; }
+
+.oe-nav { display: flex; align-items: center; gap: 14px; margin-top: 24px; }
+.oe-next {
+  font-size: 14px; font-weight: 600; padding: 13px 26px; border-radius: 100px; cursor: pointer;
+  background: var(--ink); color: #fff; border: 0; font-family: inherit;
+  transition: background 0.25s var(--ease), transform 0.2s var(--ease);
+}
+.oe-next:hover { background: var(--amber); transform: translateY(-1px); }
+.oe-next:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+.oe-back {
+  font-size: 13px; font-weight: 500; color: var(--soft); background: none; border: 0;
+  cursor: pointer; font-family: inherit; padding: 8px 4px;
+}
+.oe-back:hover { color: var(--amber); }
+.oe-skip { margin-left: auto; font-size: 12.5px; color: var(--faint); background: none; border: 0; cursor: pointer; font-family: inherit; }
+.oe-skip:hover { color: var(--amber); }
+
+/* card transitions */
+.oe-enter { animation: oe-in 0.4s var(--ease) both; }
+@keyframes oe-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .oe-enter { animation: none; } .oe-progress i { transition: none; } }
+
+/* review + success */
+.oe-review { border-top: 1px solid var(--hair); margin-top: 6px; }
+.oe-rrow { display: flex; justify-content: space-between; gap: 14px; padding: 11px 2px; border-bottom: 1px solid var(--hair2); font-size: 13.5px; }
+.oe-rrow .k { color: var(--soft); }
+.oe-rrow .v { font-weight: 500; text-align: right; }
+.oe-done { text-align: center; padding: 18px 0 6px; }
+.oe-done .big { font-family: var(--serif); font-size: 30px; line-height: 1.15; margin-bottom: 12px; }
+.oe-done p { color: var(--soft); font-size: 14.5px; max-width: 40ch; margin: 0 auto; }
+.oe-done .tick {
+  width: 46px; height: 46px; border-radius: 50%; background: var(--amber-soft); color: var(--amber);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 20px;
+}
+.oe-call { margin-top: 18px; font-size: 13px; color: var(--soft); }
+.oe-call a { color: var(--amber); font-weight: 600; text-decoration: none; }
+
+@media (max-width: 640px) { .oe-card { padding: 26px 22px 24px; } }

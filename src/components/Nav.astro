@@ -34,7 +34,7 @@ const navStyle = navMax ? `--nav-max:${navMax}px` : undefined;
       {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </div>
 
-    <a class="ncta" href={site.phone.href}>Open an Escrow</a>
+    <a class="ncta" href="/open-an-escrow">Open an Escrow</a>
 
     <button class="nburger" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span>
@@ -49,7 +49,7 @@ const navStyle = navMax ? `--nav-max:${navMax}px` : undefined;
   <a href="/calculator">Calculator</a>
   <div class="nmenu-foot">
     <a class="nm-tel mono" href={site.phone.href}>{site.phone.display}</a>
-    <a class="nm-cta" href={site.phone.href}>Open an Escrow</a>
+    <a class="nm-cta" href="/open-an-escrow">Open an Escrow</a>
   </div>
 </div>
 

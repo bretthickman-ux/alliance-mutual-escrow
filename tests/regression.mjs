@@ -34,6 +34,7 @@ const PAGES = [
   '/investors',
   '/team',
   '/calculator',
+  '/open-an-escrow',
   '/guides',
   ...guideSlugs.map((s) => `/guides/${s}`),
   '/consumer-feedback',

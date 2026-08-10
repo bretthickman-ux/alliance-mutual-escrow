@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import OpenEscrow from '../components/inquiry/OpenEscrow.jsx';
+import '../styles/interior.css';
+import '../styles/inquiry.css';
+---
+
+<BaseLayout
+  title="Open an Escrow · Alliance Mutual Escrow"
+  description="Start an escrow with a licensed, independent officer. A few quick questions and your officer reaches out, usually the same business day."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="calc-hero" style="max-width:880px;margin:0 auto;padding:84px 28px 26px;text-align:center">
+    <div class="kick">Open an escrow</div>
+    <h1 style="max-width:none">A few questions. <i>Then a person.</i></h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">
+      Fastest is a call: <a href="tel:7145446525" style="color:var(--amber);font-weight:600;text-decoration:none">(714) 544-6525</a>.
+      Or start here and a licensed officer calls you, usually the same business day.
+    </p>
+  </header>
+
+  <div class="oe-wrap">
+    <OpenEscrow client:load />
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Prefer to talk it through? <i>So do we.</i></h2>
+      <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </section>
+</BaseLayout>

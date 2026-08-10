@@ -74,11 +74,13 @@ function initTour() {
     { id: 'team-note', page: '/team', label: 'Team closing note', selector: '.team-note' },
     { id: 'calc-h1', page: '/calculator', label: 'Calculator headline', selector: '.calc-hero h1',
       pills: ['What will escrow actually cost?', 'See every fee before you commit.'] },
+    { id: 'inquiry-flow', page: '/open-an-escrow', label: 'Open an Escrow card flow', selector: '.oe',
+      pills: ['A few questions. Then a person. (page headline)', 'Keep it: phone stays the fast lane, this catches the rest.'] },
     { id: 'guides-h1', page: '/guides', label: 'Guides headline', selector: '.hero h1',
       pills: ['Escrow, explained in plain English.', 'Answers first. Jargon never.'] },
   ];
 
-  const PAGE_ORDER = ['/', '/buyers-sellers', '/agents', '/lenders', '/investors', '/team', '/calculator', '/guides'];
+  const PAGE_ORDER = ['/', '/buyers-sellers', '/agents', '/lenders', '/investors', '/team', '/calculator', '/open-an-escrow', '/guides'];
   const here = location.pathname.replace(/\/$/, '') || '/';
   const pageStops = STOPS.filter((s) => s.page === here && document.querySelector(s.selector));
   const state: Record<string, StopResult> = JSON.parse(localStorage.getItem(KEY_STATE) || '{}');

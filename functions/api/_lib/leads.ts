@@ -10,6 +10,8 @@ export interface LeadsEnv {
   LEADS_API_TOKEN?: string;
   LEADS_BASE_ID?: string;
   LEADS_TABLE_ID?: string;
+  /** 'AME' | 'AOE': one shared base logs both sites' leads. */
+  LEADS_COMPANY?: string;
 }
 
 export interface Lead {
@@ -33,7 +35,7 @@ export async function logLead(env: LeadsEnv, lead: Lead): Promise<void> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        records: [{ fields: { Status: 'New', ...lead } }],
+        records: [{ fields: { Status: 'New', Company: env.LEADS_COMPANY || 'AME', ...lead } }],
         typecast: true, // lets Airtable accept new select options like Role values
       }),
     });

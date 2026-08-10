@@ -99,10 +99,20 @@ export const onRequestPost: PagesFunction<SendEnv & LeadsEnv & { EMAIL_PROVIDER?
 
     // Internal heads-up; never fails the visitor's request.
     try {
+      const internalRows = (body.lines || []).map((l) => ({ label: l.label, value: usd(l.amount) }));
+      if (body.total != null) internalRows.push({ label: 'Total escrow side', value: usd(body.total), strong: true } as never);
+      internalRows.push({ label: 'Sent to', value: body.email, strong: true } as never);
       await resendSend(env, {
         to: notifyList(env),
         subject: `Estimate emailed: ${titleFor(body.mode)} for ${usd(body.amount)}`,
         text: [`An estimate was emailed from the website calculator.`, '', renderText(body)].join('\n'),
+        html: brandHtml({
+          kicker: 'Website calculator',
+          heading: `${titleFor(body.mode)} sent for ${usd(body.amount)}`,
+          intro: 'A visitor emailed themselves this estimate from the website calculator just now.',
+          bodyHtml: rowsHtml(internalRows as Array<{ label: string; value: string; strong?: boolean }>),
+          footNote: 'Logged to the Website Leads base when connected. Reply to this email to start a thread with the team; the visitor is not on this message.',
+        }),
       });
     } catch {
       /* visitor email already queued */

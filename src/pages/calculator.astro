@@ -33,14 +33,14 @@ import '../styles/calc.css';
         <div class="fr"><span class="k">Base</span><span class="v">$300</span></div>
         <div class="fr"><span class="k">Per $1,000 of the price</span><span class="v">$2.15</span></div>
         <div class="fr"><span class="k">Per $1,000 past $2,000,000</span><span class="v">$1.75</span></div>
-        <div class="fr tot"><span class="k">Example at $1,000,000</span><span class="v">$2,450</span></div>
+        <div class="fr tot" id="sale-example"><span class="k">Example at $1,000,000</span><span class="v">$2,450</span></div>
       </div>
       <div class="card">
         <div class="ch">Refinance, one flat fee by loan size</div>
-        <div class="fr"><span class="k">Up to $750,000</span><span class="v">$650</span></div>
-        <div class="fr"><span class="k">To $1,000,000</span><span class="v">$850</span></div>
-        <div class="fr"><span class="k">To $2,000,000</span><span class="v">$1,200</span></div>
-        <div class="fr"><span class="k">Over $2,000,000</span><span class="v">QUOTE</span></div>
+        <div class="fr" data-tier="750000"><span class="k">Up to $750,000</span><span class="v">$650</span></div>
+        <div class="fr" data-tier="1000000"><span class="k">To $1,000,000</span><span class="v">$850</span></div>
+        <div class="fr" data-tier="2000000"><span class="k">To $2,000,000</span><span class="v">$1,200</span></div>
+        <div class="fr" data-tier="max"><span class="k">Over $2,000,000</span><span class="v">QUOTE</span></div>
         <div class="fr tot"><span class="k">Processing</span><span class="v">$200</span></div>
       </div>
       <div class="card">
@@ -71,4 +71,41 @@ import '../styles/calc.css';
       <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
     </div>
   </section>
+
+  <script>
+    // Two live touches on the published schedule, driven by the calculator:
+    // the sale example row tracks the slider, and the active refi tier
+    // highlights. The published rates themselves never move.
+    const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+    const example = document.getElementById('sale-example');
+    const tiers = Array.from(document.querySelectorAll<HTMLElement>('[data-tier]'));
+    window.addEventListener('ame:calc-change', (e) => {
+      const { mode, amount, fee } = (e as CustomEvent).detail || {};
+      if (example) {
+        const k = example.querySelector('.k');
+        const v = example.querySelector('.v');
+        if (mode !== 'refinance' && amount != null && fee != null && k && v) {
+          k.textContent = `At your price, ${usd(amount)}`;
+          v.textContent = usd(fee);
+        } else if (k && v) {
+          k.textContent = 'Example at $1,000,000';
+          v.textContent = '$2,450';
+        }
+      }
+      tiers.forEach((row) => {
+        let on = false;
+        if (mode === 'refinance' && amount != null) {
+          const t = row.dataset.tier;
+          if (t === 'max') on = amount > 2_000_000;
+          else {
+            const cap = Number(t);
+            const prev = tiers[tiers.indexOf(row) - 1];
+            const floor = prev && prev.dataset.tier !== 'max' ? Number(prev.dataset.tier) : 0;
+            on = amount <= cap && amount > floor;
+          }
+        }
+        row.classList.toggle('tier-on', on);
+      });
+    });
+  </script>
 </BaseLayout>

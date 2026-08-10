@@ -28,7 +28,7 @@ export const site: SiteConfig = {
 
 /** Flat nav, identical on every page (HANDOFF section 3). No dropdowns. */
 export const navLinks = [
-  { label: 'Services', href: '/#services' },
+  { label: 'Services', href: '/services' },
   { label: 'Guides', href: '/guides' },
   { label: 'Team', href: '/team' },
   { label: 'Calculator', href: '/calculator' },

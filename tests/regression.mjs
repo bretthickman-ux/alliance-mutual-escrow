@@ -28,6 +28,7 @@ const CROSS = process.env.CROSS_ENGINE === '1';
 
 const PAGES = [
   '/',
+  '/services',
   '/buyers-sellers',
   '/agents',
   '/lenders',

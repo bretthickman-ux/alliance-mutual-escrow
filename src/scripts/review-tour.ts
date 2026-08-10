@@ -74,6 +74,10 @@ function initTour() {
     { id: 'home-footer', page: '/', label: 'Footer license line (DFPI No. 9631912)', selector: 'footer .df-bot',
       pills: ['Keep: full department name + license number', 'Shorter: "DFPI Escrow Agents License No. 9631912"', 'Check the number with Laura before launch'] },
 
+    /* ── services hub ────────────────────────────────────────────────────── */
+    { id: 'services-hub', page: '/services', label: 'Services hub (new page behind nav "Services")', selector: '.glib',
+      pills: ['Keep: Services in the nav opens this page', 'Prefer the old way: scroll to the four doors on home', 'Keep the page and change wording (note below)'] },
+
     /* ── buyers & sellers ────────────────────────────────────────────────── */
     { id: 'buyers-h1', page: '/buyers-sellers', label: 'Buyers page headline', selector: '.hero h1',
       pills: ['The biggest purchase of your life, held steady.', 'Your money, held steady until everything is right.'] },
@@ -108,6 +112,8 @@ function initTour() {
     /* ── calculator ──────────────────────────────────────────────────────── */
     { id: 'calc-h1', page: '/calculator', label: 'Calculator headline', selector: '.calc-hero h1',
       pills: ['What will escrow actually cost?', 'See every fee before you commit.'] },
+    { id: 'calc-schedule', page: '/calculator', label: 'Published schedule (the sale example follows your slider)', selector: '.sched',
+      pills: ['Keep: schedule stays put, example row tracks the price', 'Make the schedule fully static again', 'Something else (say what in the note)'] },
     { id: 'calc-tool', page: '/calculator', label: 'The calculator (try buyer, seller, refi)', selector: '.ec',
       pills: ['Keep: seller mode shows estimated net proceeds', 'Numbers and add-ons match the fee sheet, confirmed', 'Something is off (say what in the note)'] },
 
@@ -118,12 +124,14 @@ function initTour() {
     /* ── guides ──────────────────────────────────────────────────────────── */
     { id: 'guides-h1', page: '/guides', label: 'Guides headline', selector: '.hero h1',
       pills: ['Escrow, explained in plain English.', 'Answers first. Jargon never.'] },
+    { id: 'guides-library', page: '/guides', label: 'The library: photo cards in three groups', selector: '.glib',
+      pills: ['Keep the card library with photos and read times', 'Prefer a simpler text list', 'Group them differently (say how in the note)'] },
     { id: 'guide-glance', page: '/guides/what-escrow-does', label: 'Guide layout: "In this guide" card', selector: '.g-glance' },
     { id: 'guide-break', page: '/guides/what-escrow-does', label: 'Guide layout: photo break + numbered sections', selector: '.g-break' },
     { id: 'guide-pdf', page: '/guides/what-escrow-does', label: 'Download as PDF button', selector: '.pdfbtn' },
   ];
 
-  const PAGE_ORDER = ['/', '/buyers-sellers', '/agents', '/lenders', '/investors', '/team', '/calculator', '/open-an-escrow', '/guides', '/guides/what-escrow-does'];
+  const PAGE_ORDER = ['/', '/services', '/buyers-sellers', '/agents', '/lenders', '/investors', '/team', '/calculator', '/open-an-escrow', '/guides', '/guides/what-escrow-does'];
   const here = location.pathname.replace(/\/$/, '') || '/';
   const pageStops = STOPS.filter((s) => s.page === here && document.querySelector(s.selector));
   const state: Record<string, StopResult> = JSON.parse(localStorage.getItem(KEY_STATE) || '{}');

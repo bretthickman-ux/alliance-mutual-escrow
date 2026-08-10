@@ -1,12 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Picture } from 'astro:assets';
 import { guides } from '../../data/guides.mjs';
+import { GUIDE_IMAGES, readMinutes } from '../../data/guide-images.js';
 import '../../styles/interior.css';
 
+// The library reads as a journey, not a list: essentials first, then the
+// reader's own side of the table, then the specialty files.
 const groups = [
-  { label: 'Start here', slugs: ['what-escrow-does', 'escrow-timeline', 'wire-fraud-safety'] },
-  { label: 'Your side of the table', slugs: ['buyer-guide', 'seller-guide', 'refinance-guide'] },
-  { label: 'Specialty work', slugs: ['1031-exchange', 'bulk-sale', 'probate', 'mobile-home', 'fsbo', 'holding-escrow'] },
+  {
+    n: '01',
+    label: 'Start here',
+    blurb: 'The three everyone should read, whichever side of the table you are on.',
+    slugs: ['what-escrow-does', 'escrow-timeline', 'wire-fraud-safety'],
+  },
+  {
+    n: '02',
+    label: 'Your side of the table',
+    blurb: 'Written for the seat you are sitting in.',
+    slugs: ['buyer-guide', 'seller-guide', 'refinance-guide'],
+  },
+  {
+    n: '03',
+    label: 'Specialty work',
+    blurb: 'The files most escrow companies turn away. Bring them here.',
+    slugs: ['1031-exchange', 'bulk-sale', 'probate', 'mobile-home', 'fsbo', 'holding-escrow'],
+  },
 ];
 const bySlug = new Map(guides.map((g) => [g.slug, g]));
 ---
@@ -23,29 +42,44 @@ const bySlug = new Map(guides.map((g) => [g.slug, g]));
     <h1>Escrow, explained <i>in plain English.</i></h1>
     <p class="sub">
       Short guides, written for people, not lawyers. Every one is downloadable as a PDF. If your
-      question is not here, call and a licensed officer will answer it plainly.
+      question is not here, call and a licensed escrow officer will answer it plainly.
     </p>
   </header>
 
-  <div class="wrap" style="grid-template-columns:1fr;max-width:880px">
-    <main>
-      {groups.map((grp) => (
-        <>
-          <h2>{grp.label}</h2>
-          <div class="faq" style="margin-bottom:16px">
-            {grp.slugs.map((slug) => {
-              const g = bySlug.get(slug);
-              return (
-                <div class="fq">
-                  <h3><a href={`/guides/${g.slug}`} style="color:inherit;text-decoration:none">{g.title} &rarr;</a></h3>
+  <div class="glib">
+    {groups.map((grp) => (
+      <section class="glib-group rv">
+        <div class="glib-head">
+          <span class="glib-n">{grp.n}</span>
+          <div>
+            <h2>{grp.label}</h2>
+            <p>{grp.blurb}</p>
+          </div>
+        </div>
+        <div class="gcards">
+          {grp.slugs.map((slug) => {
+            const g = bySlug.get(slug);
+            return (
+              <a class="gcard" href={`/guides/${g.slug}`}>
+                <div class="gc-img">
+                  <Picture src={GUIDE_IMAGES[g.slug]} formats={['avif', 'webp']} widths={[420, 640, 900]} sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 340px" alt="" />
+                </div>
+                <div class="gc-body">
+                  <span class="gc-kick">{g.kicker}</span>
+                  <h3>{g.title}</h3>
                   <p>{g.description}</p>
                 </div>
-              );
-            })}
-          </div>
-        </>
-      ))}
-    </main>
+                <div class="gc-foot">
+                  <span>{readMinutes(g)} min read</span>
+                  <span class="gc-pdf">PDF included</span>
+                  <span class="gc-arr" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    ))}
   </div>
 
   <section class="cta">

@@ -183,6 +183,16 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
   const inputError = parsed.error || validatePrice(parsed.value, what);
   const amount = inputError ? null : parsed.value;
 
+  // Tell the page what the tool is showing. The published-schedule cards on
+  // /calculator listen: the sale example row tracks the live price, and the
+  // matching refi tier row highlights. The schedule itself never changes.
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.dispatchEvent(
+      new CustomEvent('ame:calc-change', { detail: { mode, amount, fee: amount != null && !isRefi ? saleFee(amount) : null } }),
+    );
+  }, [mode, amount, isRefi]);
+
   const payoffAmount = parseAmount(payoffRaw).value ?? 0;
   let result = null;
   if (amount !== null) {

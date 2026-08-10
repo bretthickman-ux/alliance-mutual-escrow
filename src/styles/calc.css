@@ -120,3 +120,9 @@
 .sched { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 26px; }
 .sched .cn { padding: 10px 20px 14px; font-size: 11px; color: var(--faint); }
 @media (max-width: 760px) { .sched { grid-template-columns: 1fr; } }
+
+/* active refi tier on the published schedule (driven by the calculator) */
+.fr.tier-on { background: var(--amber-soft); }
+.fr.tier-on .k { color: var(--ink); font-weight: 600; }
+.fr.tier-on .v { color: var(--amber); }
+.fr { transition: background 0.35s var(--ease); }

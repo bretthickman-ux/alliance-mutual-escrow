@@ -4,20 +4,7 @@ import { Picture } from 'astro:assets';
 import { guides } from '../../data/guides.mjs';
 import '../../styles/interior.css';
 
-import imgFam from '../../assets/home/fam.jpg';
-import imgLake from '../../assets/doors/agents.jpg';
-import imgDusk from '../../assets/doors/lenders.jpg';
-import imgFoothills from '../../assets/doors/investors.jpg';
-import imgPark from '../../assets/home/park.jpg';
-// Pexels (free license, commercial use, no attribution): one distinct image
-// per guide so no photo repeats across the library.
-import imgKeysHandoff from '../../assets/guides/keys-handoff.jpg';
-import imgKeysSold from '../../assets/guides/keys-sold-sign.jpg';
-import imgSigningCouple from '../../assets/guides/signing-couple.jpg';
-import imgSigningCloseup from '../../assets/guides/signing-closeup.jpg';
-import imgHouseTwilight from '../../assets/guides/house-twilight.jpg';
-import imgCraftsmanPorch from '../../assets/guides/craftsman-porch.jpg';
-import imgPorchChairs from '../../assets/guides/porch-chairs.jpg';
+import { GUIDE_IMAGES } from '../../data/guide-images.js';
 
 export function getStaticPaths() {
   return guides.map((g) => ({ params: { slug: g.slug }, props: { guide: g } }));
@@ -45,23 +32,9 @@ const gi = guides.findIndex((g) => g.slug === guide.slug);
 const prevGuide = gi > 0 ? guides[gi - 1] : null;
 const nextGuide = gi < guides.length - 1 ? guides[gi + 1] : null;
 
-// One warm breather image per guide, matched to its subject. Purely
-// atmospheric (alt text stays empty); the words carry the guidance.
-const GUIDE_IMAGES = {
-  'what-escrow-does': imgCraftsmanPorch,
-  'escrow-timeline': imgLake,
-  'wire-fraud-safety': imgDusk,
-  'buyer-guide': imgSigningCouple,
-  'seller-guide': imgFam,
-  'refinance-guide': imgHouseTwilight,
-  '1031-exchange': imgFoothills,
-  'bulk-sale': imgSigningCloseup,
-  'probate': imgPorchChairs,
-  'mobile-home': imgPark,
-  'fsbo': imgKeysSold,
-  'holding-escrow': imgKeysHandoff,
-};
-const breakImg = GUIDE_IMAGES[guide.slug] || imgLake;
+// One warm breather image per guide, matched to its subject (shared with the
+// library index). Purely atmospheric; the words carry the guidance.
+const breakImg = GUIDE_IMAGES[guide.slug];
 ---
 
 <BaseLayout

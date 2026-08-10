@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Picture } from 'astro:assets';
+import '../styles/interior.css';
+
+import doorBuyers from '../assets/home/door-buyers.jpg';
+import doorAgents from '../assets/home/door-agents.jpg';
+import doorLenders from '../assets/home/door-lenders.jpg';
+import doorInvestors from '../assets/home/door-investors.jpg';
+
+// The services hub: one page that routes every audience to its own page,
+// mirroring the four doors on the home page.
+const services = [
+  {
+    href: '/buyers-sellers',
+    img: doorBuyers,
+    kicker: 'For buyers & sellers',
+    title: 'Buying or selling a home',
+    p: 'Plain-language guidance through every signature, deadline, and dollar, from open to close.',
+  },
+  {
+    href: '/agents',
+    img: doorAgents,
+    kicker: 'For real estate agents',
+    title: 'Escrow that protects your client relationship',
+    p: 'Proactive status, clean timelines, and a named escrow officer your clients can actually call.',
+  },
+  {
+    href: '/lenders',
+    img: doorLenders,
+    kicker: 'For lenders & loan officers',
+    title: 'Refinance and purchase funding',
+    p: 'One flat fee set by loan size, published in the open, and funding coordination that hits the date.',
+  },
+  {
+    href: '/investors',
+    img: doorInvestors,
+    kicker: 'For investors & specialty files',
+    title: 'The challenging ones, handled',
+    p: '1031 exchanges, bulk sales, probate, mobile homes, and commercial. Bring the files others turn away.',
+  },
+];
+
+const specialty = [
+  { label: '1031 exchanges', href: '/guides/1031-exchange' },
+  { label: 'Bulk sales', href: '/guides/bulk-sale' },
+  { label: 'Probate sales', href: '/guides/probate' },
+  { label: 'Mobile & manufactured homes', href: '/guides/mobile-home' },
+  { label: 'For sale by owner', href: '/guides/fsbo' },
+  { label: 'Holding escrows', href: '/guides/holding-escrow' },
+];
+---
+
+<BaseLayout
+  title="Services · Alliance Mutual Escrow"
+  description="Independent California escrow for buyers and sellers, real estate agents, lenders, and investors, plus specialty files: 1031, bulk sale, probate, mobile home, FSBO, and holding escrows."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="hero">
+    <div class="kick">What we do</div>
+    <h1>Escrow for <i>everyone at the table.</i></h1>
+    <p class="sub">
+      One independent company, four kinds of clients. Pick your seat and see exactly how we work
+      for you, or call and a licensed escrow officer will point you the right way.
+    </p>
+  </header>
+
+  <div class="glib">
+    <section class="glib-group rv">
+      <div class="gcards svc-cards">
+        {services.map((s) => (
+          <a class="gcard" href={s.href}>
+            <div class="gc-img">
+              <Picture src={s.img} formats={['avif', 'webp']} widths={[420, 640, 900]} sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 500px" alt="" />
+            </div>
+            <div class="gc-body">
+              <span class="gc-kick">{s.kicker}</span>
+              <h3>{s.title}</h3>
+              <p>{s.p}</p>
+            </div>
+            <div class="gc-foot">
+              <span>See how it works</span>
+              <span class="gc-arr" aria-hidden="true">&rarr;</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="glib-group rv">
+      <div class="glib-head">
+        <span class="glib-n">+</span>
+        <div>
+          <h2>Specialty files, welcome here</h2>
+          <p>Each one has its own plain-English guide; every file gets a named escrow officer.</p>
+        </div>
+      </div>
+      <div class="svc-tags">
+        {specialty.map((s) => <a href={s.href}>{s.label} &rarr;</a>)}
+      </div>
+    </section>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Not sure which fits? <i>Ask an escrow officer.</i></h2>
+      <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </section>
+
+  <script>
+    import '../scripts/interior-motion';
+  </script>
+</BaseLayout>

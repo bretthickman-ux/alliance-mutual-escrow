@@ -45,6 +45,8 @@ document.querySelectorAll('main > h2, main > p, .fq, .card').forEach((el) => {
   io.observe(el);
 });
 document.querySelectorAll('.hband, .quiet, .flow, .nums, .miles').forEach((el) => io.observe(el));
+// Elements that carry .rv in their markup (guide library, services hub).
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
 
 // Stagger the timeline rows for the transform reveal.
 document.querySelectorAll<HTMLElement>('.miles .mi').forEach((r, i) => {

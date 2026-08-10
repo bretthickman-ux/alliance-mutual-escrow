@@ -170,3 +170,6 @@
   .hero-center .hk, .hero-center h1, .hero-center .hsub, .hero-center .hero-ctas { opacity: 1; transform: none; animation: none; }
   .hero-img video { opacity: 1; }
 }
+
+/* hero anchor lands with breathing room under the fixed nav */
+#feetable { scroll-margin-top: 96px; }

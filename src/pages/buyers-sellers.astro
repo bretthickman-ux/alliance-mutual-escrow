@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HBand from '../components/HBand.astro';
+import buyersImg from '../assets/doors/buyers.jpg';
+import '../styles/interior.css';
+---
+
+<BaseLayout
+  title="Buying or Selling a Home · Alliance Mutual Escrow"
+  description="What escrow does for home buyers and sellers in California: a neutral third party, a 30 day timeline, and published fees."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="hero">
+    <div class="kick">For buyers &amp; sellers</div>
+    <h1>The biggest purchase of your life, <i>held steady.</i></h1>
+    <p class="sub">
+      Escrow is the neutral middle of your transaction. We hold the money, honor the instructions
+      both sides signed, and keep every date, so nothing moves until everything is right.
+    </p>
+  </header>
+
+  <HBand image={buyersImg} tag="Someone's life, from above" />
+
+  <div class="wrap">
+    <main>
+      <h2>What escrow actually does for you</h2>
+      <p>
+        When you buy or sell a home, a stranger and you must exchange hundreds of thousands of
+        dollars and a deed at the same moment. Escrow makes that moment safe.
+        <b>We are not your agent and not your lender.</b> We are the licensed neutral party both
+        sides trust: your deposit sits in a protected account, every instruction is followed exactly
+        as written, and nothing is released until every condition is met.
+      </p>
+
+      <h2>Your thirty days, day by day</h2>
+      <p>A standard California escrow runs about thirty days. Here is the shape of it:</p>
+      <div class="miles">
+        <div class="mi"><span class="d">DAY 1</span><span>Escrow opens and your deposit is receipted</span></div>
+        <div class="mi"><span class="d">DAY 3</span><span>Earnest money verified by phone and in writing</span></div>
+        <div class="mi"><span class="d">DAY 5</span><span>Title search ordered</span></div>
+        <div class="mi"><span class="d">DAY 12</span><span>HOA demands received and reviewed</span></div>
+        <div class="mi"><span class="d">DAY 21</span><span>Loan documents signed</span></div>
+        <div class="mi"><span class="d">DAY 27</span><span>Lender funds confirmed</span></div>
+        <div class="mi"><span class="d">DAY 30</span><span>Recorded with the county. Your agent hands over the keys.</span></div>
+      </div>
+
+      <h2>Frequently asked</h2>
+      <div class="faq">
+        <div class="fq">
+          <h3>How much does escrow cost?</h3>
+          <p>
+            Our sale escrow fee is $300 plus $2.15 per $1,000 of the sale price, paid by each side.
+            On a $1,000,000 home that is $2,450 per side. Every fee is published, and our calculator
+            itemizes the rest.
+          </p>
+        </div>
+        <div class="fq">
+          <h3>Who hands me the keys?</h3>
+          <p>
+            Your real estate agent. Escrow stays neutral to the end: we verify, fund, record, and
+            close the file, and your agent hands over the keys.
+          </p>
+        </div>
+        <div class="fq">
+          <h3>Is my money safe?</h3>
+          <p>
+            Deposits are held in trust, wires are verified by phone using independently confirmed
+            numbers, and no funds move without signed instructions from both sides.
+          </p>
+        </div>
+        <div class="fq">
+          <h3>What should I never do during escrow?</h3>
+          <p>
+            Never wire money based on an email alone. Call your escrow officer at a number you found
+            yourself, confirm the instructions, and then send. Wire fraud targets real estate, and
+            one phone call defeats most of it.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <aside class="aside">
+      <div class="card">
+        <div class="ch">Your side of a $1M sale</div>
+        <div class="fr"><span class="k">Escrow fee: $300 + $2.15/K</span><span class="v">$2,450</span></div>
+        <div class="fr"><span class="k">Loan processing (buyer)</span><span class="v">$500</span></div>
+        <div class="fr"><span class="k">Notary with loan, estimate</span><span class="v">$250</span></div>
+        <div class="fr tot"><span class="k">Escrow side, buyer</span><span class="v">$3,200</span></div>
+        <div class="cn">
+          Sellers see different line items: demands, HOA processing, grant deed. The full calculator
+          itemizes both sides.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Ready when you are. <i>Every promise, kept.</i></h2>
+      <a class="btn" href="tel:7145446525">Talk to a licensed officer</a>
+    </div>
+  </section>
+
+  <p class="note">
+    Sample page for design review. Copy is draft, written fresh; figures are from the published fee
+    schedule. Third-party costs are estimates from providers you choose.
+  </p>
+
+  <script>
+    import '../scripts/interior-motion';
+  </script>
+</BaseLayout>

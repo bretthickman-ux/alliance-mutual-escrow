@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getImage } from 'astro:assets';
+import { rosterByGroup } from '../data/roster';
+import '../styles/team.css';
+
+// Runner-up typographic index. Kept for the owner's confirmation on the team
+// layout, then deleted (HANDOFF section 4). Floating-thumbnail sources are
+// pre-optimized to a small webp; missing photos fall back to a monogram.
+const groups = rosterByGroup();
+const thumbs = new Map<string, string>();
+for (const g of groups) {
+  for (const m of g.members) {
+    if (m.photo) {
+      const img = await getImage({ src: m.photo, format: 'webp', width: 260, height: 324 });
+      thumbs.set(m.name, img.src);
+    }
+  }
+}
+---
+
+<BaseLayout
+  title="The Team · Alliance Mutual Escrow"
+  description="Meet the licensed escrow officers and specialists of Alliance Mutual Escrow in Tustin, California. Independent and DFPI licensed."
+  bodyClass="page-team"
+  navVariant="solid"
+  navPaper={true}
+  navMax={1280}
+>
+  <header class="team-header tight">
+    <div class="kick">The People</div>
+    <h1>You don't hire an officer.<br /><i>You hire a team.</i></h1>
+    <p class="sub">
+      Every file at Alliance Mutual is run by a named team: a licensed officer who owns it and
+      specialists who keep it moving. Here is everyone who will touch yours.
+    </p>
+  </header>
+
+  <div class="index-wrap" id="index">
+    {groups.map((g) => (
+      <>
+        <div class="glabel">{g.group}</div>
+        {g.members.map((m) => (
+          <div class="row" data-img={thumbs.get(m.name) ?? ''} data-mg={m.initials}>
+            <span class="thumb">
+              {m.photo ? (
+                <img src={thumbs.get(m.name)} alt={m.name} />
+              ) : (
+                <span class="mg">{m.initials}</span>
+              )}
+            </span>
+            <span class="nm">{m.name}</span>
+            {m.tag && <span class="tg">{m.tag}</span>}
+            <span class="rl">
+              {(m.roleLines ?? [m.role]).map((line, i) => (
+                <>{i > 0 && <br />}{line}</>
+              ))}
+              {m.email && (
+                <span class="em"><a href={`mailto:${m.email}`}>{m.email}</a></span>
+              )}
+            </span>
+          </div>
+        ))}
+      </>
+    ))}
+  </div>
+
+  <div id="float" aria-hidden="true"></div>
+
+  <div class="team-note">
+    <div class="team-note-in">
+      <h2>One office. One standard.</h2>
+      <div>
+        <p>
+          Alliance Mutual is independent and licensed by the California Department of Financial
+          Protection and Innovation. There is no national call center behind this page. The people
+          above are the people who answer the phone, run the file, and close it.
+        </p>
+        <p>
+          When you open an escrow, you are assigned a named officer and her team. They stay on your
+          file from open to close.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-cta">
+    <div class="team-cta-in">
+      <h2>Ready when you are. <i>So are they.</i></h2>
+      <a href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </div>
+
+  <script>
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.1 },
+    );
+    document.querySelectorAll('.row').forEach((r) => io.observe(r));
+
+    (function () {
+      const fl = document.getElementById('float');
+      if (!fl) return;
+      const fine = window.matchMedia('(pointer:fine)').matches;
+      const rm = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+      if (!fine) return;
+      let tx = 0, ty = 0, fx = 0, fy = 0, raf: number | null = null, cur: string | null = null;
+      function tick() {
+        fx += (tx - fx) * 0.14;
+        fy += (ty - fy) * 0.14;
+        fl!.style.left = fx + 26 + 'px';
+        fl!.style.top = fy - 131 + 'px';
+        if (Math.abs(tx - fx) > 0.4 || Math.abs(ty - fy) > 0.4) raf = requestAnimationFrame(tick);
+        else raf = null;
+      }
+      document.addEventListener('mousemove', (e) => {
+        tx = e.clientX;
+        ty = e.clientY;
+        if (rm) {
+          fx = tx; fy = ty;
+          fl!.style.left = fx + 26 + 'px';
+          fl!.style.top = fy - 131 + 'px';
+          return;
+        }
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+      document.querySelectorAll<HTMLElement>('.row').forEach((r) => {
+        r.addEventListener('mouseenter', () => {
+          const src = r.dataset.img, ini = r.dataset.mg || '';
+          if (cur === (src || ini)) { fl.classList.add('on'); return; }
+          cur = src || ini;
+          fl.innerHTML = '';
+          if (src) {
+            const im = document.createElement('img');
+            im.alt = '';
+            im.src = src;
+            im.onerror = () => {
+              const s = document.createElement('span');
+              s.className = 'mg';
+              s.textContent = ini;
+              fl.innerHTML = '';
+              fl.appendChild(s);
+            };
+            fl.appendChild(im);
+          } else {
+            const s = document.createElement('span');
+            s.className = 'mg';
+            s.textContent = ini;
+            fl.appendChild(s);
+          }
+          fl.classList.add('on');
+        });
+        r.addEventListener('mouseleave', () => fl.classList.remove('on'));
+      });
+    })();
+  </script>
+</BaseLayout>

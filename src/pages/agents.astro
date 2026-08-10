@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HBand from '../components/HBand.astro';
+import agentsImg from '../assets/doors/agents.jpg';
+import '../styles/interior.css';
+---
+
+<BaseLayout
+  title="For Real Estate Agents · Alliance Mutual Escrow"
+  description="A closing partner for California agents: proactive status, one licensed officer per file, and clean timelines that protect your client relationship."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="hero">
+    <div class="kick">For real estate agents</div>
+    <h1>Your client. Your relationship. <i>Our paperwork.</i></h1>
+    <p class="sub">
+      You spent months earning that trust. Our job is to close on time, with no surprises, so your
+      client remembers you chose well.
+    </p>
+  </header>
+
+  <HBand image={agentsImg} tag="The long view" />
+
+  <div class="wrap">
+    <main>
+      <h2>What working with us feels like</h2>
+      <p>
+        <b>One licensed officer owns the file</b> from open to close. You are never re-routed, never
+        re-explaining, never chasing a call center. Status moves to you before you have to ask, so
+        your client hears news from you first.
+      </p>
+      <p>
+        We chase demands, disclosures, HOA documents, and payoffs early, because the quiet weeks in
+        the middle of an escrow are where late closings are born. When something threatens the date,
+        you hear it from us the same day, with the plan already attached.
+      </p>
+
+      <div class="quiet">
+        <div class="qt">The quiet work, done early</div>
+        <div class="qi"><svg viewBox="0 0 18 18"><path d="M3 9.5l4 4 8-9" /></svg><span>Payoff demands ordered at open, not at the deadline</span></div>
+        <div class="qi"><svg viewBox="0 0 18 18"><path d="M3 9.5l4 4 8-9" /></svg><span>HOA documents chased before they can slow the file</span></div>
+        <div class="qi"><svg viewBox="0 0 18 18"><path d="M3 9.5l4 4 8-9" /></svg><span>Disclosures and demands verified line by line</span></div>
+        <div class="qi"><svg viewBox="0 0 18 18"><path d="M3 9.5l4 4 8-9" /></svg><span>Status to you before your client has to ask</span></div>
+      </div>
+
+      <h2>Opening an escrow</h2>
+      <p>
+        Send the purchase agreement and we take it from there: file opened, timeline set,
+        introductions made to both sides with plain instructions for what happens next. Your buyers
+        and sellers get a named officer and a direct line.
+      </p>
+
+      <h2>Frequently asked</h2>
+      <div class="faq">
+        <div class="fq">
+          <h3>Why does independent matter to my clients?</h3>
+          <p>
+            An independent escrow answers to the file, not to a brokerage or a bank that also has a
+            side in the deal. Licensed by the DFPI, audited, and neutral by charter. It is an easy
+            trust story to tell your clients.
+          </p>
+        </div>
+        <div class="fq">
+          <h3>How do you handle a rough file?</h3>
+          <p>
+            Early and out loud. Solar transfers, subordinations, seller payoffs that will not add up:
+            we surface problems while there is still calendar left to fix them.
+          </p>
+        </div>
+        <div class="fq">
+          <h3>Do my clients pay more for this?</h3>
+          <p>
+            No. Our fees are published: $300 plus $2.15 per $1,000, each side, with flat add-ons
+            listed in the open. No mystery line items for you to explain later.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <aside class="aside">
+      <div class="card">
+        <div class="ch">What your clients get</div>
+        <div class="fr"><span class="k">A named licensed officer</span><span class="v">DAY 1</span></div>
+        <div class="fr"><span class="k">Direct line, no call center</span><span class="v">ALWAYS</span></div>
+        <div class="fr"><span class="k">Wire verification by phone</span><span class="v">EVERY WIRE</span></div>
+        <div class="fr"><span class="k">Status before you ask</span><span class="v">WEEKLY+</span></div>
+        <div class="fr tot"><span class="k">Late-closing surprises</span><span class="v">NONE PLANNED</span></div>
+        <div class="cn">The goal is boring closings, on the date, with your name looking good.</div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Open your next escrow <i>with us.</i></h2>
+      <a class="btn" href="tel:7145446525">Talk to a licensed officer</a>
+    </div>
+  </section>
+
+  <p class="note">
+    Sample page for design review. Copy is draft, written fresh; figures are from the published fee
+    schedule. Third-party costs are estimates from providers you choose.
+  </p>
+
+  <script>
+    import '../scripts/interior-motion';
+  </script>
+</BaseLayout>

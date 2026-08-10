@@ -1,0 +1,38 @@
+---
+import { site, audiencePages } from '../data/site';
+---
+
+<footer>
+  <div class="dfoot">
+    <div class="df-top">
+      <div class="df-brand">
+        <div class="df-wm">{site.name}<span>INDEPENDENT · DFPI LICENSED</span></div>
+        <p>
+          Independent escrow for California, run by named officers who stay on your file from open
+          to close. Neutral by charter, audited, and licensed by the Department of Financial
+          Protection and Innovation.
+        </p>
+      </div>
+      <div class="df-col">
+        <div class="df-h">Escrow for</div>
+        {audiencePages.map((p) => <a href={p.href}>{p.short}</a>)}
+      </div>
+      <div class="df-col">
+        <div class="df-h">Company</div>
+        <a href="/team">The team</a>
+        <a href="/#feetable">Fees &amp; calculator</a>
+        <a href={site.phone.href}>Open an escrow</a>
+      </div>
+      <div class="df-col">
+        <div class="df-h">Visit</div>
+        <span>{site.address.line1}</span>
+        <span>{site.address.city}, {site.address.state} {site.address.zip}</span>
+        <a href={site.phone.href}>{site.phone.display}</a>
+      </div>
+    </div>
+    <div class="df-bot">
+      <span>&copy; {site.name}, Inc.</span>
+      <span>Licensed by the DFPI</span>
+    </div>
+  </div>
+</footer>

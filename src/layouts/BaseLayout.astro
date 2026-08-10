@@ -1,0 +1,50 @@
+---
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  bodyClass?: string;
+  navVariant?: 'overlay' | 'solid';
+  navPaper?: boolean;
+  navMax?: number;
+}
+
+const {
+  title,
+  description = 'Independent, DFPI licensed escrow for California. Named officers, published fees, one licensed officer from open to close.',
+  bodyClass = '',
+  navVariant = 'solid',
+  navPaper = false,
+  navMax,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0f1215" />
+  </head>
+  <body class={bodyClass} data-brand={site.brand}>
+    <Nav variant={navVariant} paper={navPaper} navMax={navMax} />
+    <slot />
+    <Footer />
+  </body>
+</html>

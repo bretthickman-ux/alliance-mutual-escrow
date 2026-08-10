@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Picture } from 'astro:assets';
+import { roster } from '../data/roster';
+import '../styles/team.css';
+---
+
+<BaseLayout
+  title="The Team · Alliance Mutual Escrow"
+  description="Meet the licensed escrow officers and specialists of Alliance Mutual Escrow in Tustin, California. Independent and DFPI licensed."
+  bodyClass="page-team"
+  navVariant="solid"
+  navPaper={true}
+  navMax={1280}
+>
+  <header class="team-header">
+    <div class="kick">The People</div>
+    <h1>You don't hire an officer.<br /><i>You hire a team.</i></h1>
+    <p class="sub">
+      Every file at Alliance Mutual is run by a named team: a licensed officer who owns it and
+      specialists who keep it moving. Here is everyone who will touch yours.
+    </p>
+  </header>
+
+  <div class="wall-wrap">
+    <div class="grid">
+      {roster.map((m) => (
+        <div class="tcard">
+          <div class="frame">
+            {m.photo ? (
+              <Picture
+                src={m.photo}
+                formats={['avif', 'webp']}
+                widths={[320, 480, 640]}
+                sizes="(max-width: 900px) 50vw, 20vw"
+                alt={m.name}
+              />
+            ) : (
+              <span class="mg">{m.initials}</span>
+            )}
+          </div>
+          <div class="cap">
+            <div class="nm">{m.name}</div>
+            <div class="rl">{m.role}</div>
+            {m.tag && <div class="tg">{m.tag}</div>}
+            {m.email && (
+              <div class="em"><a href={`mailto:${m.email}`}>{m.email}</a></div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="team-note">
+    <div class="team-note-in">
+      <h2>One office. One standard.</h2>
+      <div>
+        <p>
+          Alliance Mutual is independent and licensed by the California Department of Financial
+          Protection and Innovation. There is no national call center behind this page. The people
+          above are the people who answer the phone, run the file, and close it.
+        </p>
+        <p>
+          When you open an escrow, you are assigned a named officer and her team. They stay on your
+          file from open to close.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-cta">
+    <div class="team-cta-in">
+      <h2>Ready when you are. <i>So are they.</i></h2>
+      <a href="tel:7145446525">Call (714) 544-6525</a>
+    </div>
+  </div>
+
+  <script>
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.15 },
+    );
+    document.querySelectorAll<HTMLElement>('.tcard').forEach((c, i) => {
+      c.style.transitionDelay = (i % 3) * 90 + 'ms';
+      io.observe(c);
+    });
+  </script>
+</BaseLayout>

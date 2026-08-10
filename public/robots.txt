@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# XML sitemap is added in Phase 3.

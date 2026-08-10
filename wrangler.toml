@@ -1,0 +1,11 @@
+# Cloudflare Pages project config for direct (token) deploys and local dev.
+# Git-connected deploys do not need this file; it exists so that
+# `wrangler pages deploy` and `wrangler pages dev` work without extra flags.
+#
+# Account: 57c0ba39df3ac549e86fc62434509438 (Brett's Cloudflare account).
+# Deploys read CLOUDFLARE_API_TOKEN from the environment; the token is never
+# committed. See README "Deploying".
+
+name = "alliance-mutual-escrow"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"

@@ -1,0 +1,86 @@
+---
+import { site, navLinks, audiencePages } from '../data/site';
+
+interface Props {
+  /** overlay = fixed transparent over a hero (home). solid = sticky (interior/team). */
+  variant?: 'overlay' | 'solid';
+  /** solid nav on a paper-colored page (team). */
+  paper?: boolean;
+  /** max-width of the nav row (matches the page's content width). */
+  navMax?: number;
+}
+
+const { variant = 'solid', paper = false, navMax } = Astro.props;
+const isOverlay = variant === 'overlay';
+const navClass = [
+  isOverlay ? 'nav--overlay' : 'nav--solid',
+  paper ? 'nav--paper' : '',
+].filter(Boolean).join(' ');
+const navStyle = navMax ? `--nav-max:${navMax}px` : undefined;
+---
+
+<nav id="nav" class={navClass} style={navStyle}>
+  <div class="nav-in">
+    {isOverlay ? (
+      <a class="wm" href="/">
+        <span class="a">{site.name}</span>
+        <span class="b mono">{site.shortName}</span>
+      </a>
+    ) : (
+      <a class="wm" href="/">{site.name}<span class="b">{site.kicker}</span></a>
+    )}
+
+    <div class="links">
+      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+    </div>
+
+    <a class="ncta" href={site.phone.href}>Open an Escrow</a>
+
+    <button class="nburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nmenu" id="nmenu">
+  {audiencePages.map((p) => <a href={p.href}>{p.label}</a>)}
+  <a href="/team">Team</a>
+  <a href="/#feetable">Calculator</a>
+  <div class="nmenu-foot">
+    <a class="nm-tel mono" href={site.phone.href}>{site.phone.display}</a>
+    <a class="nm-cta" href={site.phone.href}>Open an Escrow</a>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    // Overlay nav: solidify after most of the first viewport has scrolled by.
+    var nav = document.getElementById('nav');
+    if (nav && nav.classList.contains('nav--overlay')) {
+      var onScroll = function () {
+        nav.classList.toggle('scrolled', window.scrollY > window.innerHeight * 0.72);
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+    // Full-screen mobile menu toggle.
+    var nb = document.querySelector('.nburger');
+    var nm = document.getElementById('nmenu');
+    if (!nb || !nm) return;
+    nb.addEventListener('click', function () {
+      var open = nm.classList.toggle('open');
+      nb.classList.toggle('open', open);
+      nb.setAttribute('aria-expanded', open ? 'true' : 'false');
+      nb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('mopen', open);
+    });
+    nm.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        nm.classList.remove('open');
+        nb.classList.remove('open');
+        nb.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('mopen');
+      });
+    });
+  })();
+</script>

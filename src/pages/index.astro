@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ShapeSection from '../components/ShapeSection.astro';
+import { Picture, getImage } from 'astro:assets';
+
+import posterImg from '../assets/poster.jpg';
+import famImg from '../assets/home/fam.jpg';
+import lagoonImg from '../assets/home/lagoon.jpg';
+import doorBuyers from '../assets/home/door-buyers.jpg';
+import doorAgents from '../assets/home/door-agents.jpg';
+import doorLenders from '../assets/home/door-lenders.jpg';
+import doorInvestors from '../assets/home/door-investors.jpg';
+
+import '../styles/home.css';
+
+// Optimized poster for the hero video (attribute + CSS background fallback).
+const poster = await getImage({ src: posterImg, format: 'webp', width: 1920 });
+
+const doors = [
+  { href: '/buyers-sellers', img: doorBuyers, n: '01', title: 'Buying or selling', p: 'Plain-language guidance through every signature, deadline, and dollar.' },
+  { href: '/agents', img: doorAgents, n: '02', title: 'Real estate agents', p: 'Proactive status and clean timelines that protect your client relationship.' },
+  { href: '/lenders', img: doorLenders, n: '03', title: 'Lenders & loan officers', p: 'Tiered refi pricing and funding coordination that hits the date.' },
+  { href: '/investors', img: doorInvestors, n: '04', title: 'Investors & specialty', p: '1031, bulk sale, probate, commercial. Bring the hard ones.' },
+];
+---
+
+<BaseLayout
+  title="Alliance Mutual Escrow · Independent, DFPI Licensed"
+  description="Independent escrow for California. Every promise, kept. Funds verified, instructions honored, one licensed officer from open to close."
+  bodyClass="page-home"
+  navVariant="overlay"
+>
+  <header class="hero">
+    <div class="hero-img" style={`--poster: url(${poster.src})`}>
+      <video
+        id="hv"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster={poster.src}
+        src="/media/hero.mp4"></video>
+    </div>
+    <div class="hero-center">
+      <div class="hk">Independent Escrow · Licensed by the DFPI · California</div>
+      <h1 class="serif">Every promise, <i>kept.</i></h1>
+      <p class="hsub">
+        We have kept it for decades. Funds verified, instructions honored, one licensed officer from
+        open to close.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn light" href="tel:7145446525">Open an Escrow</a>
+        <a class="btn glass" href="#feetable">Estimate closing costs</a>
+      </div>
+    </div>
+    <div class="statline">
+      <span><b>75+ yrs<sup>&dagger;</sup></b>combined experience</span>
+      <span><b>4.9 &#9733;<sup>&dagger;</sup></b>Google · live</span>
+      <span><b>100%</b>independent</span>
+    </div>
+  </header>
+
+  <section class="intro">
+    <div class="reveal">
+      <div class="kick">Alliance Mutual Escrow</div>
+      <h2>Escrow is a promise kept precisely.<br /><i>We have kept it for decades.</i></h2>
+      <p>
+        We are independent and licensed by the DFPI. We hold the money, follow the instructions both
+        sides signed, and answer to no bank, broker, or parent company.
+      </p>
+    </div>
+  </section>
+
+  <div class="rows">
+    <div class="rowx reveal">
+      <div class="media">
+        <Picture src={famImg} formats={['avif', 'webp']} widths={[480, 720, 960, 1200]} sizes="(max-width: 1000px) 92vw, 46vw" alt="A family at home after their move" />
+      </div>
+      <div class="body">
+        <h3>One licensed officer.<br /><i>Open to close.</i></h3>
+        <p>
+          No call centers, no queue, no re-explaining your file. The officer who opens your escrow
+          answers your calls, orders what the file needs, and closes on time, so your agent hands
+          over the keys.
+        </p>
+        <div class="pts">
+          <div class="pt"><span class="n">01</span><span><b>Buyers &amp; sellers</b> · <span>plain-language guidance at every signature</span></span></div>
+          <div class="pt"><span class="n">02</span><span><b>Agents</b> · <span>proactive status that protects your client relationship</span></span></div>
+          <div class="pt"><span class="n">03</span><span><b>Lenders</b> · <span>tiered refi pricing, funding that hits the date</span></span></div>
+          <div class="pt"><span class="n">04</span><span><b>Investors</b> · <span>1031, bulk sale, probate, commercial. Bring the hard ones</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rowx flip reveal">
+      <div class="media">
+        <Picture src={lagoonImg} formats={['avif', 'webp']} widths={[480, 720, 960, 1200]} sizes="(max-width: 1000px) 92vw, 46vw" alt="A California neighborhood" />
+      </div>
+      <div class="body">
+        <h3>Our fees are on the table. <i>Literally.</i></h3>
+        <p>
+          Published, current, and computed by the same formulas we bill with: $300 base plus $2.15
+          per thousand. No mystery line items, no call-for-pricing.
+        </p>
+        <div class="feetable" id="feetable" style="margin-top:28px">
+          <div class="ft-head">
+            <button class="ft-tab on" type="button">Buyer</button>
+            <button class="ft-tab" type="button">Seller</button>
+            <button class="ft-tab" type="button">Refinance</button>
+          </div>
+          <div class="ft-row"><span class="l2">Purchase price</span><span class="r2">$1,000,000</span></div>
+          <div class="ft-row"><span class="l2">Escrow fee: $300 + $2.15/K</span><span class="r2" id="cnt1">$2,450</span></div>
+          <div class="ft-row"><span class="l2">Loan processing</span><span class="r2">$500</span></div>
+          <div class="ft-row"><span class="l2">Notary (with loan) · est.</span><span class="r2">$250</span></div>
+          <div class="ft-row total"><span class="l2">Escrow side · buyer</span><span class="r2" id="cnt2">$3,200</span></div>
+          <div class="ft-note">Illustrative, using real published rates. Third-party costs itemized in the full calculator.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ShapeSection />
+
+  <section class="doors-wrap" id="services">
+    <div class="center-head reveal">
+      <div class="kick">Who we serve</div>
+      <h2>Escrow for <i>everyone at the table.</i></h2>
+    </div>
+    <div class="doors">
+      {doors.map((d) => (
+        <a class="door reveal" href={d.href}>
+          <Picture src={d.img} formats={['avif', 'webp']} widths={[360, 520, 720]} sizes="(max-width: 600px) 92vw, (max-width: 1000px) 46vw, 23vw" alt="" />
+          <span class="arr2">&rarr;</span>
+          <span class="dl">
+            <span class="mono">{d.n}</span>
+            <h3>{d.title}</h3>
+            <p>{d.p}</p>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="statement" id="stband">
+    <video id="stvid" muted loop playsinline preload="none" src="/media/statement.mp4"></video>
+    <div class="serif reveal">&ldquo;Every escrow closes twice: once on paper, <i>once in someone's life.</i>&rdquo;</div>
+    <div class="who reveal" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:26px">The standard we work to</div>
+    <div class="proofline reveal">
+      <div class="pf"><b>75+ yrs<sup>&dagger;</sup></b><span>combined experience</span></div>
+      <div class="pf"><b>4.9 &#9733;<sup>&dagger;</sup></b><span>Google · live</span></div>
+      <div class="pf"><b>0</b><span>call centers, ever</span></div>
+      <div class="pf"><b>100%</b><span>independent</span></div>
+    </div>
+  </section>
+
+  <section class="steps-wrap">
+    <div class="reveal" style="text-align:center">
+      <div class="kick">The shape of a closing</div>
+      <h2 class="serif" style="font-size:clamp(30px,3.4vw,46px);line-height:1.12">Always know where your escrow stands.</h2>
+    </div>
+    <div class="inst2" id="inst2">
+      <div class="i2-head"><span class="i2dot"></span><span class="i2t">Escrow &#8470; 24-118</span><span class="i2d mono">DAY <b id="i2day">1</b> / 30</span></div>
+      <div class="i2-prog"><i id="i2prog"></i></div>
+      <div class="i2-body" id="i2body">
+        <div class="i2m" data-d="1"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">Escrow opened &amp; receipted</span><span class="w mono">DAY 1</span></div>
+        <div class="i2m" data-d="3"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">Earnest money verified</span><span class="w mono">DAY 3</span></div>
+        <div class="i2m" data-d="5"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">Title search ordered</span><span class="w mono">DAY 5</span></div>
+        <div class="i2m" data-d="12"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">HOA demands received</span><span class="w mono">DAY 12</span></div>
+        <div class="i2m" data-d="21"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">Loan documents signed</span><span class="w mono">DAY 21</span></div>
+        <div class="i2m" data-d="27"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">Lender funds confirmed</span><span class="w mono">DAY 27</span></div>
+        <div class="i2m" data-d="30"><span class="ic2"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" /></svg></span><span class="l">Recorded · County of Orange</span><span class="w mono">DAY 30</span></div>
+      </div>
+      <div class="i2-foot">A 30-day file, replayed. Yours gets a live version.</div>
+    </div>
+  </section>
+
+  <section class="close">
+    <div class="close-in">
+      <div>
+        <h2>Independent, <i>by design.</i></h2>
+        <p>Not broker-owned. Not bank-owned. A neutrality you can verify, and a licensed officer you can actually call.</p>
+      </div>
+      <a class="btn light" href="tel:7145446525">Talk to an officer</a>
+    </div>
+  </section>
+
+  <p class="note">
+    <b>&dagger;</b> The 75+ years and 4.9 star figures are placeholders until you confirm the real
+    numbers. All imagery is licensed stock. All copy is fresh.
+  </p>
+
+  <script>
+    import '../scripts/home-motion';
+  </script>
+</BaseLayout>

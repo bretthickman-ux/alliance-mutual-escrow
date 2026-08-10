@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HBand from '../components/HBand.astro';
+import lendersImg from '../assets/doors/lenders.jpg';
+import '../styles/interior.css';
+---
+
+<BaseLayout
+  title="For Lenders & Loan Officers · Alliance Mutual Escrow"
+  description="A refinance desk that hits the date: published flat tiers, clean conditions, and funding confirmations you never have to chase."
+  bodyClass="page-interior"
+  navVariant="solid"
+  navMax={1080}
+>
+  <header class="hero">
+    <div class="kick">For lenders &amp; loan officers</div>
+    <h1>Funding that <i>hits the date.</i></h1>
+    <p class="sub">
+      Rate locks do not wait. Our refinance desk runs on published flat tiers, clean conditions, and
+      confirmation calls you never have to make twice.
+    </p>
+  </header>
+
+  <HBand image={lendersImg} tag="Precision, from above" />
+
+  <div class="wrap">
+    <main>
+      <h2>How we run a refinance</h2>
+      <p>
+        Your borrower gets a named officer and a timeline on day one. Payoff demands are ordered
+        immediately, conditions are tracked in the open, and signing is scheduled around your docs,
+        not around us. When funds land, you get the confirmation without asking.
+      </p>
+
+      <div class="flow">
+        <div class="fs"><span class="dot"></span><span>Docs in</span></div><span class="fl"></span>
+        <div class="fs"><span class="dot"></span><span>Conditions cleared</span></div><span class="fl"></span>
+        <div class="fs"><span class="dot"></span><span>Balanced</span></div><span class="fl"></span>
+        <div class="fs"><span class="dot"></span><span>Funded</span></div><span class="fl"></span>
+        <div class="fs"><span class="dot"></span><span>Recorded</span></div>
+      </div>
+
+      <h2>Published refinance pricing</h2>
+      <p>
+        Single family residence tiers, flat, no per-thousand drift: <b>$650</b> up to $750,000,
+        <b>$850</b> to $1,000,000, <b>$1,200</b> to $2,000,000, and above that we quote the file.
+        Processing is $200. Multi-family and commercial refinance runs $95 base plus $0.95 per
+        $1,000 with a $500,000 minimum.
+      </p>
+
+      <h2>Frequently asked</h2>
+      <div class="faq">
+        <div class="fq">
+          <h3>Can you keep a tight lock window?</h3>
+          <p>
+            Tell us the expiration when you open the file. The timeline is built backward from your
+            lock, and signing and funding are coordinated to it.
+          </p>
+        </div>
+        <div class="fq">
+          <h3>How are payoffs handled?</h3>
+          <p>Ordered at open, verified line by line, updated before funding. Demand processing is a published $30 per payoff.</p>
+        </div>
+        <div class="fq">
+          <h3>Subordinations and HELOCs?</h3>
+          <p>Handled routinely: subordination agreements at a published $50, second or HELOC-only escrows at $250.</p>
+        </div>
+      </div>
+    </main>
+
+    <aside class="aside">
+      <div class="card">
+        <div class="ch">SFR refinance tiers</div>
+        <div class="fr"><span class="k">Up to $750,000</span><span class="v">$650</span></div>
+        <div class="fr"><span class="k">$750,001 to $1,000,000</span><span class="v">$850</span></div>
+        <div class="fr"><span class="k">$1,000,001 to $2,000,000</span><span class="v">$1,200</span></div>
+        <div class="fr"><span class="k">Over $2,000,000</span><span class="v">QUOTE</span></div>
+        <div class="fr tot"><span class="k">Processing</span><span class="v">$200</span></div>
+        <div class="cn">Multi-family and commercial: $95 base plus $0.95 per $1,000, minimum $500,000 loan.</div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="cta">
+    <div class="cta-in">
+      <h2>Your next funding, <i>on the date.</i></h2>
+      <a class="btn" href="tel:7145446525">Talk to a licensed officer</a>
+    </div>
+  </section>
+
+  <p class="note">
+    Sample page for design review. Copy is draft, written fresh; figures are from the published fee
+    schedule. Third-party costs are estimates from providers you choose.
+  </p>
+
+  <script>
+    import '../scripts/interior-motion';
+  </script>
+</BaseLayout>

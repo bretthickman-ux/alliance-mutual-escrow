@@ -1,0 +1,21 @@
+---
+// The Shape of a Closing, presented with no player chrome. The island hydrates
+// only when scrolled into view (client:visible) and pauses itself off screen.
+// Its background is set to the section's --shape-bg token value so the piece is
+// seamless by construction: no frame, no shadow, no visible boundary.
+import ShapeOfClosing from './shape/ShapeOfClosing.jsx';
+
+const SHAPE_BG = '#f7f6f2'; // === var(--shape-bg)
+---
+
+<section class="dshape" id="story">
+  <div class="ds-sticky">
+    <div class="ds-head">
+      <div class="ds-kick">The shape of a closing</div>
+      <h2 class="serif">Watch a 30-day escrow, <i>start to finish.</i></h2>
+    </div>
+    <div class="anim-frame">
+      <ShapeOfClosing client:visible background={SHAPE_BG} accent="#b97a3a" county="Orange" />
+    </div>
+  </div>
+</section>

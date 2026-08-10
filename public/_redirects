@@ -1,10 +1,7 @@
-# Cloudflare Pages redirects.
-# The full redirect map from the old alliancemutualescrow.com URLs lands in
-# Phase 3 (HANDOFF section 8, item 6). These are the safe canonical tidy-ups.
-
-/index.html            /                 301
-/buyers-sellers.html   /buyers-sellers   301
-/agents.html           /agents           301
-/lenders.html          /lenders          301
-/investors.html        /investors        301
-/team.html             /team             301
+# Old-site URL inventory (alliancemutualescrow.com sitemap, captured
+# 2026-08-10) mapped to their new homes. Cloudflare Pages serves these
+# as 301s once the domain cuts over.
+/what-we-do    /services        301
+/why-we-do-it  /                301
+/our-team      /team            301
+/contact       /open-an-escrow  301

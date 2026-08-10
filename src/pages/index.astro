@@ -2,7 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShapeSection from '../components/ShapeSection.astro';
 import EscrowCalculator from '../components/calculator/EscrowCalculator.jsx';
-import { Picture, getImage } from 'astro:assets';
+import { Picture, getImage } from "astro:assets";
+import { roster } from "../data/roster";
 
 import posterImg from '../assets/poster.jpg';
 import famImg from '../assets/home/fam.jpg';
@@ -57,8 +58,8 @@ const doors = [
       </div>
     </div>
     <div class="statline">
-      <span><b>75+ yrs<sup>&dagger;</sup></b>combined experience</span>
-      <span><b>4.9 &#9733;<sup>&dagger;</sup></b>Google · live</span>
+      <span><b>4.9 &#9733;</b>Google reviews</span>
+      <span><b>{roster.length}</b>named officers &amp; staff</span>
       <span><b>100%</b>independent</span>
     </div>
   </header>
@@ -144,8 +145,8 @@ const doors = [
     <div class="serif reveal">&ldquo;Every escrow closes twice: once on paper, <i>once in someone's life.</i>&rdquo;</div>
     <div class="who reveal" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:26px">The standard we work to</div>
     <div class="proofline reveal">
-      <div class="pf"><b>75+ yrs<sup>&dagger;</sup></b><span>combined experience</span></div>
-      <div class="pf"><b>4.9 &#9733;<sup>&dagger;</sup></b><span>Google · live</span></div>
+      <div class="pf"><b>4.9 &#9733;</b><span>Google reviews</span></div>
+      <div class="pf"><b>{roster.length}</b><span>named officers &amp; staff</span></div>
       <div class="pf"><b>0</b><span>call centers, ever</span></div>
       <div class="pf"><b>100%</b><span>independent</span></div>
     </div>

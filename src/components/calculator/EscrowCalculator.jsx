@@ -58,10 +58,10 @@ function buyerLines(price, withLoan, addons) {
   return { lines, total: lines.reduce((s, x) => s + x.amount, 0) };
 }
 
-function sellerLines(price, payoffs, hoas, addons) {
-  // Add-ons default off: accurate default line items come from a real closing
-  // cost sheet (open item with Laura), and nothing beyond the schedule is
-  // invented in the meantime.
+function sellerLines(price, payoffs, hoas, addons, commissionPct, payoffAmount) {
+  // AME's own fees (add-ons default off: accurate defaults come from a real
+  // closing cost sheet, an open item with Laura; nothing beyond the schedule is
+  // invented in the meantime).
   const lines = [
     { l: `Escrow fee: ${saleFeeLabel(price)}`, amount: saleFee(price) },
   ];
@@ -71,7 +71,20 @@ function sellerLines(price, payoffs, hoas, addons) {
   if (addons.taxForm) lines.push({ l: 'Tax form processing', amount: 50 });
   if (addons.archive) lines.push({ l: 'Archive fee', amount: 50 });
   if (addons.solar) lines.push({ l: 'Solar transfer, your side', amount: 100 });
-  return { lines, total: lines.reduce((s, x) => s + x.amount, 0) };
+  const total = lines.reduce((s, x) => s + x.amount, 0);
+
+  // Other typical seller costs. Transfer tax is statutory (R&T 11911), the
+  // commission is the seller's own number, and the payoff is their loan.
+  // Nothing here is an AME fee; it feeds the net proceeds picture.
+  const others = [
+    { l: fees.countyTransferTax.label, amount: Math.round((price / 1000) * fees.countyTransferTax.perThousand) },
+  ];
+  if (commissionPct > 0) others.push({ l: `Agent commission at ${commissionPct}%`, amount: Math.round(price * (commissionPct / 100)) });
+  if (payoffAmount > 0) others.push({ l: 'Loan payoff (your estimate)', amount: payoffAmount });
+  const othersTotal = others.reduce((s, x) => s + x.amount, 0);
+  const net = Math.max(0, price - total - othersTotal);
+
+  return { lines, total, others, net };
 }
 
 function refiLines(loan, kind, addons) {
@@ -151,6 +164,8 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
   const [payoffs, setPayoffs] = React.useState(0);
   const [hoas, setHoas] = React.useState(0);
   const [refiKind, setRefiKind] = React.useState('sfr');
+  const [commissionPct, setCommissionPct] = React.useState(0);
+  const [payoffRaw, setPayoffRaw] = React.useState('');
   const [addons, setAddons] = React.useState({
     solar: false, x1031: false, subordination: false, heloc: false,
     grantDeed: false, taxForm: false, archive: false,
@@ -168,10 +183,11 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
   const inputError = parsed.error || validatePrice(parsed.value, what);
   const amount = inputError ? null : parsed.value;
 
+  const payoffAmount = parseAmount(payoffRaw).value ?? 0;
   let result = null;
   if (amount !== null) {
     if (mode === 'buyer') result = buyerLines(amount, withLoan, addons);
-    else if (mode === 'seller') result = sellerLines(amount, payoffs, hoas, addons);
+    else if (mode === 'seller') result = sellerLines(amount, payoffs, hoas, addons, commissionPct, payoffAmount);
     else result = refiLines(amount, refiKind, addons);
   }
 
@@ -181,7 +197,10 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
   const sliderCfg = isRefi ? SLIDER.refi : SLIDER.sale;
   const sliderValue = amount !== null ? Math.max(sliderCfg.min, Math.min(sliderCfg.max, amount)) : sliderCfg.min;
   const sliderFill = ((sliderValue - sliderCfg.min) / (sliderCfg.max - sliderCfg.min)) * 100;
-  const animatedTotal = useAnimatedNumber(result?.total ?? 0);
+  // Sellers care about what they walk away with; everyone else about the fee.
+  const heroValue = mode === 'seller' && result ? result.net : result?.total ?? 0;
+  const heroLabel = mode === 'seller' ? 'Estimated net proceeds' : sideLabel;
+  const animatedTotal = useAnimatedNumber(heroValue);
 
   function shareUrl() {
     const u = new URL('/calculator', window.location.origin);
@@ -321,6 +340,24 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
             <button type="button" className="ec-opt" aria-pressed={addons.solar} onClick={() => toggle('solar')}>
               <span className="dot"></span> Solar transfer ($100)
             </button>
+            <span className="ec-count" role="group" aria-label="Agent commission percent">
+              <button type="button" aria-label="Lower commission" onClick={() => setCommissionPct(Math.max(0, Math.round((commissionPct - 0.5) * 2) / 2))}>&minus;</button>
+              <span aria-live="polite">{commissionPct}%</span>
+              <button type="button" aria-label="Higher commission" onClick={() => setCommissionPct(Math.min(6, Math.round((commissionPct + 0.5) * 2) / 2))}>+</button>
+              <span className="ec-count-label">commission</span>
+            </span>
+            <span className="ec-in" style={{ flex: '1 1 150px', minWidth: 150 }}>
+              <span className="cur" aria-hidden="true">$</span>
+              <input
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="loan payoff"
+                aria-label="Estimated loan payoff"
+                value={payoffRaw}
+                onChange={(e) => setPayoffRaw(e.target.value)}
+                onBlur={() => { const v = parseAmount(payoffRaw).value; if (v !== null) setPayoffRaw(fmtInput(v)); }}
+              />
+            </span>
           </div>
         )}
 
@@ -360,8 +397,22 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
                 <span className="r">{usd(x.amount)}</span>
               </div>
             ))}
+            {mode === 'seller' && (
+              <>
+                <div className="ec-row" style={{ animationDelay: '90ms' }}>
+                  <span className="l" style={{ fontWeight: 600, color: 'var(--ink)' }}>Escrow side, seller</span>
+                  <span className="r">{usd(result.total)}</span>
+                </div>
+                {result.others.map((x, i) => (
+                  <div className="ec-row" key={x.l} style={{ animationDelay: (i + 3) * 45 + 'ms' }}>
+                    <span className="l">{x.l}</span>
+                    <span className="r">{usd(x.amount)}</span>
+                  </div>
+                ))}
+              </>
+            )}
             <div className="ec-hero">
-              <span className="lbl">{sideLabel}</span>
+              <span className="lbl">{heroLabel}</span>
               <span className="amt" aria-live="polite"><span className="c">$</span>{animatedTotal.toLocaleString('en-US')}</span>
             </div>
           </>
@@ -396,7 +447,11 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
       <div className="ec-note">
         {compact
           ? fees.conciergeNote
-          : `Escrow fees only. Title, recording, and lender charges come from third parties and appear on your closing statement. ${fees.conciergeNote}`}
+          : mode === 'seller'
+            ? `${fees.titleNotes.seller} City transfer taxes vary by city; your officer confirms both. ${fees.conciergeNote}`
+            : mode === 'buyer'
+              ? `${fees.titleNotes.buyer} Recording and lender charges appear on your closing statement. ${fees.conciergeNote}`
+              : `Escrow fees only. Title, recording, and lender charges come from third parties and appear on your closing statement. ${fees.conciergeNote}`}
       </div>
     </div>
   );

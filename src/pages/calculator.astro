@@ -27,22 +27,42 @@ import '../styles/calc.css';
   </div>
 
   <div class="calc-below">
-    <h2>The whole schedule, published</h2>
-    <p>
-      Sale escrow is $300 base plus $2.15 per $1,000 of the price for each side, and $1.75 per
-      $1,000 past two million. Single family refinance is one flat fee set by loan size: $650 to
-      $750,000, $850 to $1,000,000, $1,200 to $2,000,000, quoted above that, plus $200 processing.
-      Multi-family and commercial refinance is {fees.commercialRefinance.label} with a $500,000
-      loan minimum. Published add-ons: 1031 processing $250, subordination $50, solar transfer $100
-      per side, doc prep $50 each, demand processing $30 per payoff, payoff of bills $10 each, HELOC
-      or second-only escrow $250.
-    </p>
-    <h2>What this does not include</h2>
-    <p>
-      Title insurance, recording charges, lender fees, and county transfer taxes are set by third
-      parties and your county. Your officer itemizes them on your file. Nothing here is hidden;
-      there is just more than one company at the table.
-    </p>
+    <div class="sched">
+      <div class="card">
+        <div class="ch">Sale escrow, each side</div>
+        <div class="fr"><span class="k">Base</span><span class="v">$300</span></div>
+        <div class="fr"><span class="k">Per $1,000 of the price</span><span class="v">$2.15</span></div>
+        <div class="fr"><span class="k">Per $1,000 past $2,000,000</span><span class="v">$1.75</span></div>
+        <div class="fr tot"><span class="k">Example at $1,000,000</span><span class="v">$2,450</span></div>
+      </div>
+      <div class="card">
+        <div class="ch">Refinance, one flat fee by loan size</div>
+        <div class="fr"><span class="k">Up to $750,000</span><span class="v">$650</span></div>
+        <div class="fr"><span class="k">To $1,000,000</span><span class="v">$850</span></div>
+        <div class="fr"><span class="k">To $2,000,000</span><span class="v">$1,200</span></div>
+        <div class="fr"><span class="k">Over $2,000,000</span><span class="v">QUOTE</span></div>
+        <div class="fr tot"><span class="k">Processing</span><span class="v">$200</span></div>
+      </div>
+      <div class="card">
+        <div class="ch">Add-ons, published</div>
+        <div class="fr"><span class="k">1031 processing</span><span class="v">$250</span></div>
+        <div class="fr"><span class="k">HELOC or second-only escrow</span><span class="v">$250</span></div>
+        <div class="fr"><span class="k">Solar transfer, per side</span><span class="v">$100</span></div>
+        <div class="fr"><span class="k">Subordination · doc prep · grant deed · tax form · archive · HOA</span><span class="v">$50</span></div>
+        <div class="fr"><span class="k">Demand processing, per payoff</span><span class="v">$30</span></div>
+        <div class="fr"><span class="k">Payoff of bills, each</span><span class="v">$10</span></div>
+      </div>
+      <div class="card">
+        <div class="ch">Multi-family &amp; commercial refinance</div>
+        <div class="fr"><span class="k">Base</span><span class="v">$95</span></div>
+        <div class="fr"><span class="k">Per $1,000 of the loan</span><span class="v">$0.95</span></div>
+        <div class="fr tot"><span class="k">Loan minimum</span><span class="v">$500,000</span></div>
+        <div class="cn">
+          Title insurance, recording, and transfer taxes come from third parties and your county;
+          your officer itemizes them on your file.
+        </div>
+      </div>
+    </div>
   </div>
 
   <section class="cta">

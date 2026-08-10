@@ -21,6 +21,19 @@ export const fees = {
   /** Owner-supplied line, approved for visitor copy (Review Board round 2). */
   conciergeNote: 'Our concierge service often covers the cost of the notary.',
 
+  /** California documentary transfer tax, R&T Code 11911: $1.10 per $1,000 of
+      the price, statutory and statewide at the county level (some cities add
+      their own). Typically a seller cost per Laura's guidance. Not an AME fee. */
+  countyTransferTax: { perThousand: 1.1, label: 'County transfer tax, $1.10 per $1,000' },
+
+  /** Who-pays conventions from Laura (2026-08-06): owner's title policy is
+      typically the seller's cost; the loan policy is the buyer's. Premiums are
+      quoted by the title company, never estimated here. */
+  titleNotes: {
+    seller: "Owner's title policy: seller's cost, quoted by the title company.",
+    buyer: "Loan title policy: buyer's cost, quoted by the title company.",
+  },
+
   /** Labeled estimates, never billed as-is; third parties set the final number.
       The owner cut notary from the homepage example; it stays out of calculator
       defaults (accurate defaults await Laura's closing cost sheet). */

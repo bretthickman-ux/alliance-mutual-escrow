@@ -90,30 +90,35 @@ function cameraAt(T, M, CUES) {
   const s = interpolate(tt, [1.0, 1.02, 1.36, 1.42, 1.34, 1.34, 1.2, 1.34, 1.38, 1.22, 1.42, 1.38, 1.02, 1.06, 1.08], Easing.easeInOutSine)(T);
   return { fx, fy, s };
 }
-const camCSS = (fx, fy, s) => `translate3d(${800 - fx * s}px, ${340 - fy * s}px, 0) scale(${s})`;
+// Stage is 1600x760 (taller than the standalone bundle's 680): the extra rows
+// give the bottom band room so the ruler, milestone callouts, and the centered
+// Happening Now line never overlap.
+const camCSS = (fx, fy, s) => `translate3d(${800 - fx * s}px, ${380 - fy * s}px, 0) scale(${s})`;
 
 function NowCard({ T, M, accent }) {
+  // Centered under the key, per the owner pass: the live status is the piece's
+  // narration and reads like a caption, not a footnote.
   const head = MOTION.enter(T, M.open - 1.2, 0.9, 14);
   const gone = MOTION.draw(T, M.keys + 1.2, 0.5);
   const dotP = 1 + 0.22 * Math.sin(T * 3.4);
   return (
-    <div style={{ position: 'absolute', left: 96, top: 540, width: 740, opacity: head.opacity * (1 - gone), transform: head.transform }}>
-      <div style={{ position: 'absolute', left: -140, top: -10, right: -46, bottom: -24, background: '#f7f6f2', boxShadow: '0 0 20px 14px rgba(247,246,242,0.97)', borderRadius: 10 }}></div>
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 11 }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: 648, textAlign: 'center', opacity: head.opacity * (1 - gone), transform: head.transform }}>
+      <div style={{ position: 'absolute', left: 260, top: -14, right: 260, bottom: -18, background: '#f7f6f2', boxShadow: '0 0 24px 18px rgba(247,246,242,0.97)', borderRadius: 12 }}></div>
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 11 }}>
         <div style={{ position: 'relative', width: 11, height: 11 }}>
           <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: accent, transform: `scale(${dotP})` }}></div>
           <div style={{ position: 'absolute', inset: -6, borderRadius: '50%', border: `1px solid ${accent}`, opacity: 0.35 + 0.3 * Math.sin(T * 3.4) }}></div>
         </div>
         <div style={{ fontFamily: MONO, fontSize: 14, letterSpacing: '0.36em', color: 'rgba(15,18,21,0.7)' }}>HAPPENING NOW</div>
       </div>
-      <div style={{ position: 'relative', height: 84, marginTop: 12 }}>
+      <div style={{ position: 'relative', height: 56, marginTop: 10 }}>
         {M.NOW.map((it, i) => {
           const end = i < M.NOW.length - 1 ? M.NOW[i + 1].t : M.keys + 1.2;
           const inP = MOTION.enter(T, it.t + 0.35, 0.55, 16);
           const outP = MOTION.draw(T, end, 0.28);
           return (
             <div key={i} style={{ position: 'absolute', inset: 0, opacity: inP.opacity * (1 - outP), transform: `translateY(${(1 - inP.p) * 16 - outP * 12}px)` }}>
-              <div style={{ fontFamily: SERIF, fontSize: 30, lineHeight: 1.12, color: INK }}>{it.s}</div>
+              <div style={{ fontFamily: SERIF, fontSize: 35, lineHeight: 1.1, color: INK }}>{it.s}</div>
             </div>
           );
         })}
@@ -174,12 +179,12 @@ function Annotations({ T, M, df, accent }) {
       })}
       {M.MS.map((ms, i) => {
         const x = clamp(dayX(ms.day), 460, 1520);
-        const yl = [534, 562, 590][ms.lv] || 534;
+        const yl = [560, 590, 620][ms.lv] || 560;
         const line = MOTION.draw(T, ms.t + 0.1, 0.45);
         const tx = MOTION.pop(T, ms.t + 0.3, 0.6);
         const flash = pulse(T, ms.t + 0.25, 1.4);
         const nxt = M.MS[i + 1];
-        const out = nxt ? 0.82 * MOTION.draw(T, nxt.t + 0.3, 0.5) : 0;
+        const out = nxt ? MOTION.draw(T, nxt.t + 0.3, 0.5) : 0;
         return (
           <g key={ms.day} opacity={1 - out}>
             <line x1={x} y1={502} x2={x} y2={502 + (yl - 516) * line} stroke={INK} strokeWidth="1" opacity="0.4" />
@@ -300,9 +305,9 @@ function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = "#b97a3a", coun
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: paper, color: INK, fontFamily: UIF }}>
       <div style={{ position: 'absolute', inset: 0, transform: camCSS(fx2, fy2, s2), transformOrigin: '0 0' }}>
-        <div style={{ position: 'absolute', left: 320, top: 170, width: 700, height: 660, WebkitMaskImage: numMask, maskImage: numMask }}>
-          <div style={{ position: 'absolute', inset: 0, fontFamily: SERIF, fontSize: 520, lineHeight: '660px', textAlign: 'center', color: '#b08d3f', opacity: numO * (1 - numRoll) }}>{shown}</div>
-          <div style={{ position: 'absolute', inset: 0, fontFamily: SERIF, fontSize: 520, lineHeight: '660px', textAlign: 'center', color: '#b08d3f', opacity: numO * numRoll }}>{Math.min(shown + 1, 30)}</div>
+        <div style={{ position: 'absolute', left: 450, top: 96, width: 700, height: 560, WebkitMaskImage: numMask, maskImage: numMask }}>
+          <div style={{ position: 'absolute', inset: 0, fontFamily: SERIF, fontSize: 460, lineHeight: '560px', textAlign: 'center', color: '#b08d3f', opacity: numO * (1 - numRoll) }}>{shown}</div>
+          <div style={{ position: 'absolute', inset: 0, fontFamily: SERIF, fontSize: 460, lineHeight: '560px', textAlign: 'center', color: '#b08d3f', opacity: numO * numRoll }}>{Math.min(shown + 1, 30)}</div>
         </div>
       </div>
       <div style={{ position: 'absolute', inset: 0, transform: camCSS(fx, fy, s), transformOrigin: '0 0' }}>
@@ -326,7 +331,7 @@ function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = "#b97a3a", coun
    Runs a rAF loop only while the piece is on screen. Plays 0 -> total, holds
    `HOLD` seconds on the finished key, then loops. Reduced motion shows the
    final frame and never starts the loop. Background comes from the token. */
-const STAGE_W = 1600, STAGE_H = 680;
+const STAGE_W = 1600, STAGE_H = 760;
 
 export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a3a", county = "Orange" }) {
   const { CUES, authoredTotal } = React.useMemo(() => derive(), []);

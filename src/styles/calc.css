@@ -115,3 +115,8 @@
   .ec { box-shadow: none; border-color: #999; }
   body { background: #fff; }
 }
+
+/* Published schedule grid on /calculator (replaces the prose block). */
+.sched { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 26px; }
+.sched .cn { padding: 10px 20px 14px; font-size: 11px; color: var(--faint); }
+@media (max-width: 760px) { .sched { grid-template-columns: 1fr; } }

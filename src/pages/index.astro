@@ -19,6 +19,24 @@ import '../styles/calc.css';
 // Optimized poster for the hero video (attribute + CSS background fallback).
 const poster = await getImage({ src: posterImg, format: 'webp', width: 1920 });
 
+// Live Google review stats, fetched at build from our own KV-cached endpoint
+// (never Google directly, never hardcoded). If unreachable (first-ever build,
+// local dev), the count is omitted and the band shows the rating line alone.
+let reviewStats: { rating: number | null; count: number | null } = { rating: null, count: null };
+try {
+  const res = await fetch('https://alliance-mutual-escrow.pages.dev/api/reviews', {
+    signal: AbortSignal.timeout(4000),
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.rating) reviewStats = { rating: data.rating, count: data.count };
+  }
+} catch {
+  /* band falls back below */
+}
+const ratingText = reviewStats.rating ? reviewStats.rating.toFixed(1) : '4.9';
+const reviewsLabel = reviewStats.count ? `${reviewStats.count} Google reviews` : 'Google reviews';
+
 const doors = [
   { href: '/buyers-sellers', img: doorBuyers, n: '01', title: 'Buying or selling', p: 'Plain-language guidance through every signature, deadline, and dollar.' },
   { href: '/agents', img: doorAgents, n: '02', title: 'Real estate agents', p: 'Proactive status and clean timelines that protect your client relationship.' },
@@ -58,8 +76,8 @@ const doors = [
       </div>
     </div>
     <div class="statline">
-      <span><b>4.9 &#9733;</b>Google reviews</span>
-      <span><b>{roster.length}</b>named officers &amp; staff</span>
+      <span><b>{ratingText} &#9733;</b>{reviewsLabel}</span>
+      <span><b>{roster.length}</b>named officers</span>
       <span><b>100%</b>independent</span>
     </div>
   </header>
@@ -145,10 +163,10 @@ const doors = [
     <div class="serif reveal">&ldquo;Every escrow closes twice: once on paper, <i>once in someone's life.</i>&rdquo;</div>
     <div class="who reveal" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:26px">The standard we work to</div>
     <div class="proofline reveal">
-      <div class="pf"><b>4.9 &#9733;</b><span>Google reviews</span></div>
+      <div class="pf"><b>{ratingText} &#9733;</b><span>{reviewsLabel}</span></div>
       <div class="pf"><b>{roster.length}</b><span>named officers &amp; staff</span></div>
       <div class="pf"><b>0</b><span>call centers, ever</span></div>
-      <div class="pf"><b>100%</b><span>independent</span></div>
+      <div class="pf"><b>100%</b><span>independent, never bank or broker owned</span></div>
     </div>
   </section>
 

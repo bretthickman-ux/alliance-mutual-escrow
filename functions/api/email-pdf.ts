@@ -42,14 +42,32 @@ const nullProvider: EmailProvider = {
   },
 };
 
-// Future providers plug in here, selected by env.EMAIL_PROVIDER:
-//   resend    -> https://api.resend.com/emails      (env.RESEND_API_KEY)
-//   postmark  -> https://api.postmarkapp.com/email  (env.POSTMARK_TOKEN)
+/** Resend (https://resend.com): HTTPS API, the right fit for Pages Functions
+    (no SMTP available at the edge). Sender falls back to Resend's onboarding
+    address until the ameescrow.com domain is verified. */
+function resendProvider(env: Record<string, unknown>): EmailProvider {
+  return {
+    name: 'resend',
+    async send(msg) {
+      const from = (env.EMAIL_FROM as string) || 'Alliance Mutual Escrow <onboarding@resend.dev>';
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ from, to: [msg.to], subject: msg.subject, text: msg.text }),
+      });
+      if (!res.ok) throw new Error('Resend ' + res.status);
+      return { queued: true };
+    },
+  };
+}
+
+// Providers are selected by env.EMAIL_PROVIDER; adding one never touches the client.
 function providerFor(env: Record<string, unknown>): EmailProvider {
-  switch (env.EMAIL_PROVIDER) {
-    default:
-      return nullProvider;
-  }
+  if (env.EMAIL_PROVIDER === 'resend' && env.RESEND_API_KEY) return resendProvider(env);
+  return nullProvider;
 }
 
 const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');

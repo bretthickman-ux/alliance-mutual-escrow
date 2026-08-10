@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /team-b
 
 Sitemap: https://alliance-mutual-escrow.pages.dev/sitemap-index.xml

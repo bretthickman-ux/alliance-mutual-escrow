@@ -10,6 +10,7 @@ import React from 'react';
 import {
   fees,
   saleFee,
+  saleFeeLabel,
   sfrRefinanceFee,
   commercialRefinanceFee,
   usd,
@@ -44,33 +45,39 @@ function fmtInput(value) {
 /* ── line builders: each returns { lines: [{l, r, amount}], total, quote } ── */
 
 function buyerLines(price, withLoan, addons) {
+  // Notary is deliberately absent: the owner cut it from the example, and the
+  // concierge service often covers it (the note below the lines says so).
   const lines = [
-    { l: `Escrow fee: ${fees.sale.label}`, amount: saleFee(price) },
+    { l: `Escrow fee: ${saleFeeLabel(price)}`, amount: saleFee(price) },
   ];
   if (withLoan) {
     lines.push({ l: 'Loan processing', amount: fees.sale.loanProcessing });
-    lines.push({ l: 'Notary (with loan), estimate', amount: fees.estimates.notaryWithLoan });
   }
   if (addons.solar) lines.push({ l: 'Solar transfer, your side', amount: 100 });
   if (addons.x1031) lines.push({ l: '1031 exchange processing', amount: 250 });
   return { lines, total: lines.reduce((s, x) => s + x.amount, 0) };
 }
 
-function sellerLines(price, payoffs, docPrep, addons) {
+function sellerLines(price, payoffs, hoas, addons) {
+  // Add-ons default off: accurate default line items come from a real closing
+  // cost sheet (open item with Laura), and nothing beyond the schedule is
+  // invented in the meantime.
   const lines = [
-    { l: `Escrow fee: ${fees.sale.label}`, amount: saleFee(price) },
+    { l: `Escrow fee: ${saleFeeLabel(price)}`, amount: saleFee(price) },
   ];
   if (payoffs > 0) lines.push({ l: `Demand processing, ${payoffs} payoff${payoffs > 1 ? 's' : ''} at $30`, amount: payoffs * 30 });
-  if (docPrep > 0) lines.push({ l: `Document prep (grant deed${docPrep > 1 ? ' + more' : ''}), ${docPrep} at $50`, amount: docPrep * 50 });
+  if (hoas > 0) lines.push({ l: `HOA processing, ${hoas} association${hoas > 1 ? 's' : ''} at $50`, amount: hoas * 50 });
+  if (addons.grantDeed) lines.push({ l: 'Grant deed processing', amount: 50 });
+  if (addons.taxForm) lines.push({ l: 'Tax form processing', amount: 50 });
+  if (addons.archive) lines.push({ l: 'Archive fee', amount: 50 });
   if (addons.solar) lines.push({ l: 'Solar transfer, your side', amount: 100 });
-  if (addons.x1031) lines.push({ l: '1031 exchange processing', amount: 250 });
   return { lines, total: lines.reduce((s, x) => s + x.amount, 0) };
 }
 
 function refiLines(loan, kind, addons) {
   if (kind === 'commercial') {
     if (loan < fees.commercialRefinance.minLoan) {
-      return { minError: `Multi-family and commercial refinance starts at a ${usd(fees.commercialRefinance.minLoan)} loan. For smaller loans, use the single family tiers or call ${PHONE_DISPLAY}.` };
+      return { minError: `Multi-family and commercial refinance starts at a ${usd(fees.commercialRefinance.minLoan)} loan. For smaller loans, use the single family pricing or call ${PHONE_DISPLAY}.` };
     }
     const lines = [{ l: `Escrow fee: ${fees.commercialRefinance.label}`, amount: commercialRefinanceFee(loan) }];
     if (addons.subordination) lines.push({ l: 'Subordination agreement', amount: 50 });
@@ -82,13 +89,48 @@ function refiLines(loan, kind, addons) {
   }
   const tier = fees.sfrRefinance.tiers.find((t) => t.flat === flat);
   const lines = [
-    { l: `Escrow fee, flat tier (${tier.label.toLowerCase()})`, amount: flat },
+    { l: `Escrow fee, one flat fee set by loan size (${tier.label.toLowerCase()})`, amount: flat },
     { l: 'Processing', amount: fees.sfrRefinance.processing },
   ];
   if (addons.subordination) lines.push({ l: 'Subordination agreement', amount: 50 });
   if (addons.heloc) lines.push({ l: 'Second or HELOC-only escrow', amount: 250 });
   return { lines, total: lines.reduce((s, x) => s + x.amount, 0) };
 }
+
+/* Animated number: eases toward the target on change, static under reduced
+   motion. The total deserves motion; the motion respects the viewer. */
+function useAnimatedNumber(target) {
+  const [shown, setShown] = React.useState(target);
+  const fromRef = React.useRef(target);
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      fromRef.current = target;
+      setShown(target);
+      return;
+    }
+    const from = fromRef.current;
+    if (from === target) return;
+    const t0 = performance.now();
+    const dur = 380;
+    let raf;
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const ease = 1 - Math.pow(1 - p, 3);
+      setShown(Math.round(from + (target - from) * ease));
+      if (p < 1) raf = requestAnimationFrame(step);
+      else fromRef.current = target;
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+  return shown;
+}
+
+const SLIDER = {
+  sale: { min: 100_000, max: 5_000_000, step: 25_000 },
+  refi: { min: 100_000, max: 3_000_000, step: 25_000 },
+};
 
 /* ── component ─────────────────────────────────────────────────────────────── */
 
@@ -105,11 +147,14 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
   const [mode, setMode] = React.useState(fromUrl.mode || initialMode);
   const [priceRaw, setPriceRaw] = React.useState(fmtInput(fromUrl.amount ?? 1_000_000));
   const [loanRaw, setLoanRaw] = React.useState(fmtInput(fromUrl.amount ?? 750_000));
-  const [withLoan, setWithLoan] = React.useState(true);
-  const [payoffs, setPayoffs] = React.useState(1);
-  const [docPrep, setDocPrep] = React.useState(1);
+  const [withLoan, setWithLoan] = React.useState(false);
+  const [payoffs, setPayoffs] = React.useState(0);
+  const [hoas, setHoas] = React.useState(0);
   const [refiKind, setRefiKind] = React.useState('sfr');
-  const [addons, setAddons] = React.useState({ solar: false, x1031: false, subordination: false, heloc: false });
+  const [addons, setAddons] = React.useState({
+    solar: false, x1031: false, subordination: false, heloc: false,
+    grantDeed: false, taxForm: false, archive: false,
+  });
   const [status, setStatus] = React.useState(null);
   const [email, setEmail] = React.useState('');
   const [emailOpen, setEmailOpen] = React.useState(false);
@@ -126,12 +171,17 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
   let result = null;
   if (amount !== null) {
     if (mode === 'buyer') result = buyerLines(amount, withLoan, addons);
-    else if (mode === 'seller') result = sellerLines(amount, payoffs, docPrep, addons);
+    else if (mode === 'seller') result = sellerLines(amount, payoffs, hoas, addons);
     else result = refiLines(amount, refiKind, addons);
   }
 
   const toggle = (k) => setAddons((a) => ({ ...a, [k]: !a[k] }));
   const sideLabel = mode === 'buyer' ? 'Escrow side, buyer' : mode === 'seller' ? 'Escrow side, seller' : 'Escrow side, refinance';
+
+  const sliderCfg = isRefi ? SLIDER.refi : SLIDER.sale;
+  const sliderValue = amount !== null ? Math.max(sliderCfg.min, Math.min(sliderCfg.max, amount)) : sliderCfg.min;
+  const sliderFill = ((sliderValue - sliderCfg.min) / (sliderCfg.max - sliderCfg.min)) * 100;
+  const animatedTotal = useAnimatedNumber(result?.total ?? 0);
 
   function shareUrl() {
     const u = new URL('/calculator', window.location.origin);
@@ -212,6 +262,23 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
           </div>
           {inputError && raw !== '' && <div className="ec-err" role="alert">{inputError}</div>}
           {raw === '' && <div className="ec-err">{`Enter a ${what} to see your fees.`}</div>}
+          <div className="ec-slider">
+            <input
+              type="range"
+              min={sliderCfg.min}
+              max={sliderCfg.max}
+              step={sliderCfg.step}
+              value={sliderValue}
+              style={{ '--fill': sliderFill + '%' }}
+              aria-label={isRefi ? 'Loan amount slider' : 'Purchase price slider'}
+              onChange={(e) => { setRaw(fmtInput(parseInt(e.target.value, 10))); setStatus(null); }}
+            />
+            <div className="marks" aria-hidden="true">
+              <span>{isRefi ? '$100K' : '$100K'}</span>
+              <span>{isRefi ? '$1.5M' : '$2.5M'}</span>
+              <span>{isRefi ? '$3M' : '$5M'}</span>
+            </div>
+          </div>
         </div>
 
         {mode === 'buyer' && (
@@ -236,12 +303,21 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
               <button type="button" aria-label="More payoffs" onClick={() => setPayoffs(Math.min(4, payoffs + 1))}>+</button>
               <span className="ec-count-label">loan payoffs</span>
             </span>
-            <span className="ec-count" role="group" aria-label="Documents prepared">
-              <button type="button" aria-label="Fewer documents" onClick={() => setDocPrep(Math.max(0, docPrep - 1))}>&minus;</button>
-              <span aria-live="polite">{docPrep}</span>
-              <button type="button" aria-label="More documents" onClick={() => setDocPrep(Math.min(4, docPrep + 1))}>+</button>
-              <span className="ec-count-label">docs prepared</span>
+            <span className="ec-count" role="group" aria-label="HOA associations">
+              <button type="button" aria-label="Fewer associations" onClick={() => setHoas(Math.max(0, hoas - 1))}>&minus;</button>
+              <span aria-live="polite">{hoas}</span>
+              <button type="button" aria-label="More associations" onClick={() => setHoas(Math.min(3, hoas + 1))}>+</button>
+              <span className="ec-count-label">HOAs</span>
             </span>
+            <button type="button" className="ec-opt" aria-pressed={addons.grantDeed} onClick={() => toggle('grantDeed')}>
+              <span className="dot"></span> Grant deed ($50)
+            </button>
+            <button type="button" className="ec-opt" aria-pressed={addons.taxForm} onClick={() => toggle('taxForm')}>
+              <span className="dot"></span> Tax form ($50)
+            </button>
+            <button type="button" className="ec-opt" aria-pressed={addons.archive} onClick={() => toggle('archive')}>
+              <span className="dot"></span> Archive ($50)
+            </button>
             <button type="button" className="ec-opt" aria-pressed={addons.solar} onClick={() => toggle('solar')}>
               <span className="dot"></span> Solar transfer ($100)
             </button>
@@ -279,14 +355,14 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
         {result?.lines && (
           <>
             {result.lines.map((x, i) => (
-              <div className="ec-row" key={i}>
+              <div className="ec-row" key={x.l} style={{ animationDelay: i * 45 + 'ms' }}>
                 <span className="l">{x.l}</span>
                 <span className="r">{usd(x.amount)}</span>
               </div>
             ))}
-            <div className="ec-row total">
-              <span className="l">{sideLabel}</span>
-              <span className="r">{usd(result.total)}</span>
+            <div className="ec-hero">
+              <span className="lbl">{sideLabel}</span>
+              <span className="amt" aria-live="polite"><span className="c">$</span>{animatedTotal.toLocaleString('en-US')}</span>
             </div>
           </>
         )}
@@ -319,8 +395,8 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
 
       <div className="ec-note">
         {compact
-          ? 'Real published rates. The full calculator itemizes both sides and refinance tiers.'
-          : 'Computed from the published fee schedule, the same formulas we bill with. Third-party costs (title, recording, lender fees) are set by providers you choose and are not included. Estimates are marked.'}
+          ? fees.conciergeNote
+          : `Escrow fees only. Title, recording, and lender charges come from third parties and appear on your closing statement. ${fees.conciergeNote}`}
       </div>
     </div>
   );

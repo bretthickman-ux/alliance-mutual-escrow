@@ -32,7 +32,7 @@ export const guides = [
       {
         h: 'What escrow costs',
         ps: [
-          'Our sale escrow fee is published: $300 plus $2.15 per $1,000 of the sale price, for each side. On a $1,000,000 home that is $2,450 per side. Our calculator itemizes the rest, including flat add-ons.',
+          'Our sale escrow fee is published: $300 plus $2.15 per $1,000 of the sale price, for each side, and $1.75 per $1,000 past two million. On a $1,000,000 home that is $2,450 per side. Every fee is published. No surprises at closing.',
         ],
       },
     ],
@@ -210,7 +210,7 @@ export const guides = [
     kicker: 'Specialty escrow',
     title: '1031 exchange escrow',
     description: 'How escrow supports a 1031 exchange: the 45 and 180 day deadlines, the accommodator, and published processing.',
-    lead: 'A 1031 exchange lets an investor sell one property and buy another while deferring capital gains tax. The deadlines are hard law: 45 days to identify the replacement, 180 days to close it. Escrow builds the calendar backward from those dates.',
+    lead: 'A 1031 exchange lets an investor sell one property and buy another while deferring capital gains tax. The deadlines are set by law: 45 days to identify the replacement, 180 days to close it. Escrow builds the calendar backward from those dates.',
     sections: [
       {
         h: 'The two clocks',

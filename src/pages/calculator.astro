@@ -17,8 +17,8 @@ import '../styles/calc.css';
     <div class="kick">Fees, in the open</div>
     <h1 style="max-width:none">What will escrow <i>actually cost?</i></h1>
     <p class="sub" style="margin-left:auto;margin-right:auto">
-      Pick your side, enter a number, and see every line. These are the published formulas we bill
-      with. No signup, no email required, nothing stored.
+      Pick your side, enter a number, and see every line before you commit. No signup, no email
+      required, nothing stored.
     </p>
   </header>
 
@@ -29,12 +29,13 @@ import '../styles/calc.css';
   <div class="calc-below">
     <h2>The whole schedule, published</h2>
     <p>
-      Sale escrow is {fees.sale.label} for each side. Single family refinance runs on flat tiers:
-      $650 to $750,000, $850 to $1,000,000, $1,200 to $2,000,000, quoted above that, plus $200
-      processing. Multi-family and commercial refinance is {fees.commercialRefinance.label} with a
-      $500,000 loan minimum. Published add-ons: 1031 processing $250, subordination $50, solar
-      transfer $100 per side, document prep $50 each, demand processing $30 per payoff, HELOC or
-      second-only escrow $250.
+      Sale escrow is $300 base plus $2.15 per $1,000 of the price for each side, and $1.75 per
+      $1,000 past two million. Single family refinance is one flat fee set by loan size: $650 to
+      $750,000, $850 to $1,000,000, $1,200 to $2,000,000, quoted above that, plus $200 processing.
+      Multi-family and commercial refinance is {fees.commercialRefinance.label} with a $500,000
+      loan minimum. Published add-ons: 1031 processing $250, subordination $50, solar transfer $100
+      per side, doc prep $50 each, demand processing $30 per payoff, payoff of bills $10 each, HELOC
+      or second-only escrow $250.
     </p>
     <h2>What this does not include</h2>
     <p>

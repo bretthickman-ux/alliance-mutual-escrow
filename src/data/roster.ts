@@ -183,7 +183,7 @@ export function telHref(phone: string): string {
   return 'tel:' + base + (ext ? ',' + ext[1] : '');
 }
 
-/** Members grouped in display order, for the typographic index (team-b). */
+/** Members grouped in display order. */
 export function rosterByGroup(): { group: RosterGroup; members: Member[] }[] {
   return groupOrder
     .map((group) => ({ group, members: roster.filter((m) => m.group === group) }))

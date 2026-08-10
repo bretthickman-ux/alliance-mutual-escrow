@@ -140,6 +140,6 @@ Carried from `HANDOFF.md` section 8, still owed by Brett:
   until real numbers are confirmed.
 - Roster items flagged `pending: true` in `src/data/roster.ts` (Wendy/Sue,
   Michelle's email, Jhana's team, Julie's company) need confirmation.
-- `team-b.astro` is the runner-up typographic index, kept for the owner's
-  confirmation of the team layout, then deleted (the winner is `team.astro`).
+- team-b (typographic index) was deleted after the owner confirmed the photo
+  wall in Review Board round 2; `team.astro` is the team page.
 - Google Places reviews, schema, sitemap, redirect map: Phase 2 and 3.

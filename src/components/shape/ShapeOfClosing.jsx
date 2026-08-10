@@ -92,22 +92,6 @@ function cameraAt(T, M, CUES) {
 }
 const camCSS = (fx, fy, s) => `translate3d(${800 - fx * s}px, ${340 - fy * s}px, 0) scale(${s})`;
 
-function Header({ T, accent, county }) {
-  const e1 = MOTION.enter(T, 0.7, 1.1, 18), e2 = MOTION.enter(T, 1.0, 1.4, 30);
-  const rule = MOTION.draw(T, 1.7, 0.9);
-  return (
-    <div style={{ position: 'absolute', left: 96, top: 60 }}>
-      <div style={{ fontFamily: MONO, fontSize: 14, letterSpacing: '0.32em', color: 'rgba(15,18,21,0.62)', opacity: e1.opacity, transform: e1.transform }}>
-        {'ESCROW NO. 24-118 · COUNTY OF ' + String(county || 'Orange').toUpperCase() + ', CALIFORNIA'}
-      </div>
-      <div style={{ fontFamily: SERIF, fontSize: 58, lineHeight: 1.02, color: INK, marginTop: 14, opacity: e2.opacity, transform: e2.transform }}>
-        Where your closing stands
-      </div>
-      <div style={{ height: 2, width: 64, background: accent, marginTop: 16, transform: `scaleX(${rule})`, transformOrigin: '0 50%' }}></div>
-    </div>
-  );
-}
-
 function NowCard({ T, M, accent }) {
   const head = MOTION.enter(T, M.open - 1.2, 0.9, 14);
   const gone = MOTION.draw(T, M.keys + 1.2, 0.5);
@@ -300,7 +284,7 @@ function FinaleText({ T, M, force }) {
   );
 }
 
-function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = '#b97a3a', grain = true, county = 'Orange', paper }) {
+function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = "#b97a3a", county = "Orange", paper }) {
   const M = model(CUES, authoredTotal, county);
   const T = reduced ? M.total : rawT;
   const df = clamp(M.dayAt(T), 0, 30);
@@ -326,14 +310,14 @@ function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = '#b97a3a', grai
         <Annotations T={T} M={M} df={df} accent={accent} />
         <KeyBody T={T} M={M} df={df} accent={accent} />
       </div>
-      <Header T={T} accent={accent} county={county} />
+      {/* The standalone bundle carried its own title header, vignette, and
+          paper grain. On the site, the page frames the piece (heading above,
+          seamless paper around), so all three are gone: the vignette and grain
+          were the visible edge seam against the page background. The
+          timeline-synced text (Happening Now, the finale) stays: it IS the
+          piece. */}
       <NowCard T={T} M={M} accent={accent} />
       <FinaleText T={T} M={M} force={reduced} />
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'radial-gradient(120% 120% at 50% 42%, transparent 55%, rgba(15,18,21,0.07))' }}></div>
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: grain ? 0.05 : 0, mixBlendMode: 'multiply', pointerEvents: 'none' }}>
-        <filter id="omGrain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" /><feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.07 0 0 0 0 0.08 0 0 0 0.7 0" /></filter>
-        <rect width="100%" height="100%" filter="url(#omGrain)" />
-      </svg>
     </div>
   );
 }
@@ -344,7 +328,7 @@ function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = '#b97a3a', grai
    final frame and never starts the loop. Background comes from the token. */
 const STAGE_W = 1600, STAGE_H = 680;
 
-export default function ShapeOfClosing({ background = '#f7f6f2', accent = '#b97a3a', county = 'Orange', grain = true }) {
+export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a3a", county = "Orange" }) {
   const { CUES, authoredTotal } = React.useMemo(() => derive(), []);
   const total = authoredTotal;
 
@@ -429,7 +413,7 @@ export default function ShapeOfClosing({ background = '#f7f6f2', accent = '#b97a
           reduced={reduced}
           accent={accent}
           county={county}
-          grain={grain}
+         
           paper={background}
         />
       </div>

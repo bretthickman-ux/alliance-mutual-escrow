@@ -1,8 +1,9 @@
 /* Regression harness (Phases 1-4).
 
    Gates, all fatal:
-   1. Content guard: no em dashes (or long-dash cousins) and no "hands you the
-      keys" anywhere in built HTML.
+   1. Content guard: no em dashes (or long-dash cousins), no "hands you the
+      keys", and no engineering narrative (HANDOFF section 2: visitors never
+      read copy about the site itself) anywhere in built HTML.
    2. Structure guard: every page has exactly one h1; every ld+json block
       parses; every internal link and asset href resolves in dist/; every guide
       has its generated PDF.
@@ -32,7 +33,6 @@ const PAGES = [
   '/lenders',
   '/investors',
   '/team',
-  '/team-b',
   '/calculator',
   '/guides',
   ...guideSlugs.map((s) => `/guides/${s}`),
@@ -81,6 +81,18 @@ function staticGuards() {
   }
   const htmlFiles = walk(DIST);
   const longDash = /[—–―‒]/;
+  // Engineering narrative: the site never talks about itself to visitors
+  // (HANDOFF section 2). Checked against visible text only, so HTML attributes
+  // like input placeholders do not false-positive.
+  const narrative = [
+    'calculator itemizes',
+    'design review',
+    'placeholder',
+    'illustrative',
+    'real published rates',
+    'formulas we bill',
+    'sample page',
+  ];
 
   for (const file of htmlFiles) {
     const rel = path.relative(DIST, file);
@@ -90,6 +102,11 @@ function staticGuards() {
       if (longDash.test(line)) failures.push(`EM/EN DASH in ${rel}:${i + 1} -> ${line.trim().slice(0, 100)}`);
       if (/hands you the keys/i.test(line)) failures.push(`NEUTRALITY VIOLATION "hands you the keys" in ${rel}:${i + 1}`);
     });
+
+    const visible = text.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]*>/g, ' ').toLowerCase();
+    for (const phrase of narrative) {
+      if (visible.includes(phrase)) failures.push(`ENGINEERING NARRATIVE "${phrase}" visible in ${rel}`);
+    }
 
     // exactly one h1
     const h1s = (text.match(/<h1[\s>]/g) || []).length;

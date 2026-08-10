@@ -291,8 +291,9 @@ function FinaleText({ T, M, force }) {
   const h = MOTION.enter(T, M.keys + 1.3, 0.9, 24);
   const s = MOTION.enter(T, M.keys + 1.7, 0.8, 16);
   // As the key fades away (same window as KeyBody's exit), the words float up
-  // to hold the center of the stage on their own.
-  const lift = force ? 1 : MOTION.draw(T, M.keys + 2.3, 1.1);
+  // to hold the center of the stage on their own. In the static frame the key
+  // stays, so the words stay below it.
+  const lift = force ? 0 : MOTION.draw(T, M.keys + 2.3, 1.1);
   const rise = -Easing.easeInOutCubic(lift) * 96;
   const ho = force ? 1 : h.opacity, so = force ? 1 : s.opacity;
   return (
@@ -307,7 +308,9 @@ function FinaleText({ T, M, force }) {
 
 function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = "#b97a3a", county = "Orange", paper }) {
   const M = model(CUES, authoredTotal, county);
-  const T = reduced ? M.total : rawT;
+  // Static mode (phones + reduced motion): the finale's best frame, with the
+  // completed, turned key on its shadow and the words beneath it.
+  const T = reduced ? M.keys + 1.9 : rawT;
   const df = clamp(M.dayAt(T), 0, 30);
   const shown = Math.max(1, Math.floor(df + 1e-4));
   let { fx, fy, s } = reduced ? { fx: 800, fy: 488, s: 1 } : cameraAt(T, M, CUES);
@@ -357,8 +360,16 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
   const { CUES, authoredTotal } = React.useMemo(() => derive(), []);
   const total = authoredTotal;
 
+  // Static on touch devices: iOS Safari cannot survive pinch-zooming a page
+  // with a large animating composition (repeated tab crashes in the field, even
+  // after removing all filters, masks, and backdrop-filters). Phones and
+  // tablets get the finale's completed-key frame; desktop keeps the motion.
   const reduced = React.useMemo(
-    () => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        window.matchMedia('(pointer: coarse)').matches),
     [],
   );
 

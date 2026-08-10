@@ -3,7 +3,7 @@
 
 .hero { max-width: 1080px; margin: 0 auto; padding: 84px 28px 40px; }
 .hero .kick {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.24em;
+  font-family: var(--mono); font-size: 14px; letter-spacing: 0.3em;
   text-transform: uppercase; color: var(--amber); margin-bottom: 16px;
 }
 .hero h1 {
@@ -19,9 +19,9 @@
 .hband::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 18, 21, 0.16), transparent 34%); }
 .hband .tag {
   position: absolute; right: 24px; bottom: 18px; z-index: 2;
-  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase;
   color: #fff; background: rgba(15, 18, 21, 0.42); backdrop-filter: blur(8px);
-  padding: 7px 13px; border-radius: 99px;
+  padding: 8px 15px; border-radius: 99px;
 }
 
 .wrap {
@@ -121,3 +121,29 @@
   .rv { opacity: 1; transform: none; transition: none; }
   .hband img { transform: none; transition: none; }
 }
+
+/* ── guide article facelift: glance card, numbered sections, image break ── */
+.g-glance {
+  margin: 6px 0 40px; padding: 22px 26px; border: 1px solid var(--hair);
+  border-radius: 16px; background: var(--paper);
+}
+.g-glance-h {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 12px;
+}
+.g-glance ol { margin: 0; padding: 0 0 0 2px; list-style: none; counter-reset: glance; }
+.g-glance li {
+  counter-increment: glance; font-size: 14.5px; color: var(--ink);
+  padding: 6px 0; border-bottom: 1px solid var(--hair); display: flex; gap: 12px; align-items: baseline;
+}
+.g-glance li:last-child { border-bottom: 0; }
+.g-glance li::before {
+  content: counter(glance, decimal-leading-zero); font-family: var(--mono);
+  font-size: 11px; color: var(--faint); letter-spacing: 0.08em;
+}
+.g-sec { display: flex; align-items: baseline; gap: 14px; margin-top: 54px; padding-top: 26px; border-top: 1px solid var(--hair); }
+.g-sec:first-of-type { border-top: 0; padding-top: 0; margin-top: 26px; }
+.g-sec .g-num { font-family: var(--mono); font-size: 13px; color: var(--amber); letter-spacing: 0.12em; }
+.g-sec h2 { margin: 0; }
+.g-break { margin: 38px 0 10px; border-radius: 18px; overflow: hidden; }
+.g-break img { display: block; width: 100%; height: auto; aspect-ratio: 21 / 9; object-fit: cover; }

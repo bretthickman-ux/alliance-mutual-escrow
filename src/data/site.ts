@@ -10,6 +10,9 @@ export interface SiteConfig {
   address: { line1: string; city: string; state: string; zip: string };
   phone: { display: string; href: string };
   email: string;
+  /** DFPI escrow agents license (source: Escrow Institute of CA member
+      profile, issued 2016-02-08; confirm the display format with Laura). */
+  license: { number: string; display: string };
 }
 
 export const site: SiteConfig = {
@@ -20,6 +23,7 @@ export const site: SiteConfig = {
   address: { line1: '12681 Newport Ave', city: 'Tustin', state: 'CA', zip: '92780' },
   phone: { display: '(714) 544-6525', href: 'tel:7145446525' },
   email: 'info@ameescrow.com',
+  license: { number: '9631912', display: 'Escrow Agents License No. 9631912' },
 };
 
 /** Flat nav, identical on every page (HANDOFF section 3). No dropdowns. */

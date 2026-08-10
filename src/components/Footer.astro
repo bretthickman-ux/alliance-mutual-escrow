@@ -33,7 +33,7 @@ import { site, audiencePages, legalLinks } from '../data/site';
     </div>
     <div class="df-bot">
       <span>&copy; {site.name}, Inc.</span>
-      <span>Licensed by the DFPI</span>
+      <span>Licensed by the California Department of Financial Protection and Innovation &middot; {site.license.display}</span>
       {legalLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </div>
   </div>

@@ -1,7 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Picture } from 'astro:assets';
 import { guides } from '../../data/guides.mjs';
 import '../../styles/interior.css';
+
+import imgFam from '../../assets/home/fam.jpg';
+import imgBoxes from '../../assets/doors/buyers.jpg';
+import imgLake from '../../assets/doors/agents.jpg';
+import imgDusk from '../../assets/doors/lenders.jpg';
+import imgFoothills from '../../assets/doors/investors.jpg';
+import imgPark from '../../assets/home/park.jpg';
+import imgLagoon from '../../assets/home/lagoon.jpg';
 
 export function getStaticPaths() {
   return guides.map((g) => ({ params: { slug: g.slug }, props: { guide: g } }));
@@ -9,6 +18,24 @@ export function getStaticPaths() {
 
 const { guide } = Astro.props;
 const pdfHref = `/pdfs/${guide.slug}.pdf`;
+
+// One warm breather image per guide, matched to its subject. Purely
+// atmospheric (alt text stays empty); the words carry the guidance.
+const GUIDE_IMAGES = {
+  'what-escrow-does': imgFam,
+  'escrow-timeline': imgLake,
+  'wire-fraud-safety': imgDusk,
+  'buyer-guide': imgBoxes,
+  'seller-guide': imgFam,
+  'refinance-guide': imgDusk,
+  '1031-exchange': imgFoothills,
+  'bulk-sale': imgPark,
+  'probate': imgLagoon,
+  'mobile-home': imgPark,
+  'fsbo': imgBoxes,
+  'holding-escrow': imgLake,
+};
+const breakImg = GUIDE_IMAGES[guide.slug] || imgLake;
 ---
 
 <BaseLayout
@@ -37,15 +64,34 @@ const pdfHref = `/pdfs/${guide.slug}.pdf`;
   </header>
 
   <div class="wrap" style="grid-template-columns:1fr;max-width:880px">
-    <main>
-      {guide.sections.map((s) => (
+    <main class="g-article">
+      <aside class="g-glance">
+        <div class="g-glance-h">In this guide</div>
+        <ol>
+          {guide.sections.map((s) => <li>{s.h}</li>)}
+          <li>Frequently asked</li>
+        </ol>
+      </aside>
+
+      {guide.sections.map((s, i) => (
         <>
-          <h2>{s.h}</h2>
+          <div class="g-sec">
+            <span class="g-num">{String(i + 1).padStart(2, '0')}</span>
+            <h2>{s.h}</h2>
+          </div>
           {s.ps.map((p) => <p>{p}</p>)}
+          {i === 0 && (
+            <figure class="g-break">
+              <Picture src={breakImg} formats={['avif', 'webp']} widths={[640, 960, 1280]} sizes="(max-width: 940px) 92vw, 880px" alt="" />
+            </figure>
+          )}
         </>
       ))}
 
-      <h2>Frequently asked</h2>
+      <div class="g-sec">
+        <span class="g-num">{String(guide.sections.length + 1).padStart(2, '0')}</span>
+        <h2>Frequently asked</h2>
+      </div>
       <div class="faq">
         {guide.faq.map((f) => (
           <div class="fq">

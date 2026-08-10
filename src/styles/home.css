@@ -32,8 +32,7 @@
 
 /* ── intro ───────────────────────────────────────────────────────────────── */
 .intro { max-width: 880px; margin: 0 auto; padding: 140px 40px 120px; text-align: center; }
-.kick { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 26px; }
-.intro .kick { font-size: 14px; letter-spacing: 0.3em; }
+.kick { font-family: var(--mono); font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 26px; }
 .intro h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3.6vw, 50px); line-height: 1.15; letter-spacing: -0.01em; }
 .intro h2 i { color: var(--soft); }
 .intro p { color: var(--soft); max-width: 54ch; margin: 24px auto 0; font-size: 16px; }
@@ -73,7 +72,7 @@
 .dshape { position: relative; background: var(--shape-bg); border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); padding: 48px 0 40px; }
 .ds-sticky { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .ds-head { text-align: center; padding: 0 24px; }
-.ds-kick { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 12px; }
+.ds-kick { font-family: var(--mono); font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 12px; }
 .ds-head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.08; }
 .ds-head h2 i { color: var(--soft); }
 .anim-frame { position: relative; width: min(100% - 48px, 860px); margin: 0 auto; }

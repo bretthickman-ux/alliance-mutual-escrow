@@ -21,10 +21,10 @@ const UIF = "Inter, 'Helvetica Neue', sans-serif";
 const MONO = "'IBM Plex Mono', ui-monospace, monospace";
 
 const HOLD = 3.2; // seconds held on the finale before the loop restarts
-// The authored piece opens on 1.6s of empty paper before the first stroke
-// lands. On the site that read as "the bar just sits there", so the clock
-// starts here: the first visible drawing begins almost immediately.
-const START_SKIP = 1.6;
+// The authored piece opens on empty paper (first strokes land at ~1.8s). On
+// the site that read as "the bar just sits there", so the clock starts here,
+// right on the first stroke: the piece is drawing the instant it appears.
+const START_SKIP = 2.2;
 
 const X0 = 430, PXD = 30, TIP = 1330, BT = 448, BB = 496, CY = 470;
 const dayX = (d) => X0 + d * PXD;
@@ -406,7 +406,9 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
         if (visible) start();
         else stop();
       }),
-      { threshold: 0.35 },
+      // Low threshold: playback starts as soon as a sliver is on screen, so
+      // by the time the piece is fully in view it is already in motion.
+      { threshold: 0.12 },
     );
     io.observe(el);
     return () => { stop(); io.disconnect(); };

@@ -23,7 +23,7 @@ interface Stop {
   pills?: string[];
 }
 
-const KEY_STATE = 'ame_review_r3';
+const KEY_STATE = 'ame_review_r4';
 const KEY_ACTIVE = 'ame_review_tour';
 
 const qs = new URLSearchParams(location.search);
@@ -37,16 +37,25 @@ if (localStorage.getItem(KEY_ACTIVE) === 'on') {
 function initTour() {
   /* ── the stops, in reading order across the site ───────────────────────── */
   const STOPS: Stop[] = [
+    /* ── home, top to bottom ─────────────────────────────────────────────── */
     { id: 'home-hero', page: '/', label: 'Hero headline', selector: '.hero-center h1',
       pills: ['Every promise, kept. (owner approved)', 'Independent, by design. (owner approved)'] },
     { id: 'home-hero-sub', page: '/', label: 'Hero subline', selector: '.hero-center .hsub',
       pills: ['Funds verified, instructions honored, one licensed officer from open to close.', 'One licensed officer holds your file from open to close. Every dollar verified.'] },
-    { id: 'home-intro', page: '/', label: 'Intro statement', selector: '.intro h2' },
-    { id: 'home-row1', page: '/', label: 'One officer story', selector: '.rows .rowx:first-child .body' },
+    { id: 'home-statline', page: '/', label: 'Stats bar (gold numbers, 25 years)', selector: '.statline',
+      pills: ['25 years · est. 2001 (as built)', 'Serving California since 2001', 'A quarter century of escrow'] },
+    { id: 'home-intro', page: '/', label: 'Intro statement (bigger gold kicker)', selector: '.intro h2' },
+    { id: 'home-row1', page: '/', label: 'One officer story + family photo', selector: '.rows .rowx:first-child .body' },
     { id: 'home-fees', page: '/', label: 'Fees headline', selector: '.rowx.flip h3',
       pills: ['Our fees are on the table. Literally.', 'Published fees. No mystery line items.', 'The price is on the page, not on request.'] },
+    { id: 'home-calc-embed', page: '/', label: 'Homepage calculator', selector: '#feetable',
+      pills: ['Keep the calculator on the homepage', 'Move it: link to the calculator page instead'] },
     { id: 'home-shape', page: '/', label: 'Animation heading', selector: '.ds-head h2' },
+    { id: 'home-anim', page: '/', label: 'The animation itself (watch it through)', selector: '.anim-frame',
+      pills: ['Keep the new finale: the key fades and the words take the stage', 'Keep the key on screen at the end instead', 'Hold the final frame longer before it loops'] },
     { id: 'home-doors', page: '/', label: 'Audiences heading', selector: '.doors-wrap .center-head h2' },
+    { id: 'home-door-cards', page: '/', label: 'The four door photos', selector: '.doors',
+      pills: ['Keep all four photos', 'Swap one or more (say which in the note)'] },
     { id: 'home-statement', page: '/', label: 'Statement quote', selector: '.statement .serif',
       pills: [
         'Every escrow closes twice: once on paper, once in someone’s life. (owner approved)',
@@ -55,32 +64,66 @@ function initTour() {
         'Every file we close is the start of someone’s next chapter.',
         'Precision on paper. Care in everything else.',
       ] },
+    { id: 'home-statement-video', page: '/', label: 'Statement background video (lake community)', selector: '.statement video',
+      pills: ['Keep this footage', 'Swap it (three licensed aerials are queued as candidates)'] },
+    { id: 'home-proofline', page: '/', label: 'Proof numbers under the quote', selector: '.proofline' },
     { id: 'home-tracker', page: '/', label: 'File tracker heading', selector: '.steps-wrap h2' },
+    { id: 'home-reviews', page: '/', label: 'Reviews section (live Google reviews)', selector: '.gr-wrap' },
     { id: 'home-close', page: '/', label: 'Closing line', selector: '.close h2',
       pills: ['Independent, by design. (owner approved)'] },
+    { id: 'home-footer', page: '/', label: 'Footer license line (DFPI No. 9631912)', selector: 'footer .df-bot',
+      pills: ['Keep: full department name + license number', 'Shorter: "DFPI Escrow Agents License No. 9631912"', 'Check the number with Laura before launch'] },
+
+    /* ── buyers & sellers ────────────────────────────────────────────────── */
     { id: 'buyers-h1', page: '/buyers-sellers', label: 'Buyers page headline', selector: '.hero h1',
       pills: ['The biggest purchase of your life, held steady.', 'Your money, held steady until everything is right.'] },
+    { id: 'buyers-band', page: '/buyers-sellers', label: 'Moving day photo band', selector: '.hband' },
     { id: 'buyers-days', page: '/buyers-sellers', label: '30 day timeline', selector: '.miles' },
     { id: 'buyers-faq', page: '/buyers-sellers', label: 'Buyer FAQ', selector: '.faq' },
+    { id: 'buyers-cta', page: '/buyers-sellers', label: 'Call-to-action band', selector: '.cta' },
+
+    /* ── agents ──────────────────────────────────────────────────────────── */
     { id: 'agents-h1', page: '/agents', label: 'Agents page headline', selector: '.hero h1',
       pills: ['Your client. Your relationship. Our guidance. (owner approved)', 'You keep the relationship. We keep the dates.'] },
+    { id: 'agents-band', page: '/agents', label: 'Lake community photo band', selector: '.hband' },
     { id: 'agents-quiet', page: '/agents', label: 'The quiet work block', selector: '.quiet' },
+
+    /* ── lenders ─────────────────────────────────────────────────────────── */
     { id: 'lenders-h1', page: '/lenders', label: 'Lenders page headline', selector: '.hero h1',
       pills: ['Funding that hits the date.', 'Rate locks do not wait. Neither do we.'] },
+    { id: 'lenders-flow', page: '/lenders', label: 'Funding flow strip', selector: '.flow' },
+    { id: 'lenders-band', page: '/lenders', label: 'Dusk photo band', selector: '.hband' },
+
+    /* ── investors ───────────────────────────────────────────────────────── */
     { id: 'investors-h1', page: '/investors', label: 'Investors page headline', selector: '.hero h1',
       pills: ['Bring the challenging ones. (owner approved)', 'Complex files, run as regular work.'] },
+    { id: 'investors-nums', page: '/investors', label: '45 / 180 day numerals', selector: '.nums' },
+
+    /* ── team ────────────────────────────────────────────────────────────── */
     { id: 'team-h1', page: '/team', label: 'Team page headline', selector: '.team-header h1',
       pills: ['You don’t hire an officer. You hire a team.', 'Named people. One standard.'] },
+    { id: 'team-grid', page: '/team', label: 'The roster (live from Compendium)', selector: '.grid' },
     { id: 'team-note', page: '/team', label: 'Team closing note', selector: '.team-note' },
+
+    /* ── calculator ──────────────────────────────────────────────────────── */
     { id: 'calc-h1', page: '/calculator', label: 'Calculator headline', selector: '.calc-hero h1',
       pills: ['What will escrow actually cost?', 'See every fee before you commit.'] },
-    { id: 'inquiry-flow', page: '/open-an-escrow', label: 'Open an Escrow card flow', selector: '.oe',
+    { id: 'calc-tool', page: '/calculator', label: 'The calculator (try buyer, seller, refi)', selector: '.ec',
+      pills: ['Keep: seller mode shows estimated net proceeds', 'Numbers and add-ons match the fee sheet, confirmed', 'Something is off (say what in the note)'] },
+
+    /* ── open an escrow ──────────────────────────────────────────────────── */
+    { id: 'inquiry-flow', page: '/open-an-escrow', label: 'Open an Escrow card flow (click through it)', selector: '.oe',
       pills: ['A few questions. Then a person. (page headline)', 'Keep it: phone stays the fast lane, this catches the rest.'] },
+
+    /* ── guides ──────────────────────────────────────────────────────────── */
     { id: 'guides-h1', page: '/guides', label: 'Guides headline', selector: '.hero h1',
       pills: ['Escrow, explained in plain English.', 'Answers first. Jargon never.'] },
+    { id: 'guide-glance', page: '/guides/what-escrow-does', label: 'Guide layout: "In this guide" card', selector: '.g-glance' },
+    { id: 'guide-break', page: '/guides/what-escrow-does', label: 'Guide layout: photo break + numbered sections', selector: '.g-break' },
+    { id: 'guide-pdf', page: '/guides/what-escrow-does', label: 'Download as PDF button', selector: '.pdfbtn' },
   ];
 
-  const PAGE_ORDER = ['/', '/buyers-sellers', '/agents', '/lenders', '/investors', '/team', '/calculator', '/open-an-escrow', '/guides'];
+  const PAGE_ORDER = ['/', '/buyers-sellers', '/agents', '/lenders', '/investors', '/team', '/calculator', '/open-an-escrow', '/guides', '/guides/what-escrow-does'];
   const here = location.pathname.replace(/\/$/, '') || '/';
   const pageStops = STOPS.filter((s) => s.page === here && document.querySelector(s.selector));
   const state: Record<string, StopResult> = JSON.parse(localStorage.getItem(KEY_STATE) || '{}');
@@ -129,7 +172,7 @@ function initTour() {
   const totalDone = () => STOPS.filter((s) => state[s.id]?.verdict).length;
 
   function digest(): string {
-    const lines: string[] = ['AME site review, owner pass', ''];
+    const lines: string[] = ['AME site review, owner pass 4', ''];
     for (const s of STOPS) {
       const r = state[s.id];
       if (!r?.verdict) continue;

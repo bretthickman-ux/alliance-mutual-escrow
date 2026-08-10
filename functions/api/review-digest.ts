@@ -5,6 +5,7 @@
    files (rate sheets, marked-up PDFs), forwarded via Resend attachments. */
 
 import { resendSend, type SendEnv } from './_lib/email';
+import { logLead, type LeadsEnv } from './_lib/leads';
 
 interface DigestRequest {
   digest?: string;
@@ -14,7 +15,7 @@ interface DigestRequest {
 
 const MAX_ATTACH_TOTAL = 25 * 1024 * 1024; // ~25MB of base64 text, under Resend's 40MB cap
 
-export const onRequestPost: PagesFunction<SendEnv & { REVIEW_TO?: string }> = async (context) => {
+export const onRequestPost: PagesFunction<SendEnv & LeadsEnv & { REVIEW_TO?: string }> = async (context) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -60,6 +61,14 @@ export const onRequestPost: PagesFunction<SendEnv & { REVIEW_TO?: string }> = as
       }),
     });
     if (!res.ok) throw new Error('Resend ' + res.status);
+    // Laura's completed review is logged so the daily reminder knows to stop.
+    if (body.reviewer === 'laura') {
+      await logLead(context.env, {
+        Type: 'Laura Review' as never,
+        Name: 'Laura Woodbury',
+        Summary: digest.slice(0, 2000),
+      });
+    }
     return json({ ok: true });
   } catch {
     return json({ ok: false, error: 'Sending failed. Use Copy results instead.' }, 502);

@@ -12,7 +12,8 @@
 const KEY_STATE = 'ame_laura_r1';
 const KEY_ACTIVE = 'ame_laura_tour';
 
-interface PageResult { verdict?: 'keep' | 'omit' | 'change'; note?: string; }
+interface ItemResult { v: 'ok' | 'change'; note?: string; label: string; }
+interface PageResult { verdict?: 'keep' | 'omit' | 'change'; note?: string; items?: Record<string, ItemResult>; }
 
 const qs = new URLSearchParams(location.search);
 if (qs.get('laura') === '1') localStorage.setItem(KEY_ACTIVE, 'on');
@@ -73,6 +74,17 @@ function init() {
   .lr-panel p{font-size:13px;color:#4a4f55;margin:0 0 12px;line-height:1.5}
   .lr-file{font-size:13px;margin-bottom:12px}
   .lr-flash{color:#d9a56f;font-size:11px}
+  .lr-item{position:relative}
+  .lr-item.lr-ok{box-shadow:inset 3px 0 0 #4a6e5e;background:rgba(74,110,94,.06)}
+  .lr-item.lr-chg{box-shadow:inset 3px 0 0 #b08d3f;background:rgba(176,141,63,.08)}
+  .lr-tag{display:inline-flex;gap:5px;margin-left:10px;vertical-align:middle}
+  .lr-tag button{width:26px;height:26px;border-radius:50%;border:1px solid rgba(15,18,21,.2);background:#fdfdfc;color:#9aa0a6;font-size:13px;line-height:1;cursor:pointer;font-family:inherit;padding:0}
+  .lr-tag button:hover{border-color:#b97a3a;color:#b97a3a}
+  .lr-tag .on-ok{background:#e8f0ec;border-color:#4a6e5e;color:#2e4a3e}
+  .lr-tag .on-chg{background:#fdf3dc;border-color:#b08d3f;color:#7a5f1f}
+  .lr-ipop{position:absolute;z-index:9003;background:#fdfdfc;border:1px solid rgba(15,18,21,.15);border-radius:12px;box-shadow:0 20px 60px -18px rgba(0,0,0,.4);padding:12px;width:min(300px,80vw);font-family:Inter,system-ui,sans-serif}
+  .lr-ipop textarea{width:100%;border:1px solid rgba(15,18,21,.15);border-radius:8px;padding:8px 10px;font-size:15px;min-height:56px;font-family:inherit}
+  .lr-ipop .row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
   @media (max-width:640px){
     .lr-card{left:10px;right:10px;width:auto;bottom:92px;max-height:46vh;overflow:auto}
     .lr-bar{flex-wrap:wrap;justify-content:center;row-gap:7px;border-radius:18px;width:calc(100vw - 20px);bottom:8px}
@@ -81,6 +93,107 @@ function init() {
   const style = document.createElement('style');
   style.textContent = css;
   document.head.appendChild(style);
+
+  /* ── item-level review: every fee row, tier, section, and FAQ gets its own
+     pair of buttons (check = looks right, pencil = needs change + note). ─── */
+  const ITEM_SELECTORS: Array<{ match: (p: string) => boolean; selector: string; labelFrom?: string }> = [
+    { match: (p) => p === '/calculator', selector: '.sched .fr, .sched .cn' },
+    { match: (p) => p === '/guides', selector: '.gcard', labelFrom: 'h3' },
+    { match: (p) => p.startsWith('/guides/'), selector: '.g-sec, .faq .fq, .hero .sub, .g-glance', labelFrom: 'h2,h3' },
+  ];
+
+  const itemLabel = (el: Element, labelFrom?: string): string => {
+    const src = labelFrom ? el.querySelector(labelFrom) || el : el;
+    return (src.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 80);
+  };
+
+  function pageItems(): Record<string, ItemResult> {
+    state[here] = state[here] || {};
+    state[here].items = state[here].items || {};
+    return state[here].items!;
+  }
+
+  function instrumentItems() {
+    const rule = ITEM_SELECTORS.find((r) => r.match(here));
+    if (!rule) return;
+    document.querySelectorAll(rule.selector).forEach((el, i) => {
+      if (el.querySelector(':scope > .lr-tag')) return;
+      const label = itemLabel(el, rule.labelFrom);
+      if (!label) return;
+      const key = `${i}:${label.slice(0, 40)}`;
+      el.classList.add('lr-item');
+      const saved = pageItems()[key];
+      if (saved) el.classList.add(saved.v === 'ok' ? 'lr-ok' : 'lr-chg');
+
+      const tag = document.createElement('span');
+      tag.className = 'lr-tag';
+      const ok = document.createElement('button');
+      ok.type = 'button';
+      ok.textContent = '✓';
+      ok.title = 'Looks right';
+      ok.className = saved?.v === 'ok' ? 'on-ok' : '';
+      const chg = document.createElement('button');
+      chg.type = 'button';
+      chg.textContent = '✎';
+      chg.title = 'Needs change';
+      chg.className = saved?.v === 'change' ? 'on-chg' : '';
+
+      const setState = (v: 'ok' | 'change' | null, note?: string) => {
+        const items = pageItems();
+        if (v === null) delete items[key];
+        else items[key] = { v, note: note ?? items[key]?.note, label };
+        save();
+        el.classList.toggle('lr-ok', v === 'ok');
+        el.classList.toggle('lr-chg', v === 'change');
+        ok.className = v === 'ok' ? 'on-ok' : '';
+        chg.className = v === 'change' ? 'on-chg' : '';
+      };
+
+      ok.onclick = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        setState(pageItems()[key]?.v === 'ok' ? null : 'ok');
+      };
+      chg.onclick = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        openItemNote(el, label, pageItems()[key]?.note || '', (note, remove) => {
+          if (remove) setState(null);
+          else setState('change', note);
+        });
+      };
+      tag.append(ok, chg);
+      el.appendChild(tag);
+    });
+  }
+
+  function openItemNote(anchor: Element, label: string, existing: string, done: (note: string, remove?: boolean) => void) {
+    document.querySelectorAll('.lr-ipop').forEach((p) => p.remove());
+    const pop = document.createElement('div');
+    pop.className = 'lr-ipop';
+    const h = document.createElement('div');
+    h.style.cssText = 'font-size:12px;font-weight:600;margin-bottom:7px';
+    h.textContent = `Needs change: ${label.slice(0, 48)}`;
+    const ta = document.createElement('textarea');
+    ta.placeholder = 'What should it say or be?';
+    ta.value = existing;
+    const row = document.createElement('div');
+    row.className = 'row';
+    const clear = document.createElement('button');
+    clear.className = 'lr-v';
+    clear.textContent = 'Clear';
+    clear.onclick = () => { done('', true); pop.remove(); };
+    const saveB = document.createElement('button');
+    saveB.className = 'lr-v on-change';
+    saveB.textContent = 'Save';
+    saveB.onclick = () => { done(ta.value.trim()); pop.remove(); };
+    row.append(clear, saveB);
+    pop.append(h, ta, row);
+    document.body.appendChild(pop);
+    const r = anchor.getBoundingClientRect();
+    pop.style.left = Math.min(Math.max(10, r.left + scrollX), innerWidth - pop.offsetWidth - 10) + 'px';
+    pop.style.top = r.bottom + scrollY + 8 + 'px';
+    pop.style.position = 'absolute';
+    ta.focus();
+  }
 
   /* ── the per-page card ─────────────────────────────────────────────────── */
   const card = document.createElement('div');
@@ -121,7 +234,9 @@ function init() {
 
     const meta = document.createElement('div');
     meta.className = 'lr-meta';
-    meta.textContent = 'Saves as you go. Send to Brett below when you are done, from any page.';
+    meta.textContent = onCircuit
+      ? 'Tip: every fee line and section has its own ✓ and ✎ buttons, right on the page. Saves as you go; Send to Brett when done.'
+      : 'Saves as you go. Send to Brett below when you are done, from any page.';
     bd.appendChild(meta);
     card.appendChild(bd);
   }
@@ -182,10 +297,15 @@ function init() {
     const lines: string[] = ["Laura's site review", ''];
     for (const p of CIRCUIT) {
       const r = state[p.path];
-      if (!r?.verdict && !r?.note) continue;
-      const v = r.verdict === 'keep' ? 'LOOKS RIGHT' : r.verdict === 'omit' ? 'OMIT' : r.verdict === 'change' ? 'NEEDS CHANGE' : 'NOTE';
+      const items = Object.values(r?.items || {});
+      if (!r?.verdict && !r?.note && items.length === 0) continue;
+      const v = r?.verdict === 'keep' ? 'LOOKS RIGHT' : r?.verdict === 'omit' ? 'OMIT' : r?.verdict === 'change' ? 'NEEDS CHANGE' : 'REVIEWED';
       let line = `[${v}] ${p.label} (${p.path})`;
-      if (r.note) line += `\n    note: "${r.note}"`;
+      if (r?.note) line += `\n    note: "${r.note}"`;
+      for (const it of items) {
+        line += `\n    - ${it.v === 'ok' ? 'ok' : 'CHANGE'}: ${it.label}`;
+        if (it.note) line += ` -> "${it.note}"`;
+      }
       lines.push(line);
     }
     // Notes left on pages outside the circuit.
@@ -263,6 +383,9 @@ function init() {
 
   renderCard();
   renderBar();
+  instrumentItems();
+  // Late-revealed content (scroll reveals) may add items after load.
+  setTimeout(instrumentItems, 1200);
 }
 
 export {};

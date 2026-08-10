@@ -102,3 +102,8 @@ Downloaded to `src/assets/guides/`, one distinct break image per guide:
 
 Pexels videos are also free for commercial use: strong pool for future
 statement-band alternates if the Adobe earmarks stay unlicensed.
+- shop-open.jpg (Pexels 38519174) - bulk-sale (boutique OPEN sign; replaced
+  the signing closeup per Brett: images must be relative to the body they
+  serve). holding-escrow now uses lagoon.jpg (calm held water) so the FSBO
+  and holding cards no longer show two keys photos side by side.
+  keys-handoff.jpg and signing-closeup.jpg are unused, kept as spares.

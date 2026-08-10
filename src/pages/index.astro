@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShapeSection from '../components/ShapeSection.astro';
-import EscrowCalculator from '../components/calculator/EscrowCalculator.jsx';
 import OpenEscrow from '../components/inquiry/OpenEscrow.jsx';
 import '../styles/inquiry.css';
 import { Picture, getImage } from "astro:assets";
@@ -39,10 +38,6 @@ try {
 const ratingText = reviewStats.rating ? reviewStats.rating.toFixed(1) : '4.9';
 const reviewsLabel = reviewStats.count ? `${reviewStats.count} Google reviews` : 'Google reviews';
 
-// Incorporated January 4, 2001 (CA SOS entity 2301972). Computed at build
-// time so the figure rolls forward on its own; every deploy rebuilds.
-const yearsInBusiness = new Date().getFullYear() - 2001;
-
 const doors = [
   { href: '/buyers-sellers', img: doorBuyers, n: '01', title: 'Buying or selling', p: 'Plain-language guidance through every signature, deadline, and dollar.' },
   { href: '/agents', img: doorAgents, n: '02', title: 'Real estate agents', p: 'Proactive status and clean timelines that protect your client relationship.' },
@@ -78,7 +73,7 @@ const doors = [
       </p>
       <div class="hero-ctas">
         <a class="btn light" href="/open-an-escrow" data-open-escrow>Open an Escrow</a>
-        <a class="btn glass" href="#feetable">Estimate closing costs</a>
+        <a class="btn glass" href="/calculator">Estimate closing costs</a>
       </div>
     </div>
     <div class="oe-hero-wrap">
@@ -86,7 +81,7 @@ const doors = [
     </div>
     <div class="statline">
       <span><b>{ratingText} &#9733;</b>{reviewsLabel}</span>
-      <span><b>{yearsInBusiness}</b>years &middot; est. 2001</span>
+      <span><b>Since 2001</b>serving California</span>
       <span><b>100%</b>independent</span>
     </div>
   </header>
@@ -140,17 +135,20 @@ const doors = [
         <Picture src={lagoonImg} formats={['avif', 'webp']} widths={[480, 720, 960, 1200]} sizes="(max-width: 1000px) 92vw, 46vw" alt="A California neighborhood" />
       </div>
       <div class="body">
-        <h3>Our fees are on the table. <i>Literally.</i></h3>
+        <h3>Published fees. <i>No mystery line items.</i></h3>
         <p>
           Simple math: $300 base plus $2.15 per thousand of the price, and $1.75 per thousand past
-          two million. No mystery line items, no call-for-pricing.
+          two million. The exact figures for your file are one click away.
         </p>
         <div id="feetable" style="margin-top:28px">
-          <EscrowCalculator client:visible compact={true} />
-          <p style="margin-top:12px;font-size:12.5px">
-            <a href="/calculator" style="color:var(--amber);font-weight:600;text-decoration:none">
-              Open the full calculator &rarr;
-            </a>
+          <div class="feetable">
+            <div class="ft-row"><span class="l2">Base</span><span class="r2">$300</span></div>
+            <div class="ft-row"><span class="l2">Per $1,000 of the price</span><span class="r2">$2.15</span></div>
+            <div class="ft-row"><span class="l2">Per $1,000 past $2,000,000</span><span class="r2">$1.75</span></div>
+            <div class="ft-row total"><span class="l2">Example at $1,000,000</span><span class="r2">$2,450</span></div>
+          </div>
+          <p style="margin-top:16px">
+            <a class="btn dark" href="/calculator">Estimate your exact fees &rarr;</a>
           </p>
         </div>
       </div>
@@ -181,11 +179,11 @@ const doors = [
 
   <section class="statement" id="stband">
     <video id="stvid" muted loop playsinline preload="none" src="/media/statement.mp4"></video>
-    <div class="serif reveal">&ldquo;Every escrow closes twice: once on paper, <i>once in someone's life.</i>&rdquo;</div>
+    <div class="serif reveal">&ldquo;A home changes hands on paper. <i>A life changes with it.</i>&rdquo;</div>
     <div class="who reveal" style="font-family:var(--mono);font-size:14px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:26px">The standard we work to</div>
     <div class="proofline reveal">
       <div class="pf"><b>{ratingText} &#9733;</b><span>{reviewsLabel}</span></div>
-      <div class="pf"><b>{yearsInBusiness}</b><span>years of escrow, est. 2001</span></div>
+      <div class="pf"><b>Since 2001</b><span>serving California</span></div>
       <div class="pf"><b>0</b><span>call centers, ever</span></div>
       <div class="pf"><b>100%</b><span>independent, never bank or broker owned</span></div>
     </div>
@@ -224,7 +222,7 @@ const doors = [
     <div class="close-in">
       <div>
         <h2>Independent, <i>by design.</i></h2>
-        <p>Not broker-owned. Not bank-owned. A neutrality you can verify, and a licensed officer you can actually call.</p>
+        <p>A neutrality you can verify, and a licensed escrow officer you can actually call.</p>
       </div>
       <a class="btn light" href="tel:7145446525">Talk to an escrow officer</a>
     </div>

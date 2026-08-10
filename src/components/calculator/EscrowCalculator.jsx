@@ -458,9 +458,9 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
         {compact
           ? fees.conciergeNote
           : mode === 'seller'
-            ? `${fees.titleNotes.seller} City transfer taxes vary by city; your escrow officer confirms both. ${fees.conciergeNote}`
+            ? `Past $2,000,000 the rate drops to $1.75 per thousand. ${fees.titleNotes.seller} City transfer taxes vary by city; your escrow officer confirms both. ${fees.conciergeNote}`
             : mode === 'buyer'
-              ? `${fees.titleNotes.buyer} Recording and lender charges appear on your closing statement. ${fees.conciergeNote}`
+              ? `Past $2,000,000 the rate drops to $1.75 per thousand. ${fees.titleNotes.buyer} Recording and lender charges appear on your closing statement. ${fees.conciergeNote}`
               : `Escrow fees only. Title, recording, and lender charges come from third parties and appear on your closing statement. ${fees.conciergeNote}`}
       </div>
     </div>

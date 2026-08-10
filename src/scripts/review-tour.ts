@@ -23,7 +23,7 @@ interface Stop {
   pills?: string[];
 }
 
-const KEY_STATE = 'ame_review_r4';
+const KEY_STATE = 'ame_review_r5';
 const KEY_ACTIVE = 'ame_review_tour';
 
 const qs = new URLSearchParams(location.search);
@@ -42,14 +42,14 @@ function initTour() {
       pills: ['Every promise, kept. (owner approved)', 'Independent, by design. (owner approved)'] },
     { id: 'home-hero-sub', page: '/', label: 'Hero subline', selector: '.hero-center .hsub',
       pills: ['Funds verified, instructions honored, one licensed officer from open to close.', 'One licensed escrow officer holds your file from open to close. Every dollar verified.'] },
-    { id: 'home-statline', page: '/', label: 'Stats bar (gold numbers, 25 years)', selector: '.statline',
-      pills: ['25 years · est. 2001 (as built)', 'Serving California since 2001', 'A quarter century of escrow'] },
+    { id: 'home-statline', page: '/', label: 'Stats bar', selector: '.statline',
+      pills: ['Serving California since 2001 (owner approved)', 'A quarter century of escrow'] },
     { id: 'home-intro', page: '/', label: 'Intro statement (bigger gold kicker)', selector: '.intro h2' },
     { id: 'home-row1', page: '/', label: 'One officer story + family photo', selector: '.rows .rowx:first-child .body' },
     { id: 'home-fees', page: '/', label: 'Fees headline', selector: '.rowx.flip h3',
-      pills: ['Our fees are on the table. Literally.', 'Published fees. No mystery line items.', 'The price is on the page, not on request.'] },
-    { id: 'home-calc-embed', page: '/', label: 'Homepage calculator', selector: '#feetable',
-      pills: ['Keep the calculator on the homepage', 'Move it: link to the calculator page instead'] },
+      pills: ['Published fees. No mystery line items. (owner approved)', 'The price is on the page, not on request.'] },
+    { id: 'home-feetable', page: '/', label: 'Fee table (calculator moved to its own page per your pass)', selector: '#feetable',
+      pills: ['Keep: published table here, calculator one click away', 'Also remove this table from the homepage'] },
     { id: 'home-shape', page: '/', label: 'Animation heading', selector: '.ds-head h2' },
     { id: 'home-anim', page: '/', label: 'The animation itself (watch it through)', selector: '.anim-frame',
       pills: ['Keep the new finale: the key fades and the words take the stage', 'Keep the key on screen at the end instead', 'Hold the final frame longer before it loops'] },
@@ -58,9 +58,9 @@ function initTour() {
       pills: ['Keep all four photos', 'Swap one or more (say which in the note)'] },
     { id: 'home-statement', page: '/', label: 'Statement quote', selector: '.statement .serif',
       pills: [
-        'Every escrow closes twice: once on paper, once in someone’s life. (owner approved)',
+        'A home changes hands on paper. A life changes with it. (owner approved)',
         'We close files. Families open doors.',
-        'A home changes hands on paper. A life changes with it.',
+        'Every escrow closes twice: once on paper, once in someone’s life.',
         'Every file we close is the start of someone’s next chapter.',
         'Precision on paper. Care in everything else.',
       ] },
@@ -71,8 +71,8 @@ function initTour() {
     { id: 'home-reviews', page: '/', label: 'Reviews section (live Google reviews)', selector: '.gr-wrap' },
     { id: 'home-close', page: '/', label: 'Closing line', selector: '.close h2',
       pills: ['Independent, by design. (owner approved)'] },
-    { id: 'home-footer', page: '/', label: 'Footer license line (DFPI No. 9631912)', selector: 'footer .df-bot',
-      pills: ['Keep: full department name + license number', 'Shorter: "DFPI Escrow Agents License No. 9631912"', 'Check the number with Laura before launch'] },
+    { id: 'home-footer', page: '/', label: 'Footer license line (shortened per your pass; confirming number with Laura)', selector: 'footer .df-bot',
+      pills: ['Keep the short DFPI line (as applied)', 'Number is confirmed correct', 'Number is different (put it in the note)'] },
 
     /* ── services hub ────────────────────────────────────────────────────── */
     { id: 'services-hub', page: '/services', label: 'Services hub (new page behind nav "Services")', selector: '.glib',
@@ -80,9 +80,9 @@ function initTour() {
 
     /* ── buyers & sellers ────────────────────────────────────────────────── */
     { id: 'buyers-h1', page: '/buyers-sellers', label: 'Buyers page headline', selector: '.hero h1',
-      pills: ['The biggest purchase of your life, held steady.', 'Your money, held steady until everything is right.'] },
+      pills: ['Your money, held steady until everything is right. (owner approved)', 'The biggest purchase of your life, held steady.'] },
     { id: 'buyers-band', page: '/buyers-sellers', label: 'Moving day photo band', selector: '.hband' },
-    { id: 'buyers-days', page: '/buyers-sellers', label: '30 day timeline', selector: '.miles' },
+    { id: 'buyers-days', page: '/buyers-sellers', label: '30 day timeline (title search now ordered Day 1)', selector: '.miles' },
     { id: 'buyers-faq', page: '/buyers-sellers', label: 'Buyer FAQ', selector: '.faq' },
     { id: 'buyers-cta', page: '/buyers-sellers', label: 'Call-to-action band', selector: '.cta' },
 
@@ -106,7 +106,7 @@ function initTour() {
     /* ── team ────────────────────────────────────────────────────────────── */
     { id: 'team-h1', page: '/team', label: 'Team page headline', selector: '.team-header h1',
       pills: ['You don’t hire an escrow officer. You hire a team.', 'Named people. One standard.'] },
-    { id: 'team-grid', page: '/team', label: 'The roster (live from Compendium)', selector: '.grid' },
+    { id: 'team-grid', page: '/team', label: 'The roster (Sue Knox and Wendy Roman removed per your pass)', selector: '.grid' },
     { id: 'team-note', page: '/team', label: 'Team closing note', selector: '.team-note' },
 
     /* ── calculator ──────────────────────────────────────────────────────── */
@@ -115,7 +115,7 @@ function initTour() {
     { id: 'calc-schedule', page: '/calculator', label: 'Published schedule (the sale example follows your slider)', selector: '.sched',
       pills: ['Keep: schedule stays put, example row tracks the price', 'Make the schedule fully static again', 'Something else (say what in the note)'] },
     { id: 'calc-tool', page: '/calculator', label: 'The calculator (try buyer, seller, refi)', selector: '.ec',
-      pills: ['Keep: seller mode shows estimated net proceeds', 'Numbers and add-ons match the fee sheet, confirmed', 'Something is off (say what in the note)'] },
+      pills: ['Confirmed: past $2,000,000 the rate drops to $1.75 per thousand (it always computed this; now it says so under the total)', 'Numbers and add-ons match the fee sheet, confirmed', 'Something is still off (say what in the note)'] },
 
     /* ── open an escrow ──────────────────────────────────────────────────── */
     { id: 'inquiry-flow', page: '/open-an-escrow', label: 'Open an Escrow card flow (click through it)', selector: '.oe',
@@ -163,6 +163,16 @@ function initTour() {
   .rt-note:focus{outline:2px solid #b97a3a}
   .rt-meta{font-size:11px;color:#9aa0a6;margin-top:10px}
   .rt-done{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#4a6e5e;text-transform:uppercase}
+  @media (max-width:640px){
+    .rt-bar{flex-wrap:wrap;justify-content:center;row-gap:8px;border-radius:18px;padding:10px 12px;bottom:10px;width:calc(100vw - 20px);max-width:none}
+    .rt-bar b{width:100%;text-align:center}
+    .rt-btn{padding:9px 14px;font-size:13px}
+    .rt-card{position:fixed;left:10px!important;right:10px;width:auto;top:auto!important;bottom:98px;max-height:50vh;display:flex;flex-direction:column}
+    .rt-card .bd{max-height:none;overflow:auto}
+    .rt-note{min-height:52px;font-size:16px}
+    .rt-pill{padding:11px 14px}
+    .rt-v{padding:10px 16px}
+  }
   `;
   const style = document.createElement('style');
   style.textContent = css;
@@ -180,7 +190,7 @@ function initTour() {
   const totalDone = () => STOPS.filter((s) => state[s.id]?.verdict).length;
 
   function digest(): string {
-    const lines: string[] = ['AME site review, owner pass 4', ''];
+    const lines: string[] = ['AME site review, owner pass 5', ''];
     for (const s of STOPS) {
       const r = state[s.id];
       if (!r?.verdict) continue;
@@ -416,6 +426,7 @@ function initTour() {
 
   function positionCard(target: Element) {
     if (!card) return;
+    if (innerWidth <= 640) return; // CSS pins the card as a bottom sheet
     const r = target.getBoundingClientRect();
     const cw = card.offsetWidth, ch = card.offsetHeight;
     let top = r.bottom + 14;

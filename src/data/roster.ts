@@ -171,7 +171,14 @@ const generatedRoster: Member[] | null = (() => {
 })();
 
 /** The roster the site renders: Compendium-synced when available, else static. */
-export const roster: Member[] = generatedRoster ?? staticRoster;
+/* Owner exclusions (Mike, review pass 4, 2026-08-10): these people stay off
+   the website roster regardless of Compendium status. Ask Ryan to drop them
+   from the AME view too, which makes this list redundant belt-and-suspenders. */
+const EXCLUDE_NAMES = new Set(['Sue Knox', 'Wendy Roman']);
+
+export const roster: Member[] = (generatedRoster ?? staticRoster).filter(
+  (m) => !EXCLUDE_NAMES.has(m.name),
+);
 
 /** Where the current roster came from, for diagnostics. */
 export const rosterSource: 'compendium' | 'static' = generatedRoster ? 'compendium' : 'static';

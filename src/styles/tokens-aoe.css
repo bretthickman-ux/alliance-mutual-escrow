@@ -1,0 +1,32 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   AOE theme tokens (Phase 5 clone scaffold). Loaded INSTEAD of tokens.css when
+   building the Advantage One Escrow site. Only tokens change; every component
+   reads the same custom properties.
+
+   TODO(Brett/owner): the AOE brand accent. Their logo asset in Compendium is
+   "AOE_Sign_Green-01.png", so the accent is presumably their green; we need the
+   real hex from the logo file before the clone ships. The values below are the
+   AME palette with the accent slot clearly marked, so nothing here silently
+   pretends to be an approved AOE color.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --white: #fdfdfc;
+  --paper: #f6f5f2;
+  --ink: #0f1215;
+  --soft: #565d63;
+  --faint: #9aa0a6;
+
+  /* TODO: replace with the sampled AOE green + a matching soft tint. */
+  --amber: #b97a3a;
+  --amber-soft: rgba(185, 122, 58, 0.12);
+
+  --hair: rgba(15, 18, 21, 0.1);
+  --hair2: rgba(15, 18, 21, 0.06);
+  --shape-bg: #f7f6f2;
+
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(0.23, 0.9, 0.26, 1);
+}

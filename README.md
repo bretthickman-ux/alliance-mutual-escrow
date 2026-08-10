@@ -80,13 +80,24 @@ npm run test:build   # build then test
 npm run preview      # serve the built dist/ locally
 ```
 
+### The owner review tour
+
+Open any page with `?review=1` to activate an interactive walkthrough for the
+owner: 21 stops across the site, keep/veto verdicts, owner-approved and
+suggested wording pills, free-text rewrites, and a **Copy results** digest to
+paste back for processing. `?review=0` (or Exit) turns it off. Inert for normal
+visitors. State lives in `localStorage` under `ame_review_r3`.
+
 ### Regression (HANDOFF section 9)
 
-`tests/regression.mjs` loads every page at **1440x900** and **390x844** in
+`tests/regression.mjs` loads every page (27) at **1440x900** and **390x844** in
 headless Chromium and fails on any **console error**, **page error**, or
-**horizontal overflow**. It also greps the built HTML for **em dashes** and the
-phrase **"hands you the keys"** and fails if either appears (the em-dash rule and
-the neutrality rule). Run it in CI before every deploy.
+**horizontal overflow**. It also checks the built HTML for **em dashes**, the
+phrase **"hands you the keys"**, exactly **one h1** per page, **valid ld+json**,
+**resolving internal links**, and **all 12 guide PDFs**. `CROSS_ENGINE=1` adds
+Firefox and WebKit desktop passes. See `docs/QA-REPORT.md` for current status
+and Lighthouse numbers; `docs/LAUNCH-RUNBOOK.md` for the cutover playbook;
+`docs/AOE-CLONE.md` for the Phase 5 clone scaffold.
 
 ## Deploying (Cloudflare Pages)
 

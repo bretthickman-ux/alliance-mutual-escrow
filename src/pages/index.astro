@@ -86,16 +86,20 @@ const doors = [
     </div>
   </header>
 
-  <script>
-    // Hero CTA: fade the card flow in over the hero. The href stays as a
-    // real link so the flow still works anywhere JS is unavailable.
-    document.querySelectorAll('[data-open-escrow]').forEach((el) => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        (window as unknown as { __oeWanted?: boolean }).__oeWanted = true;
-        window.dispatchEvent(new Event('ame:open-escrow'));
+  <script is:inline>
+    // Hero CTA: fade the card flow in over the hero. Inline and synchronous
+    // so the listener exists the instant the button is parseable; a click can
+    // never race the bundle and fall through to the href. The href stays as
+    // a real link only for no-JS visitors.
+    (function () {
+      document.querySelectorAll('[data-open-escrow]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.__oeWanted = true;
+          window.dispatchEvent(new Event('ame:open-escrow'));
+        });
       });
-    });
+    })();
   </script>
 
   <section class="intro">

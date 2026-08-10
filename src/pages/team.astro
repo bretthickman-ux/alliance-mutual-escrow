@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Picture } from 'astro:assets';
-import { roster } from '../data/roster';
+import { roster, telHref } from '../data/roster';
 import '../styles/team.css';
 ---
 
@@ -45,6 +45,9 @@ import '../styles/team.css';
             {m.tag && <div class="tg">{m.tag}</div>}
             {m.email && (
               <div class="em"><a href={`mailto:${m.email}`}>{m.email}</a></div>
+            )}
+            {m.phone && (
+              <div class="em"><a href={telHref(m.phone)}>{m.phone}</a></div>
             )}
           </div>
         </div>

@@ -24,9 +24,11 @@ export interface Member {
   /** Primary role line. May wrap onto two lines with a <br>-equivalent split. */
   role: string;
   roleLines?: string[];
-  /** Optional specialty tag (e.g. "Residential · Bulk Sale"). */
+  /** Optional specialty/team tag (e.g. "Residential · Bulk Sale", "Team Laura"). */
   tag?: string;
   email?: string;
+  /** Direct phone, as displayed (synced from Compendium). */
+  phone?: string;
   photo?: ImageMetadata;
   group: RosterGroup;
   /** Airtable / assignment not fully confirmed; see HANDOFF section 8. */
@@ -134,7 +136,7 @@ const staticRoster: Member[] = [
    generated staff replace it automatically, headshots optimized like any asset. */
 type GeneratedMember = {
   name: string; initials: string; role: string; tag?: string;
-  email?: string; group: RosterGroup; photoFile: string | null;
+  email?: string; phone?: string; group: RosterGroup; photoFile: string | null;
 };
 
 const generatedModules = import.meta.glob<{ default: { members: GeneratedMember[] } }>(
@@ -162,6 +164,7 @@ const generatedRoster: Member[] | null = (() => {
     role: m.role,
     tag: m.tag,
     email: m.email,
+    phone: m.phone,
     group: m.group,
     photo: resolveHeadshot(m.photoFile),
   }));
@@ -172,6 +175,13 @@ export const roster: Member[] = generatedRoster ?? staticRoster;
 
 /** Where the current roster came from, for diagnostics. */
 export const rosterSource: 'compendium' | 'static' = generatedRoster ? 'compendium' : 'static';
+
+/** tel: href for a display phone, handling extensions ("ext. 100" -> ,100 pause-dial). */
+export function telHref(phone: string): string {
+  const ext = phone.match(/(?:ext\.?|x)\s*(\d+)/i);
+  const base = phone.replace(/(?:ext\.?|x)\s*\d+.*$/i, '').replace(/\D/g, '');
+  return 'tel:' + base + (ext ? ',' + ext[1] : '');
+}
 
 /** Members grouped in display order, for the typographic index (team-b). */
 export function rosterByGroup(): { group: RosterGroup; members: Member[] }[] {

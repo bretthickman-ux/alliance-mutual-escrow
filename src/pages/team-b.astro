@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getImage } from 'astro:assets';
-import { rosterByGroup } from '../data/roster';
+import { rosterByGroup, telHref } from '../data/roster';
 import '../styles/team.css';
 
 // Runner-up typographic index. Kept for the owner's confirmation on the team
@@ -57,6 +57,9 @@ for (const g of groups) {
               ))}
               {m.email && (
                 <span class="em"><a href={`mailto:${m.email}`}>{m.email}</a></span>
+              )}
+              {m.phone && (
+                <span class="em"><a href={telHref(m.phone)}>{m.phone}</a></span>
               )}
             </span>
           </div>

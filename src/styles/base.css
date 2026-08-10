@@ -222,3 +222,18 @@ footer { background: var(--ink); border-top: 0; }
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* iOS Safari: backdrop-filter layers are re-rasterized at zoom scale during
+   pinch and can crash the tab on memory. Touch devices get solid tints. */
+@media (hover: none) {
+  .statline, .btn.glass, .media .cap, .door .arr2, .hband .tag,
+  .nav--overlay.scrolled, body.mopen .nav--overlay, .nav--solid, .nav--solid.nav--paper {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .statline { background: rgba(15, 18, 21, 0.72); }
+  .media .cap, .hband .tag { background: rgba(15, 18, 21, 0.6); }
+  .nav--overlay.scrolled, body.mopen .nav--overlay { background: rgba(246, 245, 242, 0.97); }
+  .nav--solid { background: rgba(253, 253, 252, 0.98); }
+  .nav--solid.nav--paper { background: rgba(246, 245, 242, 0.98); }
+}

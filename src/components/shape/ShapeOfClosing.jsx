@@ -282,7 +282,7 @@ function KeyBody({ T, M, df, accent }) {
           </g>
         </g>
       </svg>
-      <div style={{ position: 'absolute', left: 200, top: 466, width: 1160, height: 6, background: `linear-gradient(90deg, transparent, ${accent} 30%, #fff8ee 50%, ${accent} 70%, transparent)`, opacity: glint * 0.9, filter: 'blur(1px)', pointerEvents: 'none' }}></div>
+      <div style={{ position: 'absolute', left: 200, top: 465, width: 1160, height: 8, borderRadius: 4, background: `linear-gradient(90deg, transparent, ${accent}cc 30%, #fff8ee 50%, ${accent}cc 70%, transparent)`, opacity: glint * 0.85, pointerEvents: 'none' }}></div>
     </div>
   );
 }
@@ -316,18 +316,22 @@ function Piece({ T: rawT, CUES, authoredTotal, reduced, accent = "#b97a3a", coun
   const numFrac = df - Math.floor(df);
   const numRoll = df >= 1 && shown < 30 ? Easing.easeInOutSine(clamp((numFrac - 0.45) / 0.55, 0, 1)) : 0;
   const numO = MOTION.draw(T, M.open, 0.8) * 0.09;
-  const numMask = 'linear-gradient(to bottom, #000 0%, #000 55%, transparent 80%)';
   const bloom = interpolate([M.keys + 0.5, M.keys + 1.3, M.keys + 1.9, M.keys + 3.0], [0, 0.4, 0.4, 0.2], Easing.easeInOutSine)(T);
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: paper, color: INK, fontFamily: UIF }}>
       <div style={{ position: 'absolute', inset: 0, transform: camCSS(fx2, fy2, s2), transformOrigin: '0 0' }}>
-        <div style={{ position: 'absolute', left: 450, top: 96, width: 700, height: 560, WebkitMaskImage: numMask, maskImage: numMask }}>
+        {/* Ghost day numbers. The bottom fade is a paper-gradient overlay, not
+            a CSS mask: masked layers re-rasterize at zoom scale on iOS and
+            help crash the tab under pinch. */}
+        <div style={{ position: 'absolute', left: 450, top: 96, width: 700, height: 560 }}>
           <div style={{ position: 'absolute', inset: 0, fontFamily: SERIF, fontSize: 460, lineHeight: '560px', textAlign: 'center', color: '#b08d3f', opacity: numO * (1 - numRoll) }}>{shown}</div>
           <div style={{ position: 'absolute', inset: 0, fontFamily: SERIF, fontSize: 460, lineHeight: '560px', textAlign: 'center', color: '#b08d3f', opacity: numO * numRoll }}>{Math.min(shown + 1, 30)}</div>
+          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, transparent 55%, ${paper} 80%)`, pointerEvents: 'none' }}></div>
         </div>
       </div>
       <div style={{ position: 'absolute', inset: 0, transform: camCSS(fx, fy, s), transformOrigin: '0 0' }}>
-        <div style={{ position: 'absolute', left: 350, top: 210, width: 900, height: 520, background: `radial-gradient(closest-side, ${accent}55, transparent 70%)`, opacity: bloom, filter: 'blur(10px)' }}></div>
+        {/* Finale bloom: softness baked into the gradient stops, no blur filter. */}
+        <div style={{ position: 'absolute', left: 350, top: 210, width: 900, height: 520, background: `radial-gradient(closest-side, ${accent}44 0%, ${accent}2e 34%, ${accent}14 58%, transparent 78%)`, opacity: bloom }}></div>
         <Annotations T={T} M={M} df={df} accent={accent} />
         <KeyBody T={T} M={M} df={df} accent={accent} />
       </div>
@@ -383,13 +387,21 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
     let last = null;
     let raf = null;
     let visible = false;
+    let skip = false;
+
+    // Phones render every other frame: the piece reads identically at 30fps
+    // and halves the style/raster churn that pressures iOS Safari.
+    const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
 
     const frame = (now) => {
       if (last === null) last = now;
       elapsed += (now - last) / 1000;
       last = now;
-      const e = elapsed % cycle;
-      setT(Math.min(START_SKIP + e, total));
+      skip = coarse && !skip;
+      if (!skip) {
+        const e = elapsed % cycle;
+        setT(Math.min(START_SKIP + e, total));
+      }
       raf = requestAnimationFrame(frame);
     };
     const zoomed = () =>
@@ -420,15 +432,25 @@ export default function ShapeOfClosing({ background = "#f7f6f2", accent = "#b97a
 
     // Pinch zoom on iOS re-rasterizes every animated layer at zoom scale per
     // frame; keep animating and Safari kills the tab. Freeze the clock while
-    // zoomed, resume when the pinch releases.
+    // zoomed, and give Safari a beat after release to finish re-rasterizing
+    // the page before the churn resumes.
     const vv = typeof window !== 'undefined' ? window.visualViewport : null;
-    const onViewport = () => { if (zoomed()) stop(); else if (visible) start(); };
+    let resumeTimer = null;
+    const onViewport = () => {
+      if (zoomed()) {
+        if (resumeTimer != null) { clearTimeout(resumeTimer); resumeTimer = null; }
+        stop();
+      } else if (visible && raf == null && resumeTimer == null) {
+        resumeTimer = setTimeout(() => { resumeTimer = null; if (visible && !zoomed()) start(); }, 600);
+      }
+    };
     vv?.addEventListener('resize', onViewport);
     vv?.addEventListener('scroll', onViewport);
 
     return () => {
       stop();
       io.disconnect();
+      if (resumeTimer != null) clearTimeout(resumeTimer);
       vv?.removeEventListener('resize', onViewport);
       vv?.removeEventListener('scroll', onViewport);
     };

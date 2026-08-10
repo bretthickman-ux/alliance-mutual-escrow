@@ -3,7 +3,7 @@
    here; it is emailed to the team list. No storage, no auth: the digest
    contains only review verdicts on public site copy. */
 
-import { notifyList, resendSend, type SendEnv } from './_lib/email';
+import { resendSend, type SendEnv } from './_lib/email';
 
 export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
   const json = (body: unknown, status = 200) =>
@@ -25,8 +25,11 @@ export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
   }
 
   try {
+    // Owner-review digests are internal workflow between Mike and Brett;
+    // they never go to the team notification list.
+    const to = (context.env as SendEnv & { REVIEW_TO?: string }).REVIEW_TO || 'bretth@sevengables.com';
     await resendSend(context.env, {
-      to: notifyList(context.env),
+      to: [to],
       subject: 'Owner review results, AME site',
       text: digest,
     });

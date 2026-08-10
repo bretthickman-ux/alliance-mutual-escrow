@@ -7,13 +7,15 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "sync": "node scripts/sync-roster.mjs",
+    "prebuild": "node scripts/sync-roster.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "test": "node tests/regression.mjs",
-    "test:build": "astro build && node tests/regression.mjs",
-    "deploy": "astro build && node tests/regression.mjs && wrangler pages deploy dist --project-name alliance-mutual-escrow",
-    "deploy:preview": "astro build && wrangler pages deploy dist --project-name alliance-mutual-escrow --branch preview"
+    "test:build": "npm run build && node tests/regression.mjs",
+    "deploy": "npm run build && node tests/regression.mjs && wrangler pages deploy dist --project-name alliance-mutual-escrow",
+    "deploy:preview": "npm run build && wrangler pages deploy dist --project-name alliance-mutual-escrow --branch preview"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",

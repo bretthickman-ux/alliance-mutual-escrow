@@ -18,3 +18,8 @@ npm-debug.log*
 .env
 .env.production
 .dev.vars
+
+# Compendium-synced roster, generated at build time from the live source.
+# Never committed: it is produced fresh each build from Compendium.
+src/data/roster.generated.json
+src/assets/team/generated/

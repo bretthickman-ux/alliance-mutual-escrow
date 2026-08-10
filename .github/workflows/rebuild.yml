@@ -1,0 +1,31 @@
+# Automatic rebuild trigger for the Compendium roster sync.
+#
+# Preferred trigger: a Compendium webhook that fires on a staff change, pointed
+# straight at a Cloudflare Pages Deploy Hook URL. That is instant and needs no
+# GitHub Action at all.
+#
+# This scheduled job is the fallback for when Compendium cannot emit webhooks: it
+# pings the Cloudflare Deploy Hook every 6 hours, which re-runs the build (and so
+# the sync). It is inert until the CLOUDFLARE_DEPLOY_HOOK repo secret is set;
+# without it the job succeeds and does nothing (no noise).
+name: Rebuild site (roster sync)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # every 6 hours
+  workflow_dispatch: {}
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Cloudflare Pages deploy hook
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "CLOUDFLARE_DEPLOY_HOOK secret not set; nothing to trigger yet."
+            exit 0
+          fi
+          echo "Triggering Cloudflare Pages rebuild..."
+          curl -fsS -X POST "$HOOK" && echo "Triggered."

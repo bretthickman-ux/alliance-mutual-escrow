@@ -40,7 +40,11 @@ export const groupOrder: RosterGroup[] = [
   'Office & Client Care',
 ];
 
-export const roster: Member[] = [
+/* Static, confirmed AME roster. This is the fallback and the current source of
+   truth until the Compendium sync is live (see scripts/sync-roster.mjs and the
+   compendium-roster-sync memory). When the sync writes roster.generated.json,
+   that data wins; see the resolution block below. */
+const staticRoster: Member[] = [
   {
     name: 'Laura Woodbury',
     initials: 'LW',
@@ -122,6 +126,52 @@ export const roster: Member[] = [
     group: 'Office & Client Care',
   },
 ];
+
+/* ── Compendium-generated roster (optional, wins when present) ────────────────
+   scripts/sync-roster.mjs writes roster.generated.json and downloads headshots
+   to assets/team/generated/. These globs resolve to nothing when the sync has
+   not run, so the static roster above is used. When the sync has run, the
+   generated staff replace it automatically, headshots optimized like any asset. */
+type GeneratedMember = {
+  name: string; initials: string; role: string; tag?: string;
+  email?: string; group: RosterGroup; photoFile: string | null;
+};
+
+const generatedModules = import.meta.glob<{ default: { members: GeneratedMember[] } }>(
+  './roster.generated.json',
+  { eager: true },
+);
+const generatedHeadshots = import.meta.glob<ImageMetadata>(
+  '../assets/team/generated/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' },
+);
+
+function resolveHeadshot(file: string | null): ImageMetadata | undefined {
+  if (!file) return undefined;
+  const entry = Object.entries(generatedHeadshots).find(([p]) => p.endsWith('/' + file));
+  return entry ? entry[1] : undefined;
+}
+
+const generatedRoster: Member[] | null = (() => {
+  const mod = Object.values(generatedModules)[0];
+  const members = mod?.default?.members;
+  if (!members || members.length === 0) return null;
+  return members.map((m) => ({
+    name: m.name,
+    initials: m.initials,
+    role: m.role,
+    tag: m.tag,
+    email: m.email,
+    group: m.group,
+    photo: resolveHeadshot(m.photoFile),
+  }));
+})();
+
+/** The roster the site renders: Compendium-synced when available, else static. */
+export const roster: Member[] = generatedRoster ?? staticRoster;
+
+/** Where the current roster came from, for diagnostics. */
+export const rosterSource: 'compendium' | 'static' = generatedRoster ? 'compendium' : 'static';
 
 /** Members grouped in display order, for the typographic index (team-b). */
 export function rosterByGroup(): { group: RosterGroup; members: Member[] }[] {

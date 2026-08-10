@@ -34,6 +34,35 @@ rebuild:
 - **Site facts**: `src/data/site.ts` (name, address, phone, nav).
 - **One component library**: `src/components/`, `src/layouts/BaseLayout.astro`.
 
+## Roster auto-sync (Compendium)
+
+The team roster can update itself from **Compendium** with no human work. The
+build runs `scripts/sync-roster.mjs` first (`prebuild`): it fetches escrow staff
+from Compendium, downloads each headshot locally so `astro:assets` optimizes it,
+and writes `src/data/roster.generated.json`. `src/data/roster.ts` prefers that
+generated data over the static fallback. Both generated outputs are gitignored;
+they are produced fresh on every build.
+
+Pipeline (once configured): a staff change in Compendium -> a Cloudflare Pages
+**Deploy Hook** fires (from a Compendium webhook, or the scheduled
+`.github/workflows/rebuild.yml` fallback) -> Cloudflare rebuilds -> the sync
+re-runs with the token from the environment -> the new person is live.
+
+**Resilient by design:** with no credentials the sync skips and the static roster
+is used; any Compendium error is non-fatal and leaves the last good roster in
+place, so an outage never breaks a deploy.
+
+Set these as Cloudflare Pages / CI **secrets** (never in the repo):
+
+- `COMPENDIUM_API_TOKEN` (secret)
+- `COMPENDIUM_API_URL` (base URL)
+- `COMPENDIUM_STAFF_PATH` (endpoint/query for escrow staff)
+
+The four `CONFIG` values and the `mapRecord()` field mapping in
+`scripts/sync-roster.mjs` are the only things to fill once the Compendium API
+shape is confirmed; everything around them (fetch, headshot download, image
+optimization, fallback) is done and tested.
+
 ## Commands
 
 ```bash

@@ -1,15 +1,24 @@
 /* Cloudflare Pages Function: POST /api/review-digest
-   The owner review tour's "Send results" button posts the plain-text digest
-   here; it is emailed to the team list. No storage, no auth: the digest
-   contains only review verdicts on public site copy. */
+   The review tours' "Send" buttons post plain-text results here; they are
+   emailed to Brett (owner-review workflow is internal and never goes to the
+   team notification list). Laura's compliance walkthrough may also attach
+   files (rate sheets, marked-up PDFs), forwarded via Resend attachments. */
 
 import { resendSend, type SendEnv } from './_lib/email';
 
-export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
+interface DigestRequest {
+  digest?: string;
+  reviewer?: string; // 'mike' (default) | 'laura'
+  attachments?: Array<{ filename?: string; content?: string }>; // base64
+}
+
+const MAX_ATTACH_TOTAL = 25 * 1024 * 1024; // ~25MB of base64 text, under Resend's 40MB cap
+
+export const onRequestPost: PagesFunction<SendEnv & { REVIEW_TO?: string }> = async (context) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
-  let body: { digest?: string };
+  let body: DigestRequest;
   try {
     body = await context.request.json();
   } catch {
@@ -24,15 +33,33 @@ export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
     return json({ ok: false, error: 'Sending is not connected. Use Copy results instead.' }, 503);
   }
 
+  const attachments = (body.attachments || [])
+    .filter((a) => a && a.filename && a.content)
+    .map((a) => ({
+      filename: String(a.filename).slice(0, 120).replace(/[^\w. ()-]/g, '_'),
+      content: String(a.content),
+    }));
+  const totalSize = attachments.reduce((n, a) => n + a.content.length, 0);
+  if (totalSize > MAX_ATTACH_TOTAL) {
+    return json({ ok: false, error: 'Attachments are too large to email. Keep them under about 18MB together.' }, 400);
+  }
+
+  const reviewer = body.reviewer === 'laura' ? 'Laura' : 'Owner';
+  const to = context.env.REVIEW_TO || 'bretth@sevengables.com';
+
   try {
-    // Owner-review digests are internal workflow between Mike and Brett;
-    // they never go to the team notification list.
-    const to = (context.env as SendEnv & { REVIEW_TO?: string }).REVIEW_TO || 'bretth@sevengables.com';
-    await resendSend(context.env, {
-      to: [to],
-      subject: 'Owner review results, AME site',
-      text: digest,
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: context.env.EMAIL_FROM || 'Alliance Mutual Escrow <onboarding@resend.dev>',
+        to: [to],
+        subject: `${reviewer} review results, AME site${attachments.length ? ` (+${attachments.length} attachment${attachments.length > 1 ? 's' : ''})` : ''}`,
+        text: digest,
+        ...(attachments.length ? { attachments } : {}),
+      }),
     });
+    if (!res.ok) throw new Error('Resend ' + res.status);
     return json({ ok: true });
   } catch {
     return json({ ok: false, error: 'Sending failed. Use Copy results instead.' }, 502);

@@ -46,3 +46,12 @@ Nothing gets invented; missing facts are questions for Brett at the bottom.
 6. The owner-approved copy lines for AOE ("Every promise, kept." is AME's; does
    AOE share it or get its own line?).
 7. Old AOE site URL inventory for its redirect map.
+
+## Roster notes from marketing (Yolanda, 2026-08-10)
+
+- **Rose Moreno belongs on the AOE roster** (she is excluded from the AME
+  site; when the clone syncs with COMPENDIUM_ORG="Advantage One Escrow" she
+  should appear there).
+- **Remove the Arcadia team picture** from AOE materials.
+- **Remove Sharon Cowell** from the AOE roster (add to the clone's
+  EXCLUDE_NAMES if she is Active in Compendium).

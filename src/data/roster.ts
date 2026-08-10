@@ -148,6 +148,23 @@ const generatedHeadshots = import.meta.glob<ImageMetadata>(
   { eager: true, import: 'default' },
 );
 
+/* Manual headshot overrides (marketing-supplied photos that have not made it
+   into Compendium yet). Files are named by slug (e.g. jhana-duncan.jpg) and
+   win over the synced photo. Long-term home for these is Compendium; remove
+   the override once Yolanda uploads them there. */
+const overrideHeadshots = import.meta.glob<ImageMetadata>(
+  '../assets/team/overrides/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' },
+);
+
+const slugOf = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+function overrideFor(name: string): ImageMetadata | undefined {
+  const slug = slugOf(name);
+  const entry = Object.entries(overrideHeadshots).find(([p]) => /\/([^/]+)\.\w+$/.exec(p)?.[1] === slug);
+  return entry ? entry[1] : undefined;
+}
+
 function resolveHeadshot(file: string | null): ImageMetadata | undefined {
   if (!file) return undefined;
   const entry = Object.entries(generatedHeadshots).find(([p]) => p.endsWith('/' + file));
@@ -166,15 +183,16 @@ const generatedRoster: Member[] | null = (() => {
     email: m.email,
     phone: m.phone,
     group: m.group,
-    photo: resolveHeadshot(m.photoFile),
+    photo: overrideFor(m.name) ?? resolveHeadshot(m.photoFile),
   }));
 })();
 
 /** The roster the site renders: Compendium-synced when available, else static. */
-/* Owner exclusions (Mike, review pass 4, 2026-08-10): these people stay off
-   the website roster regardless of Compendium status. Ask Ryan to drop them
-   from the AME view too, which makes this list redundant belt-and-suspenders. */
-const EXCLUDE_NAMES = new Set(['Sue Knox', 'Wendy Roman']);
+/* Exclusions (Mike, review pass 4 + Yolanda in marketing, 2026-08-10): these
+   people stay off the AME website regardless of Compendium status. Rose
+   Moreno is actually AOE staff and belongs on that site's roster. Ask Ryan to
+   reflect all three in the AME view too, making this list belt-and-suspenders. */
+const EXCLUDE_NAMES = new Set(['Sue Knox', 'Wendy Roman', 'Rose Moreno']);
 
 export const roster: Member[] = (generatedRoster ?? staticRoster).filter(
   (m) => !EXCLUDE_NAMES.has(m.name),

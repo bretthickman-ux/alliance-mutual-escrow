@@ -60,3 +60,15 @@ door only if the finalist is unclear; otherwise 1 each.
 Drop originals into `Photos/doors-v2/` in the project folder and say the word:
 the pipeline (crop to 3:4.1 focus-safe, AVIF/WebP srcset via astro:assets) and
 the swap in `index.astro` + the four `HBand` heroes is a one-pass change.
+
+## Earmarked: already-licensed Adobe assets (no credits needed)
+
+- **#282399227** "Smiling Family Carrying Boxes Into New Home On Moving Day"
+  (Monkey Business, 5351x2452 JPEG, Standard license: Downloaded). Buyers door
+  candidate. Re-download free from the asset page or the Downloads library.
+- A second family-moving photo from the same series showed a Downloaded badge in
+  search (family entering the door, leather couch); it is in the Downloads
+  library beside the first.
+- Review queue: Adobe Stock library **"AME site v2"** holds the new candidates
+  (family vertical video for buyers, agent-at-house exterior for agents) plus
+  two stray saves to prune. Nothing licensed; credits untouched.

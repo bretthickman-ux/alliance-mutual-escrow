@@ -137,7 +137,7 @@ function initTour() {
   .rt-btn:hover{border-color:#d9a56f;color:#d9a56f}
   .rt-btn.solid{background:#fdfdfc;color:#0f1215;border-color:#fdfdfc}
   .rt-btn.solid:hover{background:#d9a56f;border-color:#d9a56f;color:#0f1215}
-  .rt-hl{position:relative;outline:2px solid #b97a3a;outline-offset:6px;border-radius:4px}
+  .rt-hl{position:relative;outline:2px solid #b97a3a;outline-offset:6px;border-radius:4px;scroll-margin-top:120px;scroll-margin-bottom:130px}
   .rt-card{position:fixed;z-index:9001;width:min(400px,calc(100vw - 24px));background:#fdfdfc;color:#0f1215;border:1px solid rgba(15,18,21,.12);border-radius:16px;box-shadow:0 30px 80px -20px rgba(0,0,0,.4);font-family:'Inter',system-ui,sans-serif;overflow:hidden}
   .rt-card .hd{padding:12px 16px;border-bottom:1px solid rgba(15,18,21,.08);display:flex;align-items:center;gap:8px}
   .rt-card .hd .k{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:#b97a3a}
@@ -287,6 +287,14 @@ function initTour() {
     hlEl = target;
     target.classList.add('rt-hl');
     target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    // Never let a stop settle under the fixed nav (or the tour bar below).
+    setTimeout(() => {
+      const rt = target.getBoundingClientRect();
+      if (rt.top < 110) scrollBy({ top: rt.top - 120, behavior: 'smooth' });
+      else if (rt.bottom > innerHeight - 90 && rt.height < innerHeight - 220) {
+        scrollBy({ top: rt.bottom - (innerHeight - 100), behavior: 'smooth' });
+      }
+    }, 650);
 
     const r = state[stop.id] || {};
     card = document.createElement('div');

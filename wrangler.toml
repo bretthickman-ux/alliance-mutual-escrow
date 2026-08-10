@@ -27,3 +27,7 @@ GOOGLE_PLACE_ID = "ChIJ32vwBbjb3IARki5f0Aft9M8"
 EMAIL_PROVIDER = "resend"
 EMAIL_FROM = "Alliance Mutual Escrow <estimates@ameescrow.com>"
 INQUIRY_TO = "info@ameescrow.com"
+# Internal notification list (comma-separated). Per IT: the site emails the
+# team directly on every inquiry/estimate; no distribution list needed.
+# Update with Laura / Mike / Ryan once Ryan confirms addresses.
+NOTIFY_TO = "info@ameescrow.com"

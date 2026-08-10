@@ -138,6 +138,20 @@ img { display: block; }
   display: block; padding: 16px 2px; border-bottom: 1px solid var(--hair);
   font-family: var(--serif); font-size: 27px; color: var(--ink); text-decoration: none;
 }
+.nm-group { border-bottom: 1px solid var(--hair); }
+.nm-group summary {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 2px; font-family: var(--serif); font-size: 27px; color: var(--ink);
+  cursor: pointer; list-style: none;
+}
+.nm-group summary::-webkit-details-marker { display: none; }
+.nm-chev { font-size: 20px; color: var(--faint); transition: transform 0.3s var(--ease); line-height: 0.4; }
+.nm-group[open] .nm-chev { transform: rotate(180deg) translateY(-6px); }
+.nm-sub { padding: 2px 0 14px 16px; display: flex; flex-direction: column; gap: 2px; }
+.nm-sub a {
+  display: block; padding: 9px 2px; font-size: 16.5px; color: var(--soft); text-decoration: none;
+}
+.nm-sub a:hover { color: var(--amber); }
 .nmenu-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 26px; }
 .nm-tel { font-size: 13px; letter-spacing: 0.08em; color: var(--soft); text-decoration: none; }
 .nm-cta {

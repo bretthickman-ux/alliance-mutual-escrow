@@ -5,12 +5,19 @@ import { guides } from '../../data/guides.mjs';
 import '../../styles/interior.css';
 
 import imgFam from '../../assets/home/fam.jpg';
-import imgBoxes from '../../assets/doors/buyers.jpg';
 import imgLake from '../../assets/doors/agents.jpg';
 import imgDusk from '../../assets/doors/lenders.jpg';
 import imgFoothills from '../../assets/doors/investors.jpg';
 import imgPark from '../../assets/home/park.jpg';
-import imgLagoon from '../../assets/home/lagoon.jpg';
+// Pexels (free license, commercial use, no attribution): one distinct image
+// per guide so no photo repeats across the library.
+import imgKeysHandoff from '../../assets/guides/keys-handoff.jpg';
+import imgKeysSold from '../../assets/guides/keys-sold-sign.jpg';
+import imgSigningCouple from '../../assets/guides/signing-couple.jpg';
+import imgSigningCloseup from '../../assets/guides/signing-closeup.jpg';
+import imgHouseTwilight from '../../assets/guides/house-twilight.jpg';
+import imgCraftsmanPorch from '../../assets/guides/craftsman-porch.jpg';
+import imgPorchChairs from '../../assets/guides/porch-chairs.jpg';
 
 export function getStaticPaths() {
   return guides.map((g) => ({ params: { slug: g.slug }, props: { guide: g } }));
@@ -19,21 +26,40 @@ export function getStaticPaths() {
 const { guide } = Astro.props;
 const pdfHref = `/pdfs/${guide.slug}.pdf`;
 
+// Guide ecosystem: short labels for the sub-nav strip, plus prev/next.
+const SHORT = {
+  'what-escrow-does': 'Escrow basics',
+  'escrow-timeline': 'The 30 days',
+  'wire-fraud-safety': 'Wire safety',
+  'buyer-guide': 'Buyers',
+  'seller-guide': 'Sellers',
+  'refinance-guide': 'Refinance',
+  '1031-exchange': '1031 exchange',
+  'bulk-sale': 'Bulk sale',
+  'probate': 'Probate',
+  'mobile-home': 'Mobile home',
+  'fsbo': 'FSBO',
+  'holding-escrow': 'Holding escrow',
+};
+const gi = guides.findIndex((g) => g.slug === guide.slug);
+const prevGuide = gi > 0 ? guides[gi - 1] : null;
+const nextGuide = gi < guides.length - 1 ? guides[gi + 1] : null;
+
 // One warm breather image per guide, matched to its subject. Purely
 // atmospheric (alt text stays empty); the words carry the guidance.
 const GUIDE_IMAGES = {
-  'what-escrow-does': imgFam,
+  'what-escrow-does': imgCraftsmanPorch,
   'escrow-timeline': imgLake,
   'wire-fraud-safety': imgDusk,
-  'buyer-guide': imgBoxes,
+  'buyer-guide': imgSigningCouple,
   'seller-guide': imgFam,
-  'refinance-guide': imgDusk,
+  'refinance-guide': imgHouseTwilight,
   '1031-exchange': imgFoothills,
-  'bulk-sale': imgPark,
-  'probate': imgLagoon,
+  'bulk-sale': imgSigningCloseup,
+  'probate': imgPorchChairs,
   'mobile-home': imgPark,
-  'fsbo': imgBoxes,
-  'holding-escrow': imgLake,
+  'fsbo': imgKeysSold,
+  'holding-escrow': imgKeysHandoff,
 };
 const breakImg = GUIDE_IMAGES[guide.slug] || imgLake;
 ---
@@ -46,6 +72,17 @@ const breakImg = GUIDE_IMAGES[guide.slug] || imgLake;
   navMax={1080}
   faq={guide.faq}
 >
+  <nav class="g-subnav" aria-label="All guides">
+    <div class="g-subnav-in">
+      <a class="g-all" href="/guides">All guides</a>
+      {guides.map((g) => (
+        <a href={`/guides/${g.slug}`} class={g.slug === guide.slug ? 'on' : ''} aria-current={g.slug === guide.slug ? 'page' : undefined}>
+          {SHORT[g.slug] || g.title}
+        </a>
+      ))}
+    </div>
+  </nav>
+
   <header class="hero">
     <div class="kick">{guide.kicker}</div>
     <h1>{guide.title}</h1>
@@ -100,6 +137,25 @@ const breakImg = GUIDE_IMAGES[guide.slug] || imgLake;
           </div>
         ))}
       </div>
+      <nav class="g-pager" aria-label="More guides">
+        {prevGuide ? (
+          <a class="g-pg prev" href={`/guides/${prevGuide.slug}`}>
+            <span class="pl">&larr; Previous guide</span>
+            <span class="pt2">{prevGuide.title}</span>
+          </a>
+        ) : <span />}
+        {nextGuide ? (
+          <a class="g-pg next" href={`/guides/${nextGuide.slug}`}>
+            <span class="pl">Next guide &rarr;</span>
+            <span class="pt2">{nextGuide.title}</span>
+          </a>
+        ) : <span />}
+      </nav>
+
+      <p class="note" style="padding-left:0;padding-right:0">
+        General information for California consumers, not legal or tax advice. For advice about your
+        situation, talk to your attorney or tax professional.
+      </p>
     </main>
   </div>
 
@@ -109,11 +165,6 @@ const breakImg = GUIDE_IMAGES[guide.slug] || imgLake;
       <a class="btn" href="tel:7145446525">Call (714) 544-6525</a>
     </div>
   </section>
-
-  <p class="note">
-    General information for California consumers, not legal or tax advice. For advice about your
-    situation, talk to your attorney or tax professional.
-  </p>
 
   <script>
     import '../../scripts/interior-motion';

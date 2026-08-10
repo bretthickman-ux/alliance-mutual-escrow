@@ -1,11 +1,12 @@
 /* Cloudflare Pages Function: POST /api/email-pdf
-   Accepts a calculator summary and an email address, and hands it to an email
-   provider. The provider is stubbed behind an interface so we can pick one
-   later (Resend, Postmark, MailChannels, SES) by setting EMAIL_PROVIDER and its
-   credentials in the Pages environment; no client change needed.
+   Emails a calculator estimate. Two sends per request (IT guidance):
+   1. Branded estimate to the visitor.
+   2. A separate internal notification to the team list (NOTIFY_TO), so the
+      officers see what estimates are going out. No mailbox or distro needed.
 
-   Anonymous by design: the email address is used to send one message and is not
-   stored anywhere by this function. */
+   Anonymous by design: the email address is used to send and is not stored. */
+
+import { brandHtml, rowsHtml, notifyList, type SendEnv, resendSend } from './_lib/email';
 
 interface SummaryLine {
   label: string;
@@ -20,64 +21,16 @@ interface EmailRequest {
   total?: number;
 }
 
-interface EmailMessage {
-  to: string;
-  subject: string;
-  text: string;
-}
-
-interface EmailProvider {
-  readonly name: string;
-  send(msg: EmailMessage): Promise<{ queued: boolean; note?: string }>;
-}
-
-/** No provider configured yet: acknowledge honestly, send nothing. */
-const nullProvider: EmailProvider = {
-  name: 'none',
-  async send() {
-    return {
-      queued: false,
-      note: 'Email sending is not connected yet. Print the page or copy the link instead.',
-    };
-  },
-};
-
-/** Resend (https://resend.com): HTTPS API, the right fit for Pages Functions
-    (no SMTP available at the edge). Sender falls back to Resend's onboarding
-    address until the ameescrow.com domain is verified. */
-function resendProvider(env: Record<string, unknown>): EmailProvider {
-  return {
-    name: 'resend',
-    async send(msg) {
-      const from = (env.EMAIL_FROM as string) || 'Alliance Mutual Escrow <onboarding@resend.dev>';
-      const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ from, to: [msg.to], subject: msg.subject, text: msg.text }),
-      });
-      if (!res.ok) throw new Error('Resend ' + res.status);
-      return { queued: true };
-    },
-  };
-}
-
-// Providers are selected by env.EMAIL_PROVIDER; adding one never touches the client.
-function providerFor(env: Record<string, unknown>): EmailProvider {
-  if (env.EMAIL_PROVIDER === 'resend' && env.RESEND_API_KEY) return resendProvider(env);
-  return nullProvider;
-}
-
 const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
 
+const titleFor = (mode: EmailRequest['mode']) =>
+  mode === 'refinance' ? 'Refinance estimate' : mode === 'seller' ? 'Seller estimate' : 'Buyer estimate';
+
 function renderText(req: EmailRequest): string {
-  const title = req.mode === 'refinance' ? 'Refinance estimate' : req.mode === 'seller' ? 'Seller estimate' : 'Buyer estimate';
   const rows = (req.lines || []).map((l) => `  ${l.label}: ${usd(l.amount)}`).join('\n');
   return [
     'Alliance Mutual Escrow',
-    title + ' for ' + usd(req.amount),
+    titleFor(req.mode) + ' for ' + usd(req.amount),
     '',
     rows,
     req.total != null ? `  Total escrow side: ${usd(req.total)}` : '',
@@ -87,7 +40,19 @@ function renderText(req: EmailRequest): string {
   ].filter(Boolean).join('\n');
 }
 
-export const onRequestPost: PagesFunction = async (context) => {
+function renderHtml(req: EmailRequest): string {
+  const rows = (req.lines || []).map((l) => ({ label: l.label, value: usd(l.amount) }));
+  if (req.total != null) rows.push({ label: 'Total escrow side', value: usd(req.total), strong: true } as never);
+  return brandHtml({
+    kicker: titleFor(req.mode),
+    heading: `Your estimate for ${usd(req.amount)}`,
+    intro: 'Computed from our published fee schedule. Third-party costs like title, lender, and county charges are not included.',
+    bodyHtml: rowsHtml(rows as Array<{ label: string; value: string; strong?: boolean }>),
+    footNote: 'Estimates are informational and not a quote or a fee agreement. Your escrow officer confirms exact figures when your file opens. Questions? Call (714) 544-6525.',
+  });
+}
+
+export const onRequestPost: PagesFunction<SendEnv & { EMAIL_PROVIDER?: string }> = async (context) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -105,14 +70,36 @@ export const onRequestPost: PagesFunction = async (context) => {
     return json({ ok: false, error: 'That estimate looks empty. Enter an amount first.' }, 400);
   }
 
-  const provider = providerFor(context.env as Record<string, unknown>);
+  const env = context.env;
+  if (env.EMAIL_PROVIDER !== 'resend' || !env.RESEND_API_KEY) {
+    return json({
+      ok: true,
+      provider: 'none',
+      queued: false,
+      note: 'Email sending is not connected yet. Print the page or copy the link instead.',
+    });
+  }
+
   try {
-    const result = await provider.send({
-      to: body.email,
+    await resendSend(env, {
+      to: [body.email],
       subject: 'Your escrow fee estimate from Alliance Mutual Escrow',
       text: renderText(body),
+      html: renderHtml(body),
     });
-    return json({ ok: true, provider: provider.name, ...result });
+
+    // Internal heads-up; never fails the visitor's request.
+    try {
+      await resendSend(env, {
+        to: notifyList(env),
+        subject: `Estimate emailed: ${titleFor(body.mode)} for ${usd(body.amount)}`,
+        text: [`An estimate was emailed from the website calculator.`, '', renderText(body)].join('\n'),
+      });
+    } catch {
+      /* visitor email already queued */
+    }
+
+    return json({ ok: true, provider: 'resend', queued: true });
   } catch {
     return json({ ok: false, error: 'Sending failed on our side. Print the page instead, or call (714) 544-6525.' }, 502);
   }

@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ShapeSection from '../components/ShapeSection.astro';
 import EscrowCalculator from '../components/calculator/EscrowCalculator.jsx';
+import OpenEscrow from '../components/inquiry/OpenEscrow.jsx';
+import '../styles/inquiry.css';
 import { Picture, getImage } from "astro:assets";
 import { roster } from "../data/roster";
 
@@ -75,9 +77,12 @@ const doors = [
         open to close.
       </p>
       <div class="hero-ctas">
-        <a class="btn light" href="tel:7145446525">Open an Escrow</a>
+        <a class="btn light" href="/open-an-escrow" data-open-escrow>Open an Escrow</a>
         <a class="btn glass" href="#feetable">Estimate closing costs</a>
       </div>
+    </div>
+    <div class="oe-hero-wrap">
+      <OpenEscrow client:load variant="hero" />
     </div>
     <div class="statline">
       <span><b>{ratingText} &#9733;</b>{reviewsLabel}</span>
@@ -85,6 +90,18 @@ const doors = [
       <span><b>100%</b>independent</span>
     </div>
   </header>
+
+  <script>
+    // Hero CTA: fade the card flow in over the hero. The href stays as a
+    // real link so the flow still works anywhere JS is unavailable.
+    document.querySelectorAll('[data-open-escrow]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        (window as unknown as { __oeWanted?: boolean }).__oeWanted = true;
+        window.dispatchEvent(new Event('ame:open-escrow'));
+      });
+    });
+  </script>
 
   <section class="intro">
     <div class="reveal">

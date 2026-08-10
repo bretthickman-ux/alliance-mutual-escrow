@@ -42,11 +42,21 @@ const navStyle = navMax ? `--nav-max:${navMax}px` : undefined;
   </div>
 </nav>
 
+{/* Mobile menu mirrors the desktop flat nav item for item; Services expands
+    in place to the four audience pages instead of being replaced by them. */}
 <div class="nmenu" id="nmenu">
-  {audiencePages.map((p) => <a href={p.href}>{p.label}</a>)}
-  <a href="/guides">Guides</a>
-  <a href="/team">Team</a>
-  <a href="/calculator">Calculator</a>
+  {navLinks.filter((l) => !l.href.startsWith('tel:')).map((l) =>
+    l.label === 'Services' ? (
+      <details class="nm-group">
+        <summary>Services<span class="nm-chev" aria-hidden="true">&#8964;</span></summary>
+        <div class="nm-sub">
+          {audiencePages.map((p) => <a href={p.href}>{p.label}</a>)}
+        </div>
+      </details>
+    ) : (
+      <a href={l.href}>{l.label}</a>
+    )
+  )}
   <div class="nmenu-foot">
     <a class="nm-tel mono" href={site.phone.href}>{site.phone.display}</a>
     <a class="nm-cta" href="/open-an-escrow">Open an Escrow</a>

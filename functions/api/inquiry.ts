@@ -1,7 +1,11 @@
 /* Cloudflare Pages Function: POST /api/inquiry
-   Sends an Open-an-Escrow inquiry to the team via Resend. Nothing is stored;
-   the message goes to INQUIRY_TO (default info@ameescrow.com) and that is the
-   whole lifecycle. The honeypot field silently succeeds for bots. */
+   Open-an-Escrow inquiries. Two sends per submission (IT guidance):
+   1. Internal notification to the team list (NOTIFY_TO, comma-separated;
+      reply-to is the visitor when they left an email).
+   2. A branded confirmation to the visitor when their contact is an email.
+   Nothing is stored; the honeypot field silently succeeds for bots. */
+
+import { brandHtml, rowsHtml, notifyList, type SendEnv, resendSend } from './_lib/email';
 
 interface InquiryRequest {
   role: string;
@@ -12,11 +16,7 @@ interface InquiryRequest {
   company?: string; // honeypot
 }
 
-export const onRequestPost: PagesFunction<{
-  RESEND_API_KEY?: string;
-  EMAIL_FROM?: string;
-  INQUIRY_TO?: string;
-}> = async (context) => {
+export const onRequestPost: PagesFunction<SendEnv> = async (context) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -45,31 +45,69 @@ export const onRequestPost: PagesFunction<{
     return json({ ok: false, error: 'Sending is not connected yet. Call (714) 544-6525 and we will take it from there.' }, 503);
   }
 
-  const clean = (s: string) => String(s).slice(0, 200).replace(/[\r\n]+/g, ' ');
-  const text = [
+  const clean = (s: string) => String(s || '').slice(0, 200).replace(/[\r\n]+/g, ' ');
+  const details = [
+    { label: 'Who', value: clean(body.name), strong: true },
+    { label: 'Reach at', value: clean(contact) },
+    { label: 'Their role', value: clean(body.role) },
+    { label: 'Property city', value: clean(body.city) },
+    { label: 'Timeline', value: clean(body.timing) },
+  ];
+  const internalText = [
     'New escrow inquiry from the website',
     '',
-    `Who:      ${clean(body.name)}`,
-    `Reach at: ${clean(contact)}`,
-    `Role:     ${clean(body.role)}`,
-    `Property: ${clean(body.city)}`,
-    `Timeline: ${clean(body.timing)}`,
+    ...details.map((d) => `${(d.label + ':').padEnd(15)}${d.value}`),
     '',
     'Reply directly to the contact above.',
   ].join('\n');
+  const internalHtml = brandHtml({
+    kicker: 'Website inquiry',
+    heading: `${clean(body.name)} wants to open an escrow`,
+    intro: 'Submitted through the Open an Escrow flow just now.',
+    bodyHtml: rowsHtml(details),
+    footNote: looksEmail ? 'Replying to this email reaches the visitor directly.' : 'The visitor left a phone number; call them back.',
+  });
 
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: env.EMAIL_FROM || 'Alliance Mutual Escrow <onboarding@resend.dev>',
-        to: [env.INQUIRY_TO || 'info@ameescrow.com'],
-        subject: `Escrow inquiry: ${clean(body.name)} · ${clean(body.role)}`,
-        text,
-      }),
+    await resendSend(env, {
+      to: notifyList(env),
+      subject: `Escrow inquiry: ${clean(body.name)} · ${clean(body.role)}`,
+      text: internalText,
+      html: internalHtml,
+      replyTo: looksEmail ? contact : undefined,
     });
-    if (!res.ok) throw new Error('Resend ' + res.status);
+
+    if (looksEmail) {
+      // Confirmation to the visitor. A failure here never fails the inquiry.
+      const confirmHtml = brandHtml({
+        kicker: 'We have it',
+        heading: 'Your inquiry is with the team.',
+        intro: 'A licensed escrow officer will reach out shortly. If it is faster, call us any business day.',
+        bodyHtml: rowsHtml([
+          { label: 'Name', value: clean(body.name) },
+          { label: 'Property city', value: clean(body.city) },
+          { label: 'Timeline', value: clean(body.timing) },
+          { label: 'Call us', value: '(714) 544-6525', strong: true },
+        ]),
+        footNote: 'You are receiving this because this address was entered on alliance-mutual-escrow. If that was not you, no action is needed.',
+      });
+      try {
+        await resendSend(env, {
+          to: [contact],
+          subject: 'We received your escrow inquiry',
+          text: [
+            'Alliance Mutual Escrow',
+            '',
+            'Your inquiry is with the team. A licensed escrow officer will reach out shortly.',
+            'Faster by phone: (714) 544-6525.',
+          ].join('\n'),
+          html: confirmHtml,
+        });
+      } catch {
+        /* internal notification already sent; the inquiry still succeeded */
+      }
+    }
+
     return json({ ok: true, queued: true });
   } catch {
     return json({ ok: false, error: 'Sending failed on our side. Call (714) 544-6525 and we will take it from there.' }, 502);

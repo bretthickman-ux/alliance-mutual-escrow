@@ -87,3 +87,18 @@ then re-drop into `Photos/`:
   Iconic OC landmark; strong statement-band candidate.
 - **#1401565634** daytime OC flatland tract aerial with neighborhood park
   (1920x1080, 19s). Inland AME fit; statement-band alternate.
+
+## Pexels additions (2026-08-10, free license, commercial use, no attribution)
+
+Downloaded to `src/assets/guides/`, one distinct break image per guide:
+
+- keys-handoff.jpg (Pexels 7642004) - holding-escrow
+- keys-sold-sign.jpg (Pexels 8482876) - fsbo
+- signing-couple.jpg (Pexels 7647387) - buyer-guide
+- signing-closeup.jpg (Pexels 8292838) - bulk-sale
+- house-twilight.jpg (Pexels 5524164) - refinance-guide
+- craftsman-porch.jpg (Pexels 5502227) - what-escrow-does
+- porch-chairs.jpg (Pexels 24245767) - probate
+
+Pexels videos are also free for commercial use: strong pool for future
+statement-band alternates if the Adobe earmarks stay unlicensed.

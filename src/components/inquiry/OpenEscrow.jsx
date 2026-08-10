@@ -25,7 +25,27 @@ const TIMINGS = [
 
 const STEPS = ['role', 'where', 'when', 'contact', 'done'];
 
-export default function OpenEscrow() {
+/* variant="hero": hidden until the hero CTA dispatches `ame:open-escrow`
+   (a pre-hydration click is buffered on window.__oeWanted). The flow fades
+   in over the hero video while the hero copy fades back; Close restores it.
+   variant="page" (default): always visible, as on /open-an-escrow. */
+export default function OpenEscrow({ variant = 'page' }) {
+  const inHero = variant === 'hero';
+  const [open, setOpen] = React.useState(!inHero);
+
+  React.useEffect(() => {
+    if (!inHero) return;
+    const show = () => setOpen(true);
+    if (window.__oeWanted) { window.__oeWanted = false; show(); }
+    window.addEventListener('ame:open-escrow', show);
+    return () => window.removeEventListener('ame:open-escrow', show);
+  }, [inHero]);
+
+  React.useEffect(() => {
+    if (!inHero) return;
+    document.querySelector('.hero')?.classList.toggle('oe-open', open);
+  }, [inHero, open]);
+
   const [step, setStep] = React.useState(0);
   const [role, setRole] = React.useState(null);
   const [city, setCity] = React.useState('');
@@ -98,8 +118,15 @@ export default function OpenEscrow() {
   const pct = sent ? 100 : (step / (STEPS.length - 1)) * 100;
   const stepLabel = `0${Math.min(step + 1, 4)} · 04`;
 
+  if (inHero && !open) return null;
+
   return (
-    <div className="oe">
+    <div className={'oe' + (inHero ? ' oe-in-hero' : '')}>
+      {inHero && (
+        <button type="button" className="oe-close" aria-label="Close and return to the page" onClick={() => setOpen(false)}>
+          &times;
+        </button>
+      )}
       <div className="oe-progress"><i style={{ width: pct + '%' }} /></div>
       <div className="oe-card oe-enter" ref={cardRef}>
         {step === 0 && (

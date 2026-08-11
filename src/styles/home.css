@@ -186,3 +186,11 @@
    alone, left-aligned on desktop where it anchors to the text column */
 .ft-cta { margin-top: 24px; }
 @media (max-width: 1000px) { .ft-cta { text-align: center; margin-top: 26px; } }
+
+/* Touch devices show a static frame instead of the animation (iOS pinch-zoom
+   crashes), and "Watch a 30-day escrow" over a still image reads as broken.
+   The whole section is desktop-only; reduced-motion desktop users still get
+   the static completed-key frame inside it. */
+@media (pointer: coarse) {
+  .dshape { display: none; }
+}

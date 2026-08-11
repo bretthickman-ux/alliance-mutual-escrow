@@ -13,16 +13,22 @@ import '../styles/calc.css';
   navVariant="solid"
   navMax={1080}
 >
-  <header class="calc-hero">
-    <div class="kick">Fees, in the open</div>
-    <h1 style="max-width:none">What will escrow <i>actually cost?</i></h1>
-    <p class="sub" style="margin-left:auto;margin-right:auto">
-      Pick your side, enter a number, and see every line before you commit. No signup, no email
-      required, nothing stored.
-    </p>
+  {/* Cinematic band: dusk aerial of inland tract homes (Adobe preview
+      #1672633834, watermarked until licensed). The calculator card floats
+      up over its lower edge. */}
+  <header class="calc-hero calc-cine">
+    <video autoplay muted loop playsinline preload="metadata" src="/media/calc-hero.mp4"></video>
+    <div class="cc-in">
+      <div class="kick">Fees, in the open</div>
+      <h1 style="max-width:none">What will escrow <i>actually cost?</i></h1>
+      <p class="sub" style="margin-left:auto;margin-right:auto">
+        Pick your side, enter a number, and see every line before you commit. No signup, no email
+        required, nothing stored.
+      </p>
+    </div>
   </header>
 
-  <div class="calc-wrap">
+  <div class="calc-wrap calc-overlap">
     <EscrowCalculator client:load />
   </div>
 

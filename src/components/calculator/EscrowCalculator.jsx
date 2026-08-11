@@ -308,6 +308,20 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
               <span>{isRefi ? '$3M' : '$5M'}</span>
             </div>
           </div>
+          {!compact && (
+            <div className="ec-presets" aria-label="Common amounts">
+              {(isRefi ? [400_000, 750_000, 1_000_000, 1_500_000] : [500_000, 750_000, 1_000_000, 1_500_000, 2_500_000]).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  className={amount === v ? 'on' : ''}
+                  onClick={() => { setRaw(fmtInput(v)); setStatus(null); }}
+                >
+                  {v >= 1_000_000 ? `$${(v / 1_000_000).toString().replace(/\.0$/, '')}M` : `$${v / 1000}K`}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {mode === 'buyer' && (

@@ -34,7 +34,9 @@ const navStyle = navMax ? `--nav-max:${navMax}px` : undefined;
       {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </div>
 
-    <a class="ncta" href="/open-an-escrow">Open an Escrow</a>
+    {/* On the home page (overlay nav) this triggers the in-hero card flow;
+        everywhere else it links to the standalone page. */}
+    <a class="ncta" href="/open-an-escrow" data-open-escrow={isOverlay ? true : undefined}>Open an Escrow</a>
 
     <button class="nburger" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span>

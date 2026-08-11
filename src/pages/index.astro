@@ -97,6 +97,9 @@ const doors = [
           e.preventDefault();
           window.__oeWanted = true;
           window.dispatchEvent(new Event('ame:open-escrow'));
+          // The flow lives in the hero; bring it into view when triggered
+          // from the nav lower on the page.
+          if (window.scrollY > 60) window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
     })();

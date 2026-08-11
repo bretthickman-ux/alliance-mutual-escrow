@@ -159,3 +159,16 @@
 }
 .ec-presets button:hover { border-color: var(--amber); color: var(--amber); }
 .ec-presets button.on { border-color: var(--amber); background: var(--amber-soft); color: var(--ink); }
+
+/* ── schedule section header + the card powering the current estimate ───── */
+.sched-head { text-align: center; max-width: 720px; margin: 64px auto 34px; padding: 0 20px; }
+.sched-head .kick { font-family: var(--mono); font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
+.sched-head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 3vw, 38px); line-height: 1.12; }
+.sched-head h2 i { color: var(--soft); }
+.sched-head p { color: var(--soft); font-size: 14.5px; margin-top: 12px; }
+.sched .card { transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.sched .card.live { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft), 0 24px 60px -34px rgba(15, 18, 21, 0.18); }
+.sched .card.live .ch::after {
+  content: 'POWERING YOUR ESTIMATE'; margin-left: auto;
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.14em; color: var(--amber); font-weight: 400;
+}

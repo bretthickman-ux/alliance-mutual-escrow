@@ -33,15 +33,20 @@ import '../styles/calc.css';
   </div>
 
   <div class="calc-below">
+    <div class="sched-head">
+      <div class="kick">The published schedule</div>
+      <h2>The rates behind <i>your estimate.</i></h2>
+      <p>Every number the calculator uses, in the open. The card matching your side lights up.</p>
+    </div>
     <div class="sched">
-      <div class="card">
+      <div class="card" data-card="sale">
         <div class="ch">Sale escrow, each side</div>
         <div class="fr"><span class="k">Base</span><span class="v">$300</span></div>
         <div class="fr"><span class="k">Per $1,000 of the price</span><span class="v">$2.15</span></div>
         <div class="fr"><span class="k">Per $1,000 past $2,000,000</span><span class="v">$1.75</span></div>
         <div class="fr tot" id="sale-example"><span class="k">Example at $1,000,000</span><span class="v">$2,450</span></div>
       </div>
-      <div class="card">
+      <div class="card" data-card="refi">
         <div class="ch">Refinance, one flat fee by loan size</div>
         <div class="fr" data-tier="750000"><span class="k">Up to $750,000</span><span class="v">$650</span></div>
         <div class="fr" data-tier="1000000"><span class="k">To $1,000,000</span><span class="v">$850</span></div>
@@ -98,6 +103,10 @@ import '../styles/calc.css';
           v.textContent = '$2,450';
         }
       }
+      document.querySelectorAll('.sched .card[data-card]').forEach((card) => {
+        const mine = card.getAttribute('data-card') === (mode === 'refinance' ? 'refi' : 'sale');
+        card.classList.toggle('live', mine);
+      });
       tiers.forEach((row) => {
         let on = false;
         if (mode === 'refinance' && amount != null) {

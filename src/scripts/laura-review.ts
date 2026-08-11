@@ -25,7 +25,7 @@ function init() {
   /* The review circuit, in walking order. Everything Laura owns the facts
      on: fees, the calculator, and every guide. */
   const CIRCUIT: Array<{ path: string; label: string }> = [
-    { path: '/calculator', label: 'Fees & calculator (rates, add-ons, the published schedule below)' },
+    { path: '/calculator', label: 'Fees & calculator (video header, quick price presets, published schedule below; the card matching your side lights up)' },
     { path: '/guides', label: 'The guide library' },
     { path: '/guides/what-escrow-does', label: 'Guide: What escrow is, and what it does' },
     { path: '/guides/escrow-timeline', label: 'Guide: The 30 day escrow timeline' },
@@ -97,7 +97,7 @@ function init() {
   /* ── item-level review: every fee row, tier, section, and FAQ gets its own
      pair of buttons (check = looks right, pencil = needs change + note). ─── */
   const ITEM_SELECTORS: Array<{ match: (p: string) => boolean; selector: string; labelFrom?: string }> = [
-    { match: (p) => p === '/calculator', selector: '.sched .fr, .sched .cn' },
+    { match: (p) => p === '/calculator', selector: '.sched .fr, .sched .cn, .sched-head' },
     { match: (p) => p === '/guides', selector: '.gcard', labelFrom: 'h3' },
     { match: (p) => p.startsWith('/guides/'), selector: '.g-sec, .faq .fq, .hero .sub, .g-glance', labelFrom: 'h2,h3' },
   ];

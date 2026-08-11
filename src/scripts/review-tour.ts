@@ -112,7 +112,7 @@ function initTour() {
     /* ── calculator ──────────────────────────────────────────────────────── */
     { id: 'calc-h1', page: '/calculator', label: 'Calculator headline', selector: '.calc-hero h1',
       pills: ['What will escrow actually cost?', 'See every fee before you commit.'] },
-    { id: 'calc-schedule', page: '/calculator', label: 'Published schedule (the sale example follows your slider)', selector: '.sched',
+    { id: 'calc-schedule', page: '/calculator', label: 'Published schedule (example follows the slider; your side\u2019s card lights up)', selector: '.sched',
       pills: ['Keep: schedule stays put, example row tracks the price', 'Make the schedule fully static again', 'Something else (say what in the note)'] },
     { id: 'calc-tool', page: '/calculator', label: 'The calculator (try buyer, seller, refi)', selector: '.ec',
       pills: ['Confirmed: past $2,000,000 the rate drops to $1.75 per thousand (it always computed this; now it says so under the total)', 'Numbers and add-ons match the fee sheet, confirmed', 'Something is still off (say what in the note)'] },

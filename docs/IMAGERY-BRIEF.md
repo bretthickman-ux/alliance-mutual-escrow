@@ -81,8 +81,9 @@ These three `_Video_HD_Preview.mov` files carry the AdobeStock watermark and
 must never ship. License the originals in Adobe Stock (search by asset ID),
 then re-drop into `Photos/`:
 
-- **#1672633834** dusk aerial, inland hillside tract homes with pools (1920x1080,
-  10s). Statement-band or AOE-reserve grade.
+- **#1672633834** dusk aerial, inland hillside tract homes with pools:
+  LICENSED 2026-08-11 (4K master in Photos/AdobeStock_1672633834.mov).
+  LIVE as the calculator page hero (public/media/calc-hero.mp4).
 - **#915017186** Orange County Great Park balloon aerial (1920x1080, 21s).
   Iconic OC landmark; strong statement-band candidate.
 - **#1401565634** daytime OC flatland tract aerial with neighborhood park

@@ -87,7 +87,10 @@ import '../styles/calc.css';
     // Two live touches on the published schedule, driven by the calculator:
     // the sale example row tracks the slider, and the active refi tier
     // highlights. The published rates themselves never move.
-    const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+    const usd = (n: number) => {
+      const v = Math.round(n * 100) / 100; // exact to the cent, never rounded to the dollar
+      return '$' + v.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 });
+    };
     const example = document.getElementById('sale-example');
     const tiers = Array.from(document.querySelectorAll<HTMLElement>('[data-tier]'));
     window.addEventListener('ame:calc-change', (e) => {

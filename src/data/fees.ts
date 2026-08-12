@@ -85,7 +85,7 @@ export function saleFee(price: number): number {
   const { base, perThousand, perThousandOverBreak, breakpoint } = fees.sale;
   const below = Math.min(price, breakpoint);
   const above = Math.max(0, price - breakpoint);
-  return Math.round(base + (below / 1000) * perThousand + (above / 1000) * perThousandOverBreak);
+  return exact(base + (below / 1000) * perThousand + (above / 1000) * perThousandOverBreak);
 }
 
 /** Formula label for display; switches when the price crosses the breakpoint. */
@@ -102,10 +102,19 @@ export function sfrRefinanceFee(loan: number): number | null {
 /** Multi-family / commercial refinance fee (loan floored to the minimum). */
 export function commercialRefinanceFee(loan: number): number {
   const effective = Math.max(loan, fees.commercialRefinance.minLoan);
-  return Math.round(fees.commercialRefinance.base + (effective / 1000) * fees.commercialRefinance.perThousand);
+  return exact(fees.commercialRefinance.base + (effective / 1000) * fees.commercialRefinance.perThousand);
 }
 
-/** Currency formatter used across fee UI. */
+/** Fees are exact to the cent, never rounded to the dollar (Laura's rule). */
+export function exact(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+/** Currency formatter used across fee UI: whole dollars stay clean, cents show exactly. */
 export function usd(n: number): string {
-  return '$' + Math.round(n).toLocaleString('en-US');
+  const v = exact(n);
+  return '$' + v.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(v) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
 }

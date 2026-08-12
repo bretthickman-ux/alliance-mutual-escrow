@@ -22,7 +22,10 @@ interface EmailRequest {
   total?: number;
 }
 
-const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+const usd = (n: number) => {
+  const v = Math.round(n * 100) / 100; // exact to the cent, never rounded to the dollar
+  return '$' + v.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 });
+};
 
 const titleFor = (mode: EmailRequest['mode']) =>
   mode === 'refinance' ? 'Refinance estimate' : mode === 'seller' ? 'Seller estimate' : 'Buyer estimate';
@@ -85,7 +88,7 @@ export const onRequestPost: PagesFunction<SendEnv & LeadsEnv & { EMAIL_PROVIDER?
   await logLead(env, {
     Type: 'Estimate',
     Contact: body.email,
-    Amount: Math.round(body.amount),
+    Amount: Math.round(body.amount * 100) / 100,
     Summary: `${titleFor(body.mode)} for ${usd(body.amount)}${body.total != null ? `, escrow side ${usd(body.total)}` : ''}`,
   });
 

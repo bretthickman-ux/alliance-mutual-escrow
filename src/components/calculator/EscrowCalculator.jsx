@@ -13,6 +13,7 @@ import {
   saleFeeLabel,
   sfrRefinanceFee,
   commercialRefinanceFee,
+  exact,
   usd,
 } from '../../data/fees';
 
@@ -77,9 +78,9 @@ function sellerLines(price, payoffs, hoas, addons, commissionPct, payoffAmount) 
   // commission is the seller's own number, and the payoff is their loan.
   // Nothing here is an AME fee; it feeds the net proceeds picture.
   const others = [
-    { l: fees.countyTransferTax.label, amount: Math.round((price / 1000) * fees.countyTransferTax.perThousand) },
+    { l: fees.countyTransferTax.label, amount: exact((price / 1000) * fees.countyTransferTax.perThousand) },
   ];
-  if (commissionPct > 0) others.push({ l: `Agent commission at ${commissionPct}%`, amount: Math.round(price * (commissionPct / 100)) });
+  if (commissionPct > 0) others.push({ l: `Agent commission at ${commissionPct}%`, amount: exact(price * (commissionPct / 100)) });
   if (payoffAmount > 0) others.push({ l: 'Loan payoff (your estimate)', amount: payoffAmount });
   const othersTotal = others.reduce((s, x) => s + x.amount, 0);
   const net = Math.max(0, price - total - othersTotal);
@@ -130,7 +131,7 @@ function useAnimatedNumber(target) {
     const step = (now) => {
       const p = Math.min(1, (now - t0) / dur);
       const ease = 1 - Math.pow(1 - p, 3);
-      setShown(Math.round(from + (target - from) * ease));
+      setShown(exact(from + (target - from) * ease));
       if (p < 1) raf = requestAnimationFrame(step);
       else fromRef.current = target;
     };
@@ -437,7 +438,7 @@ export default function EscrowCalculator({ compact = false, initialMode = 'buyer
             )}
             <div className="ec-hero">
               <span className="lbl">{heroLabel}</span>
-              <span className="amt" aria-live="polite"><span className="c">$</span>{animatedTotal.toLocaleString('en-US')}</span>
+              <span className="amt" aria-live="polite"><span className="c">$</span>{animatedTotal.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(animatedTotal) ? 0 : 2, maximumFractionDigits: 2 })}</span>
             </div>
           </>
         )}

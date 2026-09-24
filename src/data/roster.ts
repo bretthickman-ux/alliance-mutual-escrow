@@ -171,6 +171,12 @@ function resolveHeadshot(file: string | null): ImageMetadata | undefined {
   return entry ? entry[1] : undefined;
 }
 
+/* Corrections that beat Compendium until the record there is fixed (Laura,
+   2026-09-24: Compendium lists kmacias@, the real address is katiem@). */
+const EMAIL_OVERRIDES: Record<string, string> = {
+  'Katie Macias': 'katiem@ameescrow.com',
+};
+
 const generatedRoster: Member[] | null = (() => {
   const mod = Object.values(generatedModules)[0];
   const members = mod?.default?.members;
@@ -180,7 +186,7 @@ const generatedRoster: Member[] | null = (() => {
     initials: m.initials,
     role: m.role,
     tag: m.tag,
-    email: m.email,
+    email: EMAIL_OVERRIDES[m.name] ?? m.email,
     phone: m.phone,
     group: m.group,
     photo: overrideFor(m.name) ?? resolveHeadshot(m.photoFile),
